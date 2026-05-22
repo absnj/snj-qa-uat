@@ -1,52 +1,10 @@
 import { Page, expect } from '@playwright/test';
-import { loginAs } from './auth';
-
-/**
- * Helper: Fill the subject field
- */
-async function fillSubject(page: Page, subject: string): Promise<void> {
-  await page.locator('.form-group').first().click();
-  const subjectInput = page.getByRole('textbox');
-  await subjectInput.waitFor({ state: 'visible' });
-  await subjectInput.fill(subject);
-}
-
-/**
- * Helper: Fill the description field (Tiptap editor)
- * TODO: Use a different editor locator if tiptap is unreliable.
- */
-async function fillDescription(page: Page, description: string): Promise<void> {
-  await page.locator('.tiptap').click();
-  const descriptionEditor = page.getByRole('paragraph').filter({ hasText: /^$/ });
-  await descriptionEditor.waitFor({ state: 'visible' });
-  await descriptionEditor.click();
-  await descriptionEditor.fill(description);
-}
-
-/**
- * Helper: Submit the ticket form
- */
-async function submitTicketForm(page: Page): Promise<void> {
-  const submitButton = page.locator('form').getByRole('button', { name: 'Create' });
-  await submitButton.waitFor({ state: 'visible' });
-  await submitButton.click();
-}
-
-/**
- * Helper: Open the create ticket form
- */
-async function openCreateTicketForm(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Create' }).click();
-  await page.waitForSelector('form', { state: 'visible' });
-}
-
-/**
- * Navigate to the Support page
- */
-export async function navigateToSupport(page: Page): Promise<void> {
-  await page.getByRole('link', { name: 'Support Help center, tickets' }).click();
-  await expect(page).toHaveURL(/\/support\/ticket\/my-ticket\/?$/);
-}
+import {
+  fillSubject, 
+  fillDescription, 
+  submitTicketForm, 
+  openCreateTicketForm, 
+  navigateToSupport } from './utils';
 
 /**
  * Create a ticket with valid data

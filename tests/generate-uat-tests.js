@@ -69,7 +69,7 @@ const FLOW_SIGNATURES = {
   createTicketEmptyDescription: ['page'],
   createTicketLongSubject: ['page'],
   createLengthyTicketDescription: ['page'],
-  createUserHappyPath: ['page', 'normalizedRole'],
+  createUserHappyPath: ['page'],
 };
 
 function readFileRequired(filePath) {
@@ -134,11 +134,11 @@ function isLoginScenario(row) {
 }
 
 function hasFlow(row) {
-  return Boolean(row['Flows'] && row['Flows'].trim());
+  return Boolean(row['Flow'] && row['Flow'].trim());
 }
 
 function getFlowFunctionName(row) {
-  return row['Flows'].trim().split('(')[0].trim();
+  return row['Flow'].trim().split('(')[0].trim();
 }
 
 function buildFlowCall(flowName, normalizedRole) {

@@ -1,4 +1,4 @@
-﻿Role,Feature/Module,Operation,Test Scenario,Priority,Environment,Expected Behavior,Browser Coverage,Flows
+﻿Role,Feature/Module,Operation,Test Scenario,Priority,Environment,Expected Behavior,Browser Coverage,Flow
 Merchant Admin,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
 Merchant Admin,Login,authenticate,Invalid credentials - login fails,High,UAT,Show error message,Chromium,loginWithInvalidCredentials
 Merchant Staff,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
@@ -19,7 +19,7 @@ Merchant Admin,Support,create,Empty ticket description - creation fails,High,UAT
 Merchant Staff,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
 Branch Admin,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
 Branch Staff,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
-Merchant Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
-Merchant Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
-Branch Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
-Branch Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
+Merchant Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
+Merchant Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
+Branch Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
+Branch Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject

@@ -23,3 +23,5 @@ Merchant Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,S
 Merchant Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
 Branch Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
 Branch Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
+Merchant Admin,User Management,create,Merchant Admin creates user - success,High,UAT,User created and visible in list,Chromium,createUserHappyPath
+Branch Admin,User Management,create,Branch Admin creates user - success,High,UAT,User created and visible in list,Chromium,createUserHappyPath
