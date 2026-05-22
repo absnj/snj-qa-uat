@@ -7,6 +7,56 @@ const ENV_PATH = path.join(ROOT, '.env');
 const CSV_PATH = path.join(ROOT, 'data/uat-matrix.csv');
 const OUT_DIR = path.join(ROOT, 'generated');
 
+// FILTER: Modules to generate from command-line arguments
+// Usage:
+//   node generator.js                                    # All modules
+//   node generator.js --modules "User Management"        # Single module
+//   node generator.js --modules "User Management,Support" # Multiple modules
+//   node generator.js --help                             # Show help
+
+const args = process.argv.slice(2);
+let MODULES_TO_GENERATE = [];
+
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`
+Test Generator - Module Filtering
+
+USAGE:
+  node generator.js [OPTIONS]
+
+OPTIONS:
+  --modules <list>    Comma-separated module names to generate
+  --help, -h         Show this help message
+
+EXAMPLES:
+  # Generate all modules
+  node generator.js
+
+  # Generate User Management only
+  node generator.js --modules "User Management"
+
+  # Generate User Management and Support
+  node generator.js --modules "User Management,Support"
+
+AVAILABLE MODULES:
+  (Run without --modules to see available modules)
+`);
+  process.exit(0);
+}
+
+const modulesArg = args.find((arg, i) => {
+  return arg === '--modules' && args[i + 1];
+});
+
+if (modulesArg) {
+  const modulesIndex = args.indexOf('--modules');
+  const modulesValue = args[modulesIndex + 1];
+  MODULES_TO_GENERATE = modulesValue
+    .split(',')
+    .map(m => m.trim())
+    .filter(Boolean);
+}
+
 dotenv.config({ path: ENV_PATH });
 
 const FLOW_SIGNATURES = {
@@ -19,6 +69,7 @@ const FLOW_SIGNATURES = {
   createTicketEmptyDescription: ['page'],
   createTicketLongSubject: ['page'],
   createLengthyTicketDescription: ['page'],
+  createUserHappyPath: ['page', 'normalizedRole'],
 };
 
 function readFileRequired(filePath) {
@@ -50,7 +101,7 @@ function splitCsvLine(line) {
 }
 
 function slug(value) {
-  return normalizeRole(value).toLowerCase().replace(/_/g, '-');
+  return normalizeRole(value).toLowerCase().replace(/[/_]+/g, '-');
 }
 
 function normalizeRole(role) {
@@ -83,11 +134,11 @@ function isLoginScenario(row) {
 }
 
 function hasFlow(row) {
-  return Boolean(row['Flow'] && row['Flow'].trim());
+  return Boolean(row['Flows'] && row['Flows'].trim());
 }
 
 function getFlowFunctionName(row) {
-  return row['Flow'].trim().split('(')[0].trim();
+  return row['Flows'].trim().split('(')[0].trim();
 }
 
 function buildFlowCall(flowName, normalizedRole) {
@@ -130,7 +181,7 @@ function renderTestBody(row, normalizedRole, indent = '    ') {
   lines.push('');
 
   if (!hasFlow(row)) {
-    lines.push(`${indent}// TODO: Add a Flow value in the UAT matrix.`);
+    lines.push(`${indent}// TODO: Add a Flows value in the UAT matrix.`);
     lines.push(`${indent}// Example: loginAs, createTicketSuccess, navigateToSupport`);
     return { implemented: false, lines };
   }
@@ -164,7 +215,7 @@ function generateFile(role, roleRows) {
   const output = [];
 
   output.push(`import { test } from '@playwright/test';`);
-  output.push(`import * as flows from '../helpers';`);
+  output.push(`import * as flows from '../flows';`);
   output.push('');
   output.push(`test.describe('${title}', () => {`);
   output.push('');
@@ -228,13 +279,52 @@ function validateRows(rows) {
   }
 }
 
+function shouldGenerateModule(moduleName) {
+  // If MODULES_TO_GENERATE is empty, generate all modules
+  if (MODULES_TO_GENERATE.length === 0) {
+    return true;
+  }
+
+  // Otherwise, only generate modules in the list (case-insensitive)
+  return MODULES_TO_GENERATE.some(
+    m => m.toLowerCase() === moduleName.toLowerCase()
+  );
+}
+
 function main() {
   const csvContent = readFileRequired(CSV_PATH);
   const rows = parseCsv(csvContent);
 
   validateRows(rows);
 
-  const grouped = groupRowsByRole(rows);
+  // Get unique modules from CSV
+  const allModules = new Set(rows.map(row => row['Feature/Module']).filter(Boolean));
+
+  // Log what we're generating
+  console.log('\n=== Test Generation ===');
+  console.log(`Command: node generator.js ${args.length > 0 ? args.join(' ') : '(all modules)'}`);
+  console.log('');
+  if (MODULES_TO_GENERATE.length === 0) {
+    console.log('Mode: Generating ALL modules');
+    console.log(`Modules found: ${Array.from(allModules).join(', ')}`);
+  } else {
+    console.log(`Mode: Filtering by module`);
+    console.log(`Modules to generate: ${MODULES_TO_GENERATE.join(', ')}`);
+    console.log(`Available modules: ${Array.from(allModules).join(', ')}`);
+  }
+  console.log('');
+
+  // Filter rows by module
+  const filteredRows = rows.filter(row => 
+    shouldGenerateModule(row['Feature/Module'])
+  );
+
+  if (filteredRows.length === 0) {
+    console.warn('⚠️  No rows matched the module filter. Nothing to generate.');
+    return;
+  }
+
+  const grouped = groupRowsByRole(filteredRows);
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -244,8 +334,10 @@ function main() {
 
     fs.writeFileSync(filePath, generateFile(role, roleRows), 'utf8');
 
-    console.log(`Generated ${path.relative(process.cwd(), filePath)}`);
+    console.log(`✓ Generated ${path.relative(process.cwd(), filePath)}`);
   }
+
+  console.log('\n✓ Done');
 }
 
 main();
