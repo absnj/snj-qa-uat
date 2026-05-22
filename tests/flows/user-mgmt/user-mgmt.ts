@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import {
   navigateToUserManagement,
   clickCreateUserButton,
@@ -55,4 +55,9 @@ export async function createUserHappyPath(
   await verifyUserCreatedInList(page, email);
 
   return { email, password };
+}
+
+export async function staffUnableToCreate(page: Page): Promise<void> {
+  await navigateToUserManagement(page);
+  await expect(page.getByRole('button', { name: 'Create' })).not.toBeVisible();
 }

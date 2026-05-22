@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "generate:uat": "node tests/generate-uat-tests.js",
+    "generate:uat": "node scripts/generate-uat-tests.js",
+    "convert": "node scripts/xlsx-to-csv.js",
+    "compile": "node scripts/xlsx-to-csv.js && node scripts/generate-uat-tests.js",
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
     "test:report": "npx playwright show-report"
@@ -18,6 +20,7 @@
     "@types/node": "^25.9.0"
   },
   "dependencies": {
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "xlsx": "^0.18.5"
   }
 }

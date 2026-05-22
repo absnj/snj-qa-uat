@@ -1,4 +1,4 @@
-﻿Role,Feature/Module,Operation,Test Scenario,Priority,Environment,Expected Behavior,Browser Coverage,Flow
+Role,Feature/Module,Operation,Test Scenario,Priority,Environment,Expected Behavior,Browser Coverage,Flow
 Merchant Admin,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
 Merchant Admin,Login,authenticate,Invalid credentials - login fails,High,UAT,Show error message,Chromium,loginWithInvalidCredentials
 Merchant Staff,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
@@ -25,3 +25,5 @@ Branch Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Sho
 Branch Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketLongSubject
 Merchant Admin,User Management,create,Merchant Admin creates user - success,High,UAT,User created and visible in list,Chromium,createUserHappyPath
 Branch Admin,User Management,create,Branch Admin creates user - success,High,UAT,User created and visible in list,Chromium,createUserHappyPath
+Merchant Staff,User Management,unable to create,Merchant/Branch Staffs option - does not exist,High,UAT,Button not present,Chromium,staffUnableToCreate
+Branch Staff,User Management,unable to create,Merchant/Branch Staffs option - does not exist,High,UAT,Button not present,Chromium,staffUnableToCreate

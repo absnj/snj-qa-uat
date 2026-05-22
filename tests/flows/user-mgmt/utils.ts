@@ -6,16 +6,17 @@ import { Page, expect } from '@playwright/test';
 export async function navigateToUserManagement(page: Page): Promise<void> {
   await page.getByRole('link', { name: 'Shop n Joy Logo' }).click();
   await page.getByRole('link', { name: 'User Management User' }).click();
-  await page.getByRole('link', { name: 'Merchant/Branch Staffs' }).click();
 
   // await page.waitForURL('**/user-management*');
-  await expect(page.getByRole('heading', { name: 'Merchant Staff Management' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'User Details' })).toBeVisible();
+
 }
 
 /**
  * Click Create button to start user creation flow
  */
 export async function clickCreateUserButton(page: Page): Promise<void> {
+  await page.getByRole('link', { name: 'Merchant/Branch Staffs' }).click();
   await page.getByRole('button', { name: 'Create' }).click();
   // await expect(page).toHaveURL('**/merchant-charity-staff-registration*');
   await expect(page.getByRole('heading', { name: 'Create Merchant/Charity Staff' })).toBeVisible();

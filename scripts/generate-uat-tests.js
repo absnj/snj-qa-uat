@@ -4,8 +4,8 @@ const dotenv = require('dotenv');
 
 const ROOT = __dirname;
 const ENV_PATH = path.join(ROOT, '.env');
-const CSV_PATH = path.join(ROOT, 'data/uat-matrix.csv');
-const OUT_DIR = path.join(ROOT, 'generated');
+const CSV_PATH = path.join(ROOT, '../tests/data/uat-matrix.csv');
+const OUT_DIR = path.join(ROOT, '../tests/generated');
 
 // FILTER: Modules to generate from command-line arguments
 // Usage:
@@ -70,6 +70,7 @@ const FLOW_SIGNATURES = {
   createTicketLongSubject: ['page'],
   createLengthyTicketDescription: ['page'],
   createUserHappyPath: ['page'],
+  staffUnableToCreate: ['page'],
 };
 
 function readFileRequired(filePath) {
