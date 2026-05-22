@@ -1,0 +1,25 @@
+﻿Role,Feature/Module,Operation,Test Scenario,Priority,Environment,Expected Behavior,Browser Coverage,Flows
+Merchant Admin,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
+Merchant Admin,Login,authenticate,Invalid credentials - login fails,High,UAT,Show error message,Chromium,loginWithInvalidCredentials
+Merchant Staff,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
+Merchant Staff,Login,authenticate,Invalid credentials - login fails,High,UAT,Show error message,Chromium,loginWithInvalidCredentials
+Branch Admin,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
+Branch Admin,Login,authenticate,Invalid credentials - login fails,High,UAT,Show error message,Chromium,loginWithInvalidCredentials
+Branch Staff,Login,authenticate,Valid credentials - login succeeds,High,UAT,Redirect to dashboard,Chromium,loginAs
+Branch Staff,Login,authenticate,Invalid credentials - login fails,High,UAT,Show error message,Chromium,loginWithInvalidCredentials
+Merchant Admin,Support,create,Create ticket - Success,High,UAT,Show success message,Chromium,createTicketSuccess
+Merchant Staff,Support,create,Create ticket - Success,High,UAT,Show success message,Chromium,createTicketSuccess
+Branch Admin,Support,create,Create ticket - Success,High,UAT,Show success message,Chromium,createTicketSuccess
+Branch Staff,Support,create,Create ticket - Success,High,UAT,Show success message,Chromium,createTicketSuccess
+Merchant Admin,Support,create,Empty ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketEmptySubject
+Merchant Staff,Support,create,Empty ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketEmptySubject
+Branch Admin,Support,create,Empty ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketEmptySubject
+Branch Staff,Support,create,Empty ticket subject - creation fails,High,UAT,Show error message,Chromium,createTicketEmptySubject
+Merchant Admin,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
+Merchant Staff,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
+Branch Admin,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
+Branch Staff,Support,create,Empty ticket description - creation fails,High,UAT,Show error message,Chromium,createTicketEmptyDescription
+Merchant Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
+Merchant Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
+Branch Admin,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
+Branch Staff,Support,create,Lengthy ticket subject - creation fails,High,UAT,Show error message,Chromium,createLengthyTicketDescription
