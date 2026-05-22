@@ -59,19 +59,7 @@ if (modulesArg) {
 
 dotenv.config({ path: ENV_PATH });
 
-const FLOW_SIGNATURES = {
-  loginAs: ['page', 'normalizedRole'],
-  loginWithInvalidCredentials: ['page', 'context', 'normalizedRole'],
-
-  navigateToSupport: ['page'],
-  createTicketSuccess: ['page'],
-  createTicketEmptySubject: ['page'],
-  createTicketEmptyDescription: ['page'],
-  createTicketLongSubject: ['page'],
-  createLengthyTicketDescription: ['page'],
-  createUserHappyPath: ['page'],
-  staffUnableToCreate: ['page'],
-};
+const FLOW_SIGNATURES = require('../flow-signatures.js');
 
 function readFileRequired(filePath) {
   if (!fs.existsSync(filePath)) {
