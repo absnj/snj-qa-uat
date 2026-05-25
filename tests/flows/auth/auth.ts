@@ -1,73 +1,26 @@
-import { Page, BrowserContext, expect } from '@playwright/test';
+import { Page, BrowserContext } from '@playwright/test';
+import {
+  getUatUrl,
+  getCredentials,
+  fillEmailField,
+  fillPasswordField,
+  clickSignIn,
+  waitForLoginForm,
+  waitForDashboard,
+  waitForInvalidCredentialsError,
+} from './utils';
 
-/**
- * Environment variable utilities
- */
-function requiredEnv(key: string): string {
-  const value = process.env[key];
-  if (!value) throw new Error(`Missing required env var: ${key}`);
-  return value;
-}
+// ---------------------------------------------------------------------------
+// Happy path login
+// ---------------------------------------------------------------------------
 
-function getUatUrl(): string {
-  return requiredEnv('UAT_URL');
-}
-
-/**
- * Credential resolution
- */
-function getCredentials(normalizedRole: string) {
-  const roleKey = normalizedRole.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
-
-  return {
-    username: process.env[`UAT_${roleKey}_USER`] ?? requiredEnv('UAT_USER'),
-    password: process.env[`UAT_${roleKey}_PASSWORD`] ?? requiredEnv('UAT_PASSWORD'),
-  };
-}
-
-/**
- * Page interactions (selectors and waits)
- */
-async function fillEmailField(page: Page, username: string): Promise<void> {
-  await page.getByRole('textbox', { name: 'Email Address' }).fill(username);
-}
-
-async function fillPasswordField(page: Page, password: string): Promise<void> {
-  await page.getByRole('textbox', { name: 'Password' }).fill(password);
-}
-
-async function clickSignIn(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Sign In' }).click();
-}
-
-async function waitForLoginForm(page: Page): Promise<void> {
-  await expect(page.getByRole('textbox', { name: 'Email Address' })).toBeVisible();
-}
-
-async function waitForDashboard(page: Page, timeout: number = 15000): Promise<void> {
-  await expect(
-    page.getByRole('heading', { name: 'Welcome to ShopNJoy' })
-  ).toBeVisible({ timeout });
-}
-
-async function waitForInvalidCredentialsError(page: Page, timeout: number = 10000): Promise<void> {
-  await expect(
-    page.getByRole('region', { name: 'Notifications' })
-      .getByText('Invalid email or password.')
-  ).toBeVisible({ timeout });
-}
-
-/**
- * High-level login flows (exported)
- */
-export async function loginAs(
-  page: Page,
-  normalizedRole: string
-): Promise<void> {
+export async function loginAs(page: Page, normalizedRole: string): Promise<void> {
   const uatUrl = getUatUrl();
   const { username, password } = getCredentials(normalizedRole);
 
-  await page.goto(uatUrl, { waitUntil: 'domcontentloaded' });
+  // networkidle ensures the JS framework has fully mounted before we
+  // look for any elements — domcontentloaded fires too early for SPAs.
+  await page.goto(uatUrl, { waitUntil: 'networkidle' });
   await waitForLoginForm(page);
 
   await fillEmailField(page, username);
@@ -77,16 +30,29 @@ export async function loginAs(
   await waitForDashboard(page);
 }
 
+// ---------------------------------------------------------------------------
+// Invalid credentials flow
+// ---------------------------------------------------------------------------
+
 export async function loginWithInvalidCredentials(
   page: Page,
   context: BrowserContext,
-  normalizedRole: string
+  normalizedRole: string,
 ): Promise<void> {
   const uatUrl = getUatUrl();
   const { username, password } = getCredentials(normalizedRole);
 
   await context.clearCookies();
-  await page.goto(uatUrl, { waitUntil: 'domcontentloaded' });
+  await page.goto(uatUrl, { waitUntil: 'networkidle' });
+
+  // Clear client-side storage now that we're on the correct origin
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
+  // Reload so the app boots fresh with no cached state
+  await page.reload({ waitUntil: 'networkidle' });
   await waitForLoginForm(page);
 
   await fillEmailField(page, username);

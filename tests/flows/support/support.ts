@@ -44,7 +44,7 @@ export async function createTicketEmptySubject(
   
   await submitTicketForm(page);
   await expect(page.getByRole('alert', { name: 'Please fix the following' })).toBeVisible();
-  await expect(page.getByText('• Subject is required', { exact: true })).toBeVisible();
+  await expect(page.getByText('Subject is required', { exact: true })).toBeVisible();
 }
 
 /**
@@ -64,7 +64,7 @@ export async function createTicketEmptyDescription(
   
   await submitTicketForm(page);
   await expect(page.getByRole('alert', { name: 'Please fix the following' })).toBeVisible();
-  await expect(page.getByText('• Description is required', { exact: true })).toBeVisible();
+  await expect(page.getByText('Description is required', { exact: true })).toBeVisible();
 }
 
 /**

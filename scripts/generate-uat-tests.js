@@ -59,7 +59,7 @@ if (modulesArg) {
 
 dotenv.config({ path: ENV_PATH });
 
-const FLOW_SIGNATURES = require('../flow-signatures.js');
+const FLOW_SIGNATURES = require('../config/flowSignatures.js');
 
 function readFileRequired(filePath) {
   if (!fs.existsSync(filePath)) {

@@ -1,115 +1,246 @@
-import { Page, expect } from '@playwright/test';
+import { Page, expect, Locator } from '@playwright/test';
+import { generateRandomEmail, generateRandomPhoneNumber } from '../utils/testDataGenerators';
+
+// ---------------------------------------------------------------------------
+// Selectors — single source of truth
+// ---------------------------------------------------------------------------
+
+const SELECTORS = {
+  nav: {
+    logo: () => (page: Page) => page.getByRole('link', { name: 'Shop n Joy Logo' }),
+    userManagement: () => (page: Page) => page.getByRole('link', { name: 'User Management User' }),
+    merchantStaffs: () => (page: Page) => page.getByRole('link', { name: 'Merchant/Branch Staffs' }),
+  },
+  headings: {
+    userDetails: (page: Page) => page.getByRole('heading', { name: 'User Details' }),
+    createMerchantStaff: (page: Page) => page.getByRole('heading', { name: 'Create Merchant Staff' }),
+  },
+  buttons: {
+    create: (page: Page) => page.getByRole('button', { name: 'Create' }),
+    next: (page: Page) => page.getByRole('button', { name: 'Next' }),
+    createStaff: (page: Page) => page.getByRole('button', { name: 'Create Staff' }),
+  },
+  form: {
+    basicInfoSection: (page: Page) => page.getByText('First Name * Last Name'),
+    firstName: (page: Page) =>
+      page.getByText('First Name * Last Name').getByRole('textbox').first(),
+    lastName: (page: Page) =>
+      page.getByText('First Name * Last Name').getByRole('textbox').nth(1),
+    email: (page: Page) => page.locator('input[type="email"]'),
+    phone: (page: Page) => page.getByRole('textbox').nth(3),
+    roleDropdown: (page: Page) =>
+      page.getByRole('combobox').filter({ hasText: 'Select a role' }),
+    roleOption: (page: Page, role: string) => page.getByRole('option', { name: role }),
+    password: (page: Page) => page.getByRole('textbox').nth(4),
+    confirmPassword: (page: Page) => page.getByRole('textbox').nth(5),
+  },
+  steps: {
+    basicInformation: (page: Page) => page.getByText('Basic Information'),
+    review: (page: Page) => page.getByText('Review', { exact: true }),
+  },
+  alerts: {
+    success: (page: Page) => page.getByRole('alert', { name: 'Success' }),
+    successMessage: (page: Page) =>
+      page
+        .getByRole('alert', { name: 'Success' })
+        .getByText('Staff created successfully.', { exact: true }),
+    validationError: (page: Page) =>
+      page.getByRole('alert', { name: 'Please fix the following' }),
+  },
+};
+
+export { SELECTORS };
+
+// ---------------------------------------------------------------------------
+// Navigation helpers
+// ---------------------------------------------------------------------------
 
 /**
- * Navigate to User Management > Merchant/Branch Staffs
+ * Navigate to User Management and land on the User Details page.
  */
 export async function navigateToUserManagement(page: Page): Promise<void> {
   await page.getByRole('link', { name: 'Shop n Joy Logo' }).click();
   await page.getByRole('link', { name: 'User Management User' }).click();
-
-  // await page.waitForURL('**/user-management*');
-  await expect(page.getByRole('heading', { name: 'User Details' })).toBeVisible();
-
+  await expect(SELECTORS.headings.userDetails(page)).toBeVisible();
 }
 
 /**
- * Click Create button to start user creation flow
+ * Navigate all the way to the Create Merchant Staff wizard (Step 1).
+ * Combines navigateToUserManagement + opening the creation modal.
  */
-export async function clickCreateUserButton(page: Page): Promise<void> {
+export async function navigateToCreateUser(page: Page): Promise<void> {
+  await navigateToUserManagement(page);
   await page.getByRole('link', { name: 'Merchant/Branch Staffs' }).click();
   await page.getByRole('button', { name: 'Create' }).click();
-  // await expect(page).toHaveURL('**/merchant-charity-staff-registration*');
-  await expect(page.getByRole('heading', { name: 'Create Merchant/Charity Staff' })).toBeVisible();
+  await expect(SELECTORS.headings.createMerchantStaff(page)).toBeVisible();
 }
 
-/**
- * Move from Step 1 to Step 2 (Selection → User Details)
- */
+// ---------------------------------------------------------------------------
+// Step navigation helpers
+// ---------------------------------------------------------------------------
+
 export async function proceedFromStep1ToStep2(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByText('Basic Information')).toBeVisible();
+  await SELECTORS.buttons.next(page).click();
+  await expect(SELECTORS.steps.basicInformation(page)).toBeVisible();
 }
 
-/**
- * Fill First Name field in Basic Information section
- */
-export async function fillFirstName(page: Page, firstName: string): Promise<void> {
-  const basicInfoSection = page.getByText('First Name * Last Name');
-  await basicInfoSection.getByRole('textbox').first().fill(firstName);
-}
-
-/**
- * Fill Last Name field in Basic Information section
- */
-export async function fillLastName(page: Page, lastName: string): Promise<void> {
-  const basicInfoSection = page.getByText('First Name * Last Name');
-  await basicInfoSection.getByRole('textbox').nth(1).fill(lastName);
-}
-
-/**
- * Fill Email field
- */
-export async function fillEmail(page: Page, email: string): Promise<void> {
-  await page.locator('input[type="email"]').click();
-  await page.locator('input[type="email"]').fill(email);
-}
-
-/**
- * Fill Phone field in Mobile section
- */
-export async function fillPhoneNumber(page: Page, phone: string): Promise<void> {
-  await page.getByText('Mobile +').click();
-  await page.getByRole('textbox').nth(3).fill(phone);
-}
-
-/**
- * Select role from dropdown combobox
- */
-export async function selectRole(page: Page, roleName: string): Promise<void> {
-  await page.getByRole('combobox').filter({ hasText: 'Select a role' }).click();
-  await page.getByRole('option', { name: roleName }).click();
-}
-
-/**
- * Fill Password field in Security section
- */
-export async function fillPassword(page: Page, password: string): Promise<void> {
-  await page.getByText('Security Password Confirm').click();
-  await page.getByRole('textbox').nth(4).fill(password);
-}
-
-/**
- * Fill Confirm Password field in Security section
- */
-export async function fillConfirmPassword(page: Page, password: string): Promise<void> {
-  await page.getByText('Security Password Confirm').click();
-  await page.getByRole('textbox').nth(5).fill(password);
-}
-
-/**
- * Move from Step 2 to Step 3 (User Details → Review & Create)
- */
 export async function proceedFromStep2ToStep3(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByText('Review', { exact: true })).toBeVisible();
-
+  await SELECTORS.buttons.next(page).click();
+  await expect(SELECTORS.steps.review(page)).toBeVisible();
 }
 
-/**
- * Click Create Staff button on Review & Create step to finalize user creation
- */
+// Only used in validation tests — clicks Next and expects to stay on Step 2
+export async function attemptProceedFromStep2(page: Page): Promise<void> {
+  await SELECTORS.buttons.next(page).click();
+}
+
 export async function submitCreateStaff(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Create Staff' }).click();
+  await SELECTORS.buttons.createStaff(page).click();
 }
 
+// ---------------------------------------------------------------------------
+// Field-level helpers (still exported for granular use in validation tests)
+// ---------------------------------------------------------------------------
+
+export async function fillFirstName(page: Page, value: string): Promise<void> {
+  await SELECTORS.form.firstName(page).fill(value);
+}
+
+export async function fillLastName(page: Page, value: string): Promise<void> {
+  await SELECTORS.form.lastName(page).fill(value);
+}
+
+export async function fillEmail(page: Page, value: string): Promise<void> {
+  await SELECTORS.form.email(page).fill(value);
+}
+
+export async function fillPhoneNumber(page: Page, value: string): Promise<void> {
+  await page.getByText('Mobile +').click();
+  await SELECTORS.form.phone(page).fill(value);
+}
+
+export async function selectRole(page: Page, role: string): Promise<void> {
+  await SELECTORS.form.roleDropdown(page).click();
+  await SELECTORS.form.roleOption(page, role).click();
+}
+
+export async function fillPassword(page: Page, value: string): Promise<void> {
+  await page.getByText('Security Password Confirm').click();
+  await SELECTORS.form.password(page).fill(value);
+}
+
+export async function fillConfirmPassword(page: Page, value: string): Promise<void> {
+  await page.getByText('Security Password Confirm').click();
+  await SELECTORS.form.confirmPassword(page).fill(value);
+}
+
+// ---------------------------------------------------------------------------
+// Assertions
+// ---------------------------------------------------------------------------
+
+export async function verifyUserCreatedInList(page: Page, _email: string): Promise<void> {
+  await expect(SELECTORS.alerts.success(page)).toBeVisible();
+  await expect(SELECTORS.alerts.successMessage(page)).toBeVisible();
+}
+
+export async function expectValidationError(page: Page): Promise<void> {
+  await expect(SELECTORS.alerts.validationError(page)).toBeVisible();
+}
+
+export async function expectNoValidationError(page: Page): Promise<void> {
+  await expect(SELECTORS.alerts.validationError(page)).not.toBeVisible();
+}
+
+// ---------------------------------------------------------------------------
+// UserCreationForm — fluent builder
+// ---------------------------------------------------------------------------
+
 /**
- * Verify user appears in the staff management list
+ * All fields are optional. Un-set fields are skipped entirely, so a test
+ * can omit (or blank out) just the one field it wants to probe.
+ *
+ * Usage:
+ *   await new UserCreationForm(page)
+ *     .withEmail('bad-email')       // override just this field
+ *     .withDefaults()               // fill everything else with valid data
+ *     .fill();
  */
-export async function verifyUserCreatedInList(page: Page, email: string): Promise<void> {
-  const successAlert = page.getByRole('alert', { name: 'Success' });
-  const successMessage = successAlert.getByText('Staff created successfully.', { exact: true });
-  
-  // Check if the email is visible in the table
-  await expect(successAlert).toBeVisible();
-  await expect(successMessage).toBeVisible();
+export type FormData = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  password?: string;
+  confirmPassword?: string;
+};
+
+const VALID_DEFAULTS: Required<FormData> = {
+  firstName: 'TestUser',
+  lastName: 'AutoTest',
+  email: '',           // generated lazily so each instance gets a unique address
+  phone: '',           // generated lazily
+  role: 'branch-staff',
+  password: '!Abcd1234',
+  confirmPassword: '!Abcd1234',
+};
+
+export class UserCreationForm {
+  private data: FormData = {};
+
+  constructor(private readonly page: Page) {}
+
+  // ── Fluent setters ──────────────────────────────────────────────────────
+
+  withFirstName(v: string) { this.data.firstName = v; return this; }
+  withLastName(v: string)  { this.data.lastName  = v; return this; }
+  withEmail(v: string)     { this.data.email     = v; return this; }
+  withPhone(v: string)     { this.data.phone     = v; return this; }
+  withRole(v: string)      { this.data.role      = v; return this; }
+  withPassword(v: string)  { this.data.password  = v; return this; }
+  withConfirmPassword(v: string) { this.data.confirmPassword = v; return this; }
+
+  /**
+   * Merge in valid defaults for every field not explicitly set.
+   * Call this last so explicit overrides win.
+   */
+  withDefaults() {
+    this.data = {
+      firstName:       this.data.firstName       ?? VALID_DEFAULTS.firstName,
+      lastName:        this.data.lastName        ?? VALID_DEFAULTS.lastName,
+      email:           this.data.email           ?? generateRandomEmail(),
+      phone:           this.data.phone           ?? generateRandomPhoneNumber(),
+      role:            this.data.role            ?? VALID_DEFAULTS.role,
+      password:        this.data.password        ?? VALID_DEFAULTS.password,
+      confirmPassword: this.data.confirmPassword ?? VALID_DEFAULTS.confirmPassword,
+    };
+    return this;
+  }
+
+  // ── Fill ────────────────────────────────────────────────────────────────
+
+  /**
+   * Fills whatever fields are set in `this.data`. Fields left undefined are
+   * skipped, so you can deliberately omit a required field to test "missing"
+   * validation.
+   *
+   * Assumes the page is already on Step 2 (Basic Information).
+   */
+  async fill(): Promise<FormData> {
+    const { page, data } = this;
+
+    if (data.firstName !== undefined) await fillFirstName(page, data.firstName);
+    if (data.lastName  !== undefined) await fillLastName(page, data.lastName);
+    if (data.email     !== undefined) await fillEmail(page, data.email);
+    if (data.phone     !== undefined) await fillPhoneNumber(page, data.phone);
+    if (data.role      !== undefined) await selectRole(page, data.role);
+    if (data.password  !== undefined) await fillPassword(page, data.password);
+    if (data.confirmPassword !== undefined) await fillConfirmPassword(page, data.confirmPassword);
+
+    return data;
+  }
+
+  get filledData(): FormData {
+    return { ...this.data };
+  }
 }

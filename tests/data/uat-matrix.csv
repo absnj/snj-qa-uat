@@ -27,3 +27,45 @@ Merchant Admin,User Management,create,Merchant Admin creates user - success,High
 Branch Admin,User Management,create,Branch Admin creates user - success,High,UAT,User created and visible in list,Chromium,createUserHappyPath
 Merchant Staff,User Management,unable to create,Merchant/Branch Staffs option - does not exist,High,UAT,Button not present,Chromium,staffUnableToCreate
 Branch Staff,User Management,unable to create,Merchant/Branch Staffs option - does not exist,High,UAT,Button not present,Chromium,staffUnableToCreate
+Merchant Admin,User Management,create,First name empty - creation fails,High,UAT,Show validation error,Chromium,invalidFirstNameEmpty
+Branch Admin,User Management,create,First name empty - creation fails,High,UAT,Show validation error,Chromium,invalidFirstNameEmpty
+Merchant Admin,User Management,create,Email empty - creation fails,High,UAT,Show validation error,Chromium,invalidEmailEmpty
+Branch Admin,User Management,create,Email empty - creation fails,High,UAT,Show validation error,Chromium,invalidEmailEmpty
+Merchant Admin,User Management,create,Email missing @ symbol - creation fails,High,UAT,Show validation error,Chromium,invalidEmailMissingAt
+Branch Admin,User Management,create,Email missing @ symbol - creation fails,High,UAT,Show validation error,Chromium,invalidEmailMissingAt
+Merchant Admin,User Management,create,Email missing domain - creation fails,High,UAT,Show validation error,Chromium,invalidEmailMissingDomain
+Branch Admin,User Management,create,Email missing domain - creation fails,High,UAT,Show validation error,Chromium,invalidEmailMissingDomain
+Merchant Admin,User Management,create,Email missing local part - creation fails,High,UAT,Show validation error,Chromium,invalidEmailMissingLocal
+Branch Admin,User Management,create,Email missing local part - creation fails,High,UAT,Show validation error,Chromium,invalidEmailMissingLocal
+Merchant Admin,User Management,create,Duplicate email - creation fails,High,UAT,Show validation error,Chromium,invalidEmailDuplicate
+Branch Admin,User Management,create,Duplicate email - creation fails,High,UAT,Show validation error,Chromium,invalidEmailDuplicate
+Merchant Admin,User Management,create,Phone non-numeric - creation fails,Medium,UAT,Show validation error,Chromium,invalidPhoneNonNumeric
+Branch Admin,User Management,create,Phone non-numeric - creation fails,Medium,UAT,Show validation error,Chromium,invalidPhoneNonNumeric
+Merchant Admin,User Management,create,Phone too short - creation fails,Medium,UAT,Show validation error,Chromium,invalidPhoneTooShort
+Branch Admin,User Management,create,Phone too short - creation fails,Medium,UAT,Show validation error,Chromium,invalidPhoneTooShort
+Merchant Admin,User Management,create,Phone too long - creation fails,Medium,UAT,Show validation error,Chromium,invalidPhoneTooLong
+Branch Admin,User Management,create,Phone too long - creation fails,Medium,UAT,Show validation error,Chromium,invalidPhoneTooLong
+Merchant Admin,User Management,create,No role selected - creation fails,High,UAT,Show validation error,Chromium,invalidRoleNotSelected
+Branch Admin,User Management,create,No role selected - creation fails,High,UAT,Show validation error,Chromium,invalidRoleNotSelected
+Merchant Admin,User Management,create,Password empty - creation fails,High,UAT,Show validation error,Chromium,invalidPasswordEmpty
+Branch Admin,User Management,create,Password empty - creation fails,High,UAT,Show validation error,Chromium,invalidPasswordEmpty
+Merchant Admin,User Management,create,Password too short - creation fails,High,UAT,Show validation error,Chromium,invalidPasswordTooShort
+Branch Admin,User Management,create,Password too short - creation fails,High,UAT,Show validation error,Chromium,invalidPasswordTooShort
+Merchant Admin,User Management,create,Password missing uppercase - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoUppercase
+Branch Admin,User Management,create,Password missing uppercase - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoUppercase
+Merchant Admin,User Management,create,Password missing lowercase - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoLowercase
+Branch Admin,User Management,create,Password missing lowercase - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoLowercase
+Merchant Admin,User Management,create,Password missing digit - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoDigit
+Branch Admin,User Management,create,Password missing digit - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoDigit
+Merchant Admin,User Management,create,Password missing special character - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoSpecialChar
+Branch Admin,User Management,create,Password missing special character - creation fails,Medium,UAT,Show validation error,Chromium,invalidPasswordNoSpecialChar
+Merchant Admin,User Management,create,Confirm password mismatch - creation fails,High,UAT,Show validation error,Chromium,invalidConfirmPasswordMismatch
+Branch Admin,User Management,create,Confirm password mismatch - creation fails,High,UAT,Show validation error,Chromium,invalidConfirmPasswordMismatch
+Merchant Admin,User Management,create,Confirm password empty - creation fails,High,UAT,Show validation error,Chromium,invalidConfirmPasswordEmpty
+Branch Admin,User Management,create,Confirm password empty - creation fails,High,UAT,Show validation error,Chromium,invalidConfirmPasswordEmpty
+Merchant Admin,User Management,create,All fields empty - creation fails,High,UAT,Show validation error,Chromium,invalidAllFieldsEmpty
+Branch Admin,User Management,create,All fields empty - creation fails,High,UAT,Show validation error,Chromium,invalidAllFieldsEmpty
+Merchant Admin,User Management,create,Password at minimum length - creation succeeds,Medium,UAT,No validation error,Chromium,validPasswordBoundaryMinimum
+Branch Admin,User Management,create,Password at minimum length - creation succeeds,Medium,UAT,No validation error,Chromium,validPasswordBoundaryMinimum
+Merchant Admin,User Management,create,Name with hyphen or apostrophe - creation succeeds,Medium,UAT,No validation error,Chromium,validNameWithHyphenOrApostrophe
+Branch Admin,User Management,create,Name with hyphen or apostrophe - creation succeeds,Medium,UAT,No validation error,Chromium,validNameWithHyphenOrApostrophe
