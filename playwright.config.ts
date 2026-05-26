@@ -21,6 +21,7 @@ for (const envPath of envPaths) {
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: './tests/setup/global.setup.ts',
   expect: {
     timeout: 10000,
   },
@@ -32,7 +33,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: 1,
   /* Opt out of parallel tests on CI. */
-  workers: 3,
+  workers: 8,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -41,25 +42,31 @@ export default defineConfig({
     baseURL: process.env.UAT_URL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'merchant-admin',
+      use: { storageState: 'tests/setup/.auth/merchant_admin.json' },
+      testMatch: '**/uat-merchant-admin.spec.ts',
     },
-
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'merchant-staff',
+      use: { storageState: 'tests/setup/.auth/merchant_staff.json' },
+      testMatch: '**/uat-merchant-staff.spec.ts',
     },
-
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'branch-admin',
+      use: { storageState: 'tests/setup/.auth/branch_admin.json' },
+      testMatch: '**/uat-branch-admin.spec.ts',
+    },
+    {
+      name: 'branch-staff',
+      use: { storageState: 'tests/setup/.auth/branch_staff.json' },
+      testMatch: '**/uat-branch-staff.spec.ts',
     },
 
     /* Test against mobile viewports. */

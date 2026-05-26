@@ -181,10 +181,17 @@ function renderTestBody(row, normalizedRole, indent = '    ') {
   return { implemented: true, lines };
 }
 
+
+const FLOWS_REQUIRING_NO_SESSION = new Set([
+  'loginAs',
+  'loginWithInvalidCredentials',
+]);
+
 function renderTest(row, normalizedRole, indent = '  ') {
   const testTitle = buildTestTitle(row);
   const { implemented, lines } = renderTestBody(row, normalizedRole, indent + '  ');
   const marker = implemented ? 'test' : 'test.skip';
+  const flowName = hasFlow(row) ? getFlowFunctionName(row) : null;
 
   return [
     `${indent}${marker}('${testTitle}', async ({ page, context }) => {`,
@@ -209,14 +216,23 @@ function generateFile(role, roleRows) {
   output.push(`test.describe('${title}', () => {`);
   output.push('');
 
-  for (const row of loginRows) {
-    output.push(renderTest(row, normalizedRole, '  '));
+  if (loginRows.length > 0) {
+    output.push(`  test.describe('Login tests', () => {`);
+    output.push(`    test.use({ storageState: undefined });`);
+    output.push('');
+
+    for (const row of loginRows) {
+      output.push(renderTest(row, normalizedRole, '    '));
+    }
+
+    output.push(`  });`);
+    output.push('');
   }
 
   if (featureRows.length > 0) {
     output.push(`  test.describe('Feature tests', () => {`);
     output.push(`    test.beforeEach(async ({ page }) => {`);
-    output.push(`      await flows.loginAs(page, '${normalizedRole}');`);
+    output.push(`      await page.goto(process.env.UAT_URL!);`);
     output.push(`    });`);
     output.push('');
 

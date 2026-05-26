@@ -34,10 +34,11 @@ function getCredentials(normalizedRole: string): { username: string; password: s
 // Flows
 // ---------------------------------------------------------------------------
 
-export async function loginAs(page: Page, normalizedRole: string): Promise<void> {
+export async function loginAs(page: Page, context: BrowserContext, normalizedRole: string): Promise<void> {
   const { username, password } = getCredentials(normalizedRole);
-
-  await page.goto(getUatUrl(), { waitUntil: 'networkidle' });
+  context.clearCookies();
+  
+  await page.goto(getUatUrl());
   await waitForLoginForm(page);
   await fillEmailField(page, username);
   await fillPasswordField(page, password);
@@ -53,7 +54,7 @@ export async function loginWithInvalidCredentials(
   const { username, password } = getCredentials(normalizedRole);
 
   await context.clearCookies();
-  await page.goto(getUatUrl(), { waitUntil: 'networkidle' });
+  await page.goto(getUatUrl());
 
   // Clear client-side storage now that we're on the correct origin
   await page.evaluate(() => {
@@ -61,7 +62,7 @@ export async function loginWithInvalidCredentials(
     sessionStorage.clear();
   });
 
-  await page.reload({ waitUntil: 'networkidle' });
+  await page.reload();
   await waitForLoginForm(page);
   await fillEmailField(page, username);
   await fillPasswordField(page, `${password}invalid`);

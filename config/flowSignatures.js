@@ -1,5 +1,5 @@
 module.exports = {
-  loginAs: ['page', 'normalizedRole'],
+  loginAs: ['page', 'context', 'normalizedRole'],
   loginWithInvalidCredentials: ['page', 'context', 'normalizedRole'],
 
   navigateToSupport: ['page'],

@@ -3,27 +3,32 @@ import * as flows from '../flows';
 
 test.describe('UAT matrix role: Merchant Admin', () => {
 
-  test('Valid credentials - login succeeds [Login | authenticate]', async ({ page, context }) => {
-    // Role: Merchant Admin
-    // Feature/Module: Login
-    // Operation: authenticate
-    // Expected Behavior: Redirect to dashboard
+  test.describe('Login tests', () => {
+    test.use({ storageState: undefined });
 
-    await flows.loginAs(page, 'MERCHANT_ADMIN');
-  });
+    test('Valid credentials - login succeeds [Login | authenticate]', async ({ page, context }) => {
+      // Role: Merchant Admin
+      // Feature/Module: Login
+      // Operation: authenticate
+      // Expected Behavior: Redirect to dashboard
 
-  test('Invalid credentials - login fails [Login | authenticate]', async ({ page, context }) => {
-    // Role: Merchant Admin
-    // Feature/Module: Login
-    // Operation: authenticate
-    // Expected Behavior: Show error message
+      await flows.loginAs(page, context, 'MERCHANT_ADMIN');
+    });
 
-    await flows.loginWithInvalidCredentials(page, context, 'MERCHANT_ADMIN');
+    test('Invalid credentials - login fails [Login | authenticate]', async ({ page, context }) => {
+      // Role: Merchant Admin
+      // Feature/Module: Login
+      // Operation: authenticate
+      // Expected Behavior: Show error message
+
+      await flows.loginWithInvalidCredentials(page, context, 'MERCHANT_ADMIN');
+    });
+
   });
 
   test.describe('Feature tests', () => {
     test.beforeEach(async ({ page }) => {
-      await flows.loginAs(page, 'MERCHANT_ADMIN');
+      await page.goto(process.env.UAT_URL!);
     });
 
     test('Create ticket - Success [Support | create]', async ({ page, context }) => {
