@@ -1,90 +1,48 @@
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import {
-  fillSubject, 
-  fillDescription, 
-  submitTicketForm, 
-  openCreateTicketForm, 
-  navigateToSupport } from './utils';
+  navigateToSupport,
+  openCreateTicketForm,
+  fillSubject,
+  fillDescription,
+  submitTicketForm,
+  expectTicketCreatedSuccess,
+  expectSubjectRequiredError,
+  expectDescriptionRequiredError,
+  expectLongSubjectError,
+} from '../../pages/SupportPage';
 
-/**
- * Create a ticket with valid data
- * Fills in subject, description, type, and priority
- */
-export async function createTicketSuccess(
-  page: Page,
-  subject: string = 'test',
-  description: string = 'test desc',
-  type: string = 'Support',
-  priority: string = 'High'
-): Promise<void> {
+const LONG_SUBJECT = 'a'.repeat(256); // Exceeds 255 character limit
+
+export async function createTicketSuccess(page: Page): Promise<void> {
   await navigateToSupport(page);
   await openCreateTicketForm(page);
-  
-  await fillSubject(page, subject);
-  await fillDescription(page, description);
-  
+  await fillSubject(page, 'test');
+  await fillDescription(page, 'test desc');
   await submitTicketForm(page);
-  await expect(page.getByText('Ticket created successfully', { exact: true })).toBeVisible();
+  await expectTicketCreatedSuccess(page);
 }
 
-/**
- * Create a ticket with empty subject (validation failure)
- */
-export async function createTicketEmptySubject(
-  page: Page,
-  description: string = 'test desc',
-  type: string = 'Support',
-  priority: string = 'High'
-): Promise<void> {
+export async function createTicketEmptySubject(page: Page): Promise<void> {
   await navigateToSupport(page);
   await openCreateTicketForm(page);
-  
-  // Skip subject - leave it empty
-  await fillDescription(page, description);
-  
+  await fillDescription(page, 'test desc');
   await submitTicketForm(page);
-  await expect(page.getByRole('alert', { name: 'Please fix the following' })).toBeVisible();
-  await expect(page.getByText('Subject is required', { exact: true })).toBeVisible();
+  await expectSubjectRequiredError(page);
 }
 
-/**
- * Create a ticket with empty description (validation failure)
- */
-export async function createTicketEmptyDescription(
-  page: Page,
-  subject: string = 'test',
-  type: string = 'Support',
-  priority: string = 'High'
-): Promise<void> {
+export async function createTicketEmptyDescription(page: Page): Promise<void> {
   await navigateToSupport(page);
   await openCreateTicketForm(page);
-  
-  await fillSubject(page, subject);
-  // Skip description - leave it empty
-  
+  await fillSubject(page, 'test');
   await submitTicketForm(page);
-  await expect(page.getByRole('alert', { name: 'Please fix the following' })).toBeVisible();
-  await expect(page.getByText('Description is required', { exact: true })).toBeVisible();
+  await expectDescriptionRequiredError(page);
 }
 
-/**
- * Create a ticket with very long subject (edge case - exceeds 255 char limit)
- */
-export async function createTicketLongSubject(
-  page: Page,
-  description: string = 'test desc',
-  type: string = 'Support',
-  priority: string = 'High'
-): Promise<void> {
-  const longSubject = 'a'.repeat(256); // Exceeds 255 character limit
-
+export async function createTicketLongSubject(page: Page): Promise<void> {
   await navigateToSupport(page);
   await openCreateTicketForm(page);
-  
-  await fillSubject(page, longSubject);
-  await fillDescription(page, description);
-  
+  await fillSubject(page, LONG_SUBJECT);
+  await fillDescription(page, 'test desc');
   await submitTicketForm(page);
-  await expect(page.getByRole('alert', { name: 'Validation Error' })).toBeVisible();
-  await expect(page.getByText('• subject must be shorter than or equal to 255 characters', { exact: true })).toBeVisible();
+  await expectLongSubjectError(page);
 }

@@ -1,52 +1,19 @@
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import {
   navigateToCreateUser,
   proceedFromStep1ToStep2,
   proceedFromStep2ToStep3,
+  attemptProceedFromStep2,
   submitCreateStaff,
-  verifyUserCreatedInList,
+  expectUserCreatedSuccess,
   expectValidationError,
   expectNoValidationError,
   UserCreationForm,
   navigateToUserManagement,
-  attemptProceedFromStep2,
-} from './utils';
+} from '../../pages/UserMgmtPage';
 
 // ---------------------------------------------------------------------------
-// Happy path
-// ---------------------------------------------------------------------------
-
-/**
- * Full happy-path user creation.
- * Returns credentials so the calling test can clean up or log in as the user.
- */
-export async function createUserHappyPath(
-  page: Page,
-): Promise<{ email: string; password: string }> {
-  await navigateToCreateUser(page);
-  await proceedFromStep1ToStep2(page);
-
-  const form = new UserCreationForm(page).withDefaults();
-  const { email, password } = await form.fill();
-
-  await proceedFromStep2ToStep3(page);
-  await submitCreateStaff(page);
-  await verifyUserCreatedInList(page, email!);
-
-  return { email: email!, password: password! };
-}
-
-// ---------------------------------------------------------------------------
-// Access-control smoke test
-// ---------------------------------------------------------------------------
-
-export async function staffUnableToCreate(page: Page): Promise<void> {
-  await navigateToUserManagement(page);
-  await expect(page.getByRole('button', { name: 'Create' })).not.toBeVisible();
-}
-
-// ---------------------------------------------------------------------------
-// Shared setup: navigate to Step 2 ready to fill
+// Shared setup
 // ---------------------------------------------------------------------------
 
 async function reachStep2(page: Page): Promise<void> {
@@ -55,18 +22,37 @@ async function reachStep2(page: Page): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// Input validation flows
-//
-// Convention:
-//   - Each function navigates fresh to Step 2, fills the form (one bad field),
-//     attempts to proceed, and asserts the expected outcome.
-//   - "invalid*" flows → expect a validation alert.
-//   - "valid*" flows   → expect no validation alert (guard / boundary tests).
+// Happy path
 // ---------------------------------------------------------------------------
 
-// ── First Name ──────────────────────────────────────────────────────────────
+export async function createUserHappyPath(
+  page: Page,
+): Promise<{ email: string; password: string }> {
+  await reachStep2(page);
+  const { email, password } = await new UserCreationForm(page).withDefaults().fill();
+  await proceedFromStep2ToStep3(page);
+  await submitCreateStaff(page);
+  await expectUserCreatedSuccess(page);
+  return { email: email!, password: password! };
+}
 
-/** First Name left blank → should surface validation error */
+// ---------------------------------------------------------------------------
+// Access control
+// ---------------------------------------------------------------------------
+
+export async function staffUnableToCreate(page: Page): Promise<void> {
+  await navigateToUserManagement(page);
+  // Staff roles should not see the Create button at all
+  // navigateToCreateUser will fail before here if the button is present,
+  // so we assert it's absent at the Merchant/Branch Staffs level
+  const { expect } = await import('@playwright/test');
+  await expect(page.getByRole('button', { name: 'Create' })).not.toBeVisible();
+}
+
+// ---------------------------------------------------------------------------
+// First Name validation
+// ---------------------------------------------------------------------------
+
 export async function invalidFirstNameEmpty(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withFirstName('').fill();
@@ -74,7 +60,41 @@ export async function invalidFirstNameEmpty(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-// ── Email ───────────────────────────────────────────────────────────────────
+export async function invalidFirstNameSpecialChars(page: Page): Promise<void> {
+  await reachStep2(page);
+  await new UserCreationForm(page).withDefaults().withFirstName('Test@123!').fill();
+  await attemptProceedFromStep2(page);
+  await expectValidationError(page);
+}
+
+export async function invalidFirstNameTooLong(page: Page): Promise<void> {
+  await reachStep2(page);
+  await new UserCreationForm(page).withDefaults().withFirstName('A'.repeat(101)).fill();
+  await attemptProceedFromStep2(page);
+  await expectValidationError(page);
+}
+
+// ---------------------------------------------------------------------------
+// Last Name validation
+// ---------------------------------------------------------------------------
+
+export async function invalidLastNameEmpty(page: Page): Promise<void> {
+  await reachStep2(page);
+  await new UserCreationForm(page).withDefaults().withLastName('').fill();
+  await attemptProceedFromStep2(page);
+  await expectValidationError(page);
+}
+
+export async function invalidLastNameSpecialChars(page: Page): Promise<void> {
+  await reachStep2(page);
+  await new UserCreationForm(page).withDefaults().withLastName('Last#Name$').fill();
+  await attemptProceedFromStep2(page);
+  await expectValidationError(page);
+}
+
+// ---------------------------------------------------------------------------
+// Email validation
+// ---------------------------------------------------------------------------
 
 export async function invalidEmailEmpty(page: Page): Promise<void> {
   await reachStep2(page);
@@ -83,7 +103,6 @@ export async function invalidEmailEmpty(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Missing @ symbol */
 export async function invalidEmailMissingAt(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withEmail('notanemail.com').fill();
@@ -91,7 +110,6 @@ export async function invalidEmailMissingAt(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Missing domain */
 export async function invalidEmailMissingDomain(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withEmail('user@').fill();
@@ -99,7 +117,6 @@ export async function invalidEmailMissingDomain(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Missing local part */
 export async function invalidEmailMissingLocal(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withEmail('@domain.com').fill();
@@ -107,22 +124,29 @@ export async function invalidEmailMissingLocal(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Duplicate email (already registered) — requires a known existing email */
 export async function invalidEmailDuplicate(page: Page): Promise<void> {
   // First creation — establish the duplicate
   const { email } = await createUserHappyPath(page);
 
-  // Second creation — same email should fail
-  await navigateToCreateUser(page);
-  await proceedFromStep1ToStep2(page);
+  // Second creation — same email should be rejected
+  await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withEmail(email).fill();
+  await proceedFromStep2ToStep3(page);
+  await submitCreateStaff(page);
+  await expectValidationError(page);
+}
+
+// ---------------------------------------------------------------------------
+// Phone validation
+// ---------------------------------------------------------------------------
+
+export async function invalidPhoneEmpty(page: Page): Promise<void> {
+  await reachStep2(page);
+  await new UserCreationForm(page).withDefaults().withPhone('').fill();
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-// ── Phone ───────────────────────────────────────────────────────────────────
-
-/** Non-numeric characters in phone */
 export async function invalidPhoneNonNumeric(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withPhone('abc-defg-hij').fill();
@@ -130,7 +154,6 @@ export async function invalidPhoneNonNumeric(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Too short — fewer digits than minimum */
 export async function invalidPhoneTooShort(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withPhone('123').fill();
@@ -138,7 +161,6 @@ export async function invalidPhoneTooShort(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Too long — more digits than maximum */
 export async function invalidPhoneTooLong(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withPhone('1'.repeat(16)).fill();
@@ -146,17 +168,17 @@ export async function invalidPhoneTooLong(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-// ── Role ────────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// Role validation
+// ---------------------------------------------------------------------------
 
-/** No role selected → should surface validation error */
 export async function invalidRoleNotSelected(page: Page): Promise<void> {
   await reachStep2(page);
-  // Deliberately omit withRole() — withDefaults() sets it; we override by
-  // building the form without a role field at all.
+  // Explicitly omit role — withDefaults() is not called
   await new UserCreationForm(page)
     .withFirstName('TestUser')
     .withLastName('AutoTest')
-    .withEmail('')       // generates via withDefaults not called — so pass random directly
+    .withEmail('')
     .withPhone('')
     .withPassword('!Abcd1234')
     .withConfirmPassword('!Abcd1234')
@@ -165,7 +187,9 @@ export async function invalidRoleNotSelected(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-// ── Password ─────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// Password validation
+// ---------------------------------------------------------------------------
 
 export async function invalidPasswordEmpty(page: Page): Promise<void> {
   await reachStep2(page);
@@ -174,69 +198,45 @@ export async function invalidPasswordEmpty(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-/** Password too short (< 8 chars is a common minimum) */
 export async function invalidPasswordTooShort(page: Page): Promise<void> {
   await reachStep2(page);
-  await new UserCreationForm(page)
-    .withDefaults()
-    .withPassword('Ab1!')
-    .withConfirmPassword('Ab1!')
-    .fill();
+  await new UserCreationForm(page).withDefaults().withPassword('Ab1!').withConfirmPassword('Ab1!').fill();
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-/** Password missing uppercase */
 export async function invalidPasswordNoUppercase(page: Page): Promise<void> {
   await reachStep2(page);
-  await new UserCreationForm(page)
-    .withDefaults()
-    .withPassword('!abcd1234')
-    .withConfirmPassword('!abcd1234')
-    .fill();
+  await new UserCreationForm(page).withDefaults().withPassword('!abcd1234').withConfirmPassword('!abcd1234').fill();
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-/** Password missing lowercase */
 export async function invalidPasswordNoLowercase(page: Page): Promise<void> {
   await reachStep2(page);
-  await new UserCreationForm(page)
-    .withDefaults()
-    .withPassword('!ABCD1234')
-    .withConfirmPassword('!ABCD1234')
-    .fill();
+  await new UserCreationForm(page).withDefaults().withPassword('!ABCD1234').withConfirmPassword('!ABCD1234').fill();
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-/** Password missing digit */
 export async function invalidPasswordNoDigit(page: Page): Promise<void> {
   await reachStep2(page);
-  await new UserCreationForm(page)
-    .withDefaults()
-    .withPassword('!Abcdefgh')
-    .withConfirmPassword('!Abcdefgh')
-    .fill();
+  await new UserCreationForm(page).withDefaults().withPassword('!Abcdefgh').withConfirmPassword('!Abcdefgh').fill();
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-/** Password missing special character */
 export async function invalidPasswordNoSpecialChar(page: Page): Promise<void> {
   await reachStep2(page);
-  await new UserCreationForm(page)
-    .withDefaults()
-    .withPassword('Abcd12345')
-    .withConfirmPassword('Abcd12345')
-    .fill();
+  await new UserCreationForm(page).withDefaults().withPassword('Abcd12345').withConfirmPassword('Abcd12345').fill();
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-// ── Confirm Password ─────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// Confirm password validation
+// ---------------------------------------------------------------------------
 
-/** Confirm password does not match password */
 export async function invalidConfirmPasswordMismatch(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page)
@@ -259,31 +259,32 @@ export async function invalidConfirmPasswordEmpty(page: Page): Promise<void> {
   await expectValidationError(page);
 }
 
-// ── All fields empty (submit blank form) ─────────────────────────────────────
+// ---------------------------------------------------------------------------
+// Blanket
+// ---------------------------------------------------------------------------
 
 export async function invalidAllFieldsEmpty(page: Page): Promise<void> {
   await reachStep2(page);
-  // Fill nothing — just try to proceed
   await attemptProceedFromStep2(page);
   await expectValidationError(page);
 }
 
-// ── Boundary / positive guard (should NOT error) ─────────────────────────────
+// ---------------------------------------------------------------------------
+// Boundary / positive guards
+// ---------------------------------------------------------------------------
 
-/** Minimum acceptable password (8 chars, meets all rules) → no error */
 export async function validPasswordBoundaryMinimum(page: Page): Promise<void> {
   await reachStep2(page);
-  const minPassword = '!Abcd123'; // exactly 8 chars
+  const minPassword = '!Abcd123'; // exactly 8 chars, meets all rules
   await new UserCreationForm(page)
     .withDefaults()
     .withPassword(minPassword)
     .withConfirmPassword(minPassword)
     .fill();
-  await attemptProceedFromStep2(page);
+  await proceedFromStep2ToStep3(page);
   await expectNoValidationError(page);
 }
 
-/** Name with hyphen/apostrophe (O'Brien, Mary-Jane) → should be valid */
 export async function validNameWithHyphenOrApostrophe(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page)
@@ -291,6 +292,6 @@ export async function validNameWithHyphenOrApostrophe(page: Page): Promise<void>
     .withFirstName("Mary-Jane")
     .withLastName("O'Brien")
     .fill();
-  await attemptProceedFromStep2(page);
+  await proceedFromStep2ToStep3(page);
   await expectNoValidationError(page);
 }

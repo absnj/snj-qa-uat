@@ -1,49 +1,59 @@
 import { Page, BrowserContext } from '@playwright/test';
 import {
-  getUatUrl,
-  getCredentials,
   fillEmailField,
   fillPasswordField,
   clickSignIn,
   waitForLoginForm,
   waitForDashboard,
   waitForInvalidCredentialsError,
-} from './utils';
+} from '../../pages/LoginPage';
 
 // ---------------------------------------------------------------------------
-// Happy path login
+// Environment
 // ---------------------------------------------------------------------------
 
-export async function loginAs(page: Page, normalizedRole: string): Promise<void> {
-  const uatUrl = getUatUrl();
-  const { username, password } = getCredentials(normalizedRole);
+function requiredEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) throw new Error(`Missing required env var: ${key}`);
+  return value;
+}
 
-  // networkidle ensures the JS framework has fully mounted before we
-  // look for any elements — domcontentloaded fires too early for SPAs.
-  await page.goto(uatUrl, { waitUntil: 'networkidle' });
-  await waitForLoginForm(page);
+function getUatUrl(): string {
+  return requiredEnv('UAT_URL');
+}
 
-  await fillEmailField(page, username);
-  await fillPasswordField(page, password);
-  await clickSignIn(page);
-
-  await waitForDashboard(page);
+function getCredentials(normalizedRole: string): { username: string; password: string } {
+  const roleKey = normalizedRole.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
+  return {
+    username: process.env[`UAT_${roleKey}_USER`] ?? requiredEnv('UAT_USER'),
+    password: process.env[`UAT_${roleKey}_PASSWORD`] ?? requiredEnv('UAT_PASSWORD'),
+  };
 }
 
 // ---------------------------------------------------------------------------
-// Invalid credentials flow
+// Flows
 // ---------------------------------------------------------------------------
+
+export async function loginAs(page: Page, normalizedRole: string): Promise<void> {
+  const { username, password } = getCredentials(normalizedRole);
+
+  await page.goto(getUatUrl(), { waitUntil: 'networkidle' });
+  await waitForLoginForm(page);
+  await fillEmailField(page, username);
+  await fillPasswordField(page, password);
+  await clickSignIn(page);
+  await waitForDashboard(page);
+}
 
 export async function loginWithInvalidCredentials(
   page: Page,
   context: BrowserContext,
   normalizedRole: string,
 ): Promise<void> {
-  const uatUrl = getUatUrl();
   const { username, password } = getCredentials(normalizedRole);
 
   await context.clearCookies();
-  await page.goto(uatUrl, { waitUntil: 'networkidle' });
+  await page.goto(getUatUrl(), { waitUntil: 'networkidle' });
 
   // Clear client-side storage now that we're on the correct origin
   await page.evaluate(() => {
@@ -51,13 +61,10 @@ export async function loginWithInvalidCredentials(
     sessionStorage.clear();
   });
 
-  // Reload so the app boots fresh with no cached state
   await page.reload({ waitUntil: 'networkidle' });
   await waitForLoginForm(page);
-
   await fillEmailField(page, username);
   await fillPasswordField(page, `${password}invalid`);
   await clickSignIn(page);
-
   await waitForInvalidCredentialsError(page);
 }
