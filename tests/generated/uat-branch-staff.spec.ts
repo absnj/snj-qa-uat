@@ -3,77 +3,36 @@ import * as flows from '../flows';
 
 test.describe('UAT matrix role: Branch Staff', () => {
 
-  test.describe('Login tests', () => {
-    test.use({ storageState: undefined });
-
-    test('Valid credentials - login succeeds [Login | authenticate]', async ({ page, context }) => {
-      // Role: Branch Staff
-      // Feature/Module: Login
-      // Operation: authenticate
-      // Expected Behavior: Redirect to dashboard
-
-      await flows.loginAs(page, context, 'BRANCH_STAFF');
-    });
-
-    test('Invalid credentials - login fails [Login | authenticate]', async ({ page, context }) => {
-      // Role: Branch Staff
-      // Feature/Module: Login
-      // Operation: authenticate
-      // Expected Behavior: Show error message
-
-      await flows.loginWithInvalidCredentials(page, context, 'BRANCH_STAFF');
-    });
-
-  });
-
   test.describe('Feature tests', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(process.env.UAT_URL!);
     });
 
-    test('Create ticket - Success [Support | create]', async ({ page, context }) => {
+    test('Branch Staff views deal list [Configuration | read]', async ({ page, context }) => {
       // Role: Branch Staff
-      // Feature/Module: Support
-      // Operation: create
-      // Expected Behavior: Show success message
+      // Feature/Module: Configuration
+      // Operation: read
+      // Expected Behavior: Deal list is visible
 
-      await flows.createTicketSuccess(page);
+      await flows.viewDealList(page);
     });
 
-    test('Empty ticket subject - creation fails [Support | create]', async ({ page, context }) => {
+    test('Branch Staff cannot create deal - button not present [Configuration | unable to create]', async ({ page, context }) => {
       // Role: Branch Staff
-      // Feature/Module: Support
-      // Operation: create
-      // Expected Behavior: Show error message
-
-      await flows.createTicketEmptySubject(page);
-    });
-
-    test('Empty ticket description - creation fails [Support | create]', async ({ page, context }) => {
-      // Role: Branch Staff
-      // Feature/Module: Support
-      // Operation: create
-      // Expected Behavior: Show error message
-
-      await flows.createTicketEmptyDescription(page);
-    });
-
-    test('Lengthy ticket subject - creation fails [Support | create]', async ({ page, context }) => {
-      // Role: Branch Staff
-      // Feature/Module: Support
-      // Operation: create
-      // Expected Behavior: Show error message
-
-      await flows.createTicketLongSubject(page);
-    });
-
-    test('Merchant/Branch Staffs option - does not exist [User Management | unable to create]', async ({ page, context }) => {
-      // Role: Branch Staff
-      // Feature/Module: User Management
+      // Feature/Module: Configuration
       // Operation: unable to create
-      // Expected Behavior: Button not present
+      // Expected Behavior: Create button not visible
 
-      await flows.staffUnableToCreate(page);
+      await flows.staffUnableToCreateDeal(page);
+    });
+
+    test('Branch Staff cannot update deal - button not present [Configuration | unable to update]', async ({ page, context }) => {
+      // Role: Branch Staff
+      // Feature/Module: Configuration
+      // Operation: unable to update
+      // Expected Behavior: Edit button not visible
+
+      await flows.staffUnableToUpdateDeal(page);
     });
 
   });

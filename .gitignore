@@ -12,3 +12,6 @@ logs/
 
 #Environment variables
 .env
+
+# Setup Config Files
+tests/setup/.auth

@@ -69,3 +69,63 @@ Merchant Admin,User Management,create,Password at minimum length - creation succ
 Branch Admin,User Management,create,Password at minimum length - creation succeeds,Medium,UAT,No validation error,Chromium,validPasswordBoundaryMinimum
 Merchant Admin,User Management,create,Name with hyphen or apostrophe - creation succeeds,Medium,UAT,No validation error,Chromium,validNameWithHyphenOrApostrophe
 Branch Admin,User Management,create,Name with hyphen or apostrophe - creation succeeds,Medium,UAT,No validation error,Chromium,validNameWithHyphenOrApostrophe
+Merchant Admin,Configuration,read,Merchant Admin views deal list,High,UAT,Deal list is visible,Chromium,viewDealList
+Merchant Staff,Configuration,read,Merchant Staff views deal list,High,UAT,Deal list is visible,Chromium,viewDealList
+Branch Admin,Configuration,read,Branch Admin views deal list,High,UAT,Deal list is visible,Chromium,viewDealList
+Branch Staff,Configuration,read,Branch Staff views deal list,High,UAT,Deal list is visible,Chromium,viewDealList
+Merchant Admin,Configuration,create,Merchant Admin creates deal - success,High,UAT,Deal created and visible in list,Chromium,createDealHappyPath
+Merchant Staff,Configuration,create,Merchant Staff creates deal - success,High,UAT,Deal created and visible in list,Chromium,createDealHappyPath
+Branch Admin,Configuration,create,Branch Admin creates deal - success,High,UAT,Deal created and visible in list,Chromium,createDealHappyPath
+Branch Staff,Configuration,unable to create,Branch Staff cannot create deal - button not present,High,UAT,Create button not visible,Chromium,staffUnableToCreateDeal
+Merchant Admin,Configuration,update,Merchant Admin updates deal - success,High,UAT,Deal updated successfully,Chromium,updateDealHappyPath
+Merchant Staff,Configuration,update,Merchant Staff updates deal - success,High,UAT,Deal updated successfully,Chromium,updateDealHappyPath
+Branch Admin,Configuration,update,Branch Admin updates deal - success,High,UAT,Deal updated successfully,Chromium,updateDealHappyPath
+Branch Staff,Configuration,unable to update,Branch Staff cannot update deal - button not present,High,UAT,Edit button not visible,Chromium,staffUnableToUpdateDeal
+Merchant Admin,Configuration,manage,Merchant Admin can manage deals,High,UAT,Manage options visible,Chromium,manageDeal
+Merchant Staff,Configuration,manage,Merchant Staff can manage deals,High,UAT,Manage options visible,Chromium,manageDeal
+Branch Admin,Configuration,manage,Branch Admin can manage deals,High,UAT,Manage options visible,Chromium,manageDeal
+Merchant Admin,Configuration,create,Deal title empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealTitleEmpty
+Merchant Staff,Configuration,create,Deal title empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealTitleEmpty
+Branch Admin,Configuration,create,Deal title empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealTitleEmpty
+Merchant Admin,Configuration,create,Deal title exceeds 50 characters - creation fails,Medium,UAT,Show validation error,Chromium,invalidDealTitleTooLong
+Merchant Staff,Configuration,create,Deal title exceeds 50 characters - creation fails,Medium,UAT,Show validation error,Chromium,invalidDealTitleTooLong
+Branch Admin,Configuration,create,Deal title exceeds 50 characters - creation fails,Medium,UAT,Show validation error,Chromium,invalidDealTitleTooLong
+Merchant Admin,Configuration,create,Description empty - creation fails,High,UAT,Show validation error,Chromium,invalidDescriptionEmpty
+Merchant Staff,Configuration,create,Description empty - creation fails,High,UAT,Show validation error,Chromium,invalidDescriptionEmpty
+Branch Admin,Configuration,create,Description empty - creation fails,High,UAT,Show validation error,Chromium,invalidDescriptionEmpty
+Merchant Admin,Configuration,create,Description exceeds 100 characters - creation fails,Medium,UAT,Show validation error,Chromium,invalidDescriptionTooLong
+Merchant Staff,Configuration,create,Description exceeds 100 characters - creation fails,Medium,UAT,Show validation error,Chromium,invalidDescriptionTooLong
+Branch Admin,Configuration,create,Description exceeds 100 characters - creation fails,Medium,UAT,Show validation error,Chromium,invalidDescriptionTooLong
+Merchant Admin,Configuration,create,Start date empty - creation fails,High,UAT,Show validation error,Chromium,invalidStartDateEmpty
+Merchant Staff,Configuration,create,Start date empty - creation fails,High,UAT,Show validation error,Chromium,invalidStartDateEmpty
+Branch Admin,Configuration,create,Start date empty - creation fails,High,UAT,Show validation error,Chromium,invalidStartDateEmpty
+Merchant Admin,Configuration,create,End date empty - creation fails,High,UAT,Show validation error,Chromium,invalidEndDateEmpty
+Merchant Staff,Configuration,create,End date empty - creation fails,High,UAT,Show validation error,Chromium,invalidEndDateEmpty
+Branch Admin,Configuration,create,End date empty - creation fails,High,UAT,Show validation error,Chromium,invalidEndDateEmpty
+Merchant Admin,Configuration,create,End date before start date - creation fails,High,UAT,Show date range error,Chromium,invalidEndDateBeforeStartDate
+Merchant Staff,Configuration,create,End date before start date - creation fails,High,UAT,Show date range error,Chromium,invalidEndDateBeforeStartDate
+Branch Admin,Configuration,create,End date before start date - creation fails,High,UAT,Show date range error,Chromium,invalidEndDateBeforeStartDate
+Merchant Admin,Configuration,create,End time before start time - creation fails,High,UAT,Show date/time range error,Chromium,invalidEndTimeBeforeStartTime
+Merchant Staff,Configuration,create,End time before start time - creation fails,High,UAT,Show date/time range error,Chromium,invalidEndTimeBeforeStartTime
+Branch Admin,Configuration,create,End time before start time - creation fails,High,UAT,Show date/time range error,Chromium,invalidEndTimeBeforeStartTime
+Merchant Admin,Configuration,create,Deal value is zero - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueZero
+Merchant Staff,Configuration,create,Deal value is zero - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueZero
+Branch Admin,Configuration,create,Deal value is zero - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueZero
+Merchant Admin,Configuration,create,Deal value is empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueEmpty
+Merchant Staff,Configuration,create,Deal value is empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueEmpty
+Branch Admin,Configuration,create,Deal value is empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueEmpty
+Merchant Admin,Configuration,create,Deal value is negative - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueNegative
+Merchant Staff,Configuration,create,Deal value is negative - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueNegative
+Branch Admin,Configuration,create,Deal value is negative - creation fails,High,UAT,Show validation error,Chromium,invalidDealValueNegative
+Merchant Admin,Configuration,create,Quantity is zero - creation fails,High,UAT,Show validation error,Chromium,invalidQuantityZero
+Merchant Staff,Configuration,create,Quantity is zero - creation fails,High,UAT,Show validation error,Chromium,invalidQuantityZero
+Branch Admin,Configuration,create,Quantity is zero - creation fails,High,UAT,Show validation error,Chromium,invalidQuantityZero
+Merchant Admin,Configuration,create,Quantity is negative - creation fails,High,UAT,Show validation error,Chromium,invalidQuantityNegative
+Merchant Staff,Configuration,create,Quantity is negative - creation fails,High,UAT,Show validation error,Chromium,invalidQuantityNegative
+Branch Admin,Configuration,create,Quantity is negative - creation fails,High,UAT,Show validation error,Chromium,invalidQuantityNegative
+Merchant Admin,Configuration,create,Empty terms and conditions - creation fails,High,UAT,Should show validation error but succeeds,Chromium,emptyTermsAndConditionsNotAllowed
+Merchant Staff,Configuration,create,Empty terms and conditions - creation fails,High,UAT,Should show validation error but succeeds,Chromium,emptyTermsAndConditionsNotAllowed
+Branch Admin,Configuration,create,Empty terms and conditions - creation fails,High,UAT,Should show validation error but succeeds,Chromium,emptyTermsAndConditionsNotAllowed
+Merchant Admin,Configuration,create,Deal value percentage exceeds 100 - creation fails,Medium,UAT,Should show validation error but succeeds,Chromium,dealValueExceedsOneHundredPercent
+Branch Admin,Configuration,create,Deal value percentage exceeds 100 - creation fails,Medium,UAT,Should show validation error but succeeds,Chromium,dealValueExceedsOneHundredPercent
+Merchant Staff,Configuration,create,Deal value percentage exceeds 100 - creation fails,Medium,UAT,Should show validation error but succeeds,Chromium,dealValueExceedsOneHundredPercent
