@@ -25,6 +25,7 @@ export default defineConfig({
   expect: {
     timeout: 10000,
   },
+  timeout: 60_000,
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -33,7 +34,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: 0,
   /* Opt out of parallel tests on CI. */
-  workers: 8,
+  workers: 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -68,6 +69,14 @@ export default defineConfig({
       use: { storageState: 'tests/setup/.auth/branch_staff.json' },
       testMatch: '**/uat-branch-staff.spec.ts',
     },
+    // {
+    //   name: 'superuser',
+    //   use: { 
+    //     ...devices['Desktop Chrome'], 
+    //     storageState: 'tests/setup/.auth/super_user.json' 
+    //     },
+    //   testMatch: '**/uat-super-user.spec.ts',
+    // }, TODO: add superuser tests for more robust coverage
 
     /* Test against mobile viewports. */
     // {

@@ -24,3 +24,13 @@ export function generateRandomPhoneNumber(): string {
   
   return `${firstDigit}${remainingDigits}`;
 }
+
+export function generateDealTitle(): string {
+  const timestamp = Date.now();
+  return `UAT Deal ${timestamp}`;
+}
+
+export function generateLoyaltyProgramTitle(): string {
+  const timestamp = Date.now();
+  return `Test Loyalty Program ${timestamp}`;
+}

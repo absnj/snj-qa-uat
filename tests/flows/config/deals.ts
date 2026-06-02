@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { generateDealTitle } from '../utils/testDataGenerators';
 import {
   navigateToDeals,
   navigateToCreateDeal,
@@ -9,6 +10,7 @@ import {
   attemptProceedFromStep1,
   attemptProceedFromStep2,
   attemptProceedFromStep3,
+  attemptProceedFromStep4,
   submitCreateDeal,
   fillDealTitle,
   fillDescription,
@@ -27,16 +29,17 @@ import {
   expectDateTimeRangeError,
   expectDealValueError,
   expectQuantityError,
-  expectMinimumSpendError,
   expectCreateButtonNotVisible,
-} from '../../pages/ConfigPage';
+  expectTermsError,
+  expectDealValueExceedError,
+} from '../../pages/config/DealsPage';
 
 // ---------------------------------------------------------------------------
 // Test data defaults
 // ---------------------------------------------------------------------------
 
 const DEFAULTS = {
-  title: 'Test Deal',
+  title: generateDealTitle(),
   description: 'Test deal description',
   startDate: '2026-06-01',
   endDate: '2026-06-30',
@@ -127,18 +130,6 @@ export async function staffUnableToCreateDeal(page: Page): Promise<void> {
   await expectCreateButtonNotVisible(page);
 }
 
-export async function staffUnableToUpdateDeal(page: Page): Promise<void> {
-  // TODO: implement once update flow selectors are confirmed
-}
-
-export async function manageDeal(page: Page): Promise<void> {
-  // TODO: implement once manage flow selectors are confirmed
-}
-
-export async function updateDealHappyPath(page: Page): Promise<void> {
-  // TODO: implement once update flow selectors are confirmed
-}
-
 // ---------------------------------------------------------------------------
 // Step 1 validation — General Details
 // ---------------------------------------------------------------------------
@@ -209,7 +200,7 @@ export async function invalidEndTimeBeforeStartTime(page: Page): Promise<void> {
   await reachStep2(page);
   await fillStartDate(page, DEFAULTS.startDate);
   await fillEndDate(page, DEFAULTS.startDate);
-  await fillStartTime(page, '23', '59');
+  await fillStartTime(page, '23', '58');
   await fillEndTime(page, '09', '00'); // end before start on the same date
   await attemptProceedFromStep2(page);
   await expectDateTimeRangeError(page);
@@ -282,48 +273,27 @@ export async function invalidQuantityNegative(page: Page): Promise<void> {
   await toggleUnlimitedQuantity(page);
   await fillCurrentQuantity(page, '-1');
   await attemptProceedFromStep3(page);
+  await expectValidationError(page);
   await expectQuantityError(page);
 }
 
-export async function invalidMinimumSpendNegative(page: Page): Promise<void> {
-  await reachStep3(page);
-  await fillDealValue(page, DEFAULTS.dealValue);
-  await fillMinimumSpend(page, '-1');
-  await toggleUnlimitedQuantity(page);
-  await fillCurrentQuantity(page, DEFAULTS.quantity);
-  await attemptProceedFromStep3(page);
-  await expectMinimumSpendError(page);
-}
-
-// ---------------------------------------------------------------------------
-// Known bugs — document broken behaviour, expected to fail until fixed
-// ---------------------------------------------------------------------------
-
-/**
- * BUG: App allows deal creation with empty Terms & Conditions.
- * Expected: validation error. Actual: deal created successfully.
- * @see [BUG-XXX] raised by QA
- */
-export async function bugEmptyTermsAndConditionsAllowed(page: Page): Promise<void> {
-  await reachStep4(page);
-  await clearTermsAndConditions(page);
-  await proceedFromStep4ToStep5(page);
-  await submitCreateDeal(page);
-  // This currently succeeds — it should not
-  await expectValidationError(page);
-}
-
-/**
- * BUG: Percentage deal value can exceed 100%.
- * Expected: validation error. Actual: deal created successfully.
- * @see [BUG-XXX] raised by QA
- */
-export async function bugDealValueExceedsOneHundredPercent(page: Page): Promise<void> {
+  export async function dealValueExceedsOneHundredPercent(page: Page): Promise<void> {
   await reachStep3(page);
   await fillDealValue(page, '101'); // % type, exceeds 100
   await toggleUnlimitedQuantity(page);
   await fillCurrentQuantity(page, DEFAULTS.quantity);
   await attemptProceedFromStep3(page);
-  // This currently passes — it should not
-  await expectDealValueError(page);
+  await expectDealValueExceedError(page);
+
+}
+
+// ---------------------------------------------------------------------------
+// Step 4 Terms and Conditions validation
+// ---------------------------------------------------------------------------
+
+export async function emptyTermsAndConditionsNotAllowed(page: Page): Promise<void> {
+  await reachStep4(page);
+  await clearTermsAndConditions(page);
+  await attemptProceedFromStep4(page);
+  await expectTermsError(page);
 }

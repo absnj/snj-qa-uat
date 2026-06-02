@@ -26,13 +26,13 @@ test.describe('UAT matrix role: Branch Staff', () => {
       await flows.staffUnableToCreateDeal(page);
     });
 
-    test('Branch Staff cannot update deal - button not present [Configuration | unable to update]', async ({ page, context }) => {
+    test('Branch Staff cannot see Create button [Configuration | access control]', async ({ page, context }) => {
       // Role: Branch Staff
       // Feature/Module: Configuration
-      // Operation: unable to update
-      // Expected Behavior: Edit button not visible
+      // Operation: access control
+      // Expected Behavior: Create button not visible
 
-      await flows.staffUnableToUpdateDeal(page);
+      await flows.staffUnableToCreateLoyaltyProgram(page);
     });
 
   });

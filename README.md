@@ -265,7 +265,7 @@ npx playwright test --reporter=html
 The framework provides random test data generation:
 
 ```typescript
-import { generateRandomEmail, generateRandomPhoneNumber } from '../utils/testDataGenerators';
+import { generateRandomEmail, generateRandomPhoneNumber } from '../flows/utils/testDataGenerators';
 
 const email = generateRandomEmail();      // testuser_1716352800_abc123@xyz789.com
 const phone = generateRandomPhoneNumber(); // 81234567

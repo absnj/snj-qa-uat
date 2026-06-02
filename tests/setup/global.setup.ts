@@ -7,6 +7,7 @@ const ROLES = [
   'MERCHANT_STAFF', 
   'BRANCH_ADMIN',
   'BRANCH_STAFF',
+  'SUPERUSER',
 ];
 
 async function globalSetup(config: FullConfig) {

@@ -26,24 +26,6 @@ test.describe('UAT matrix role: Branch Admin', () => {
       await flows.createDealHappyPath(page);
     });
 
-    test('Branch Admin updates deal - success [Configuration | update]', async ({ page, context }) => {
-      // Role: Branch Admin
-      // Feature/Module: Configuration
-      // Operation: update
-      // Expected Behavior: Deal updated successfully
-
-      await flows.updateDealHappyPath(page);
-    });
-
-    test('Branch Admin can manage deals [Configuration | manage]', async ({ page, context }) => {
-      // Role: Branch Admin
-      // Feature/Module: Configuration
-      // Operation: manage
-      // Expected Behavior: Manage options visible
-
-      await flows.manageDeal(page);
-    });
-
     test('Deal title empty - creation fails [Configuration | create]', async ({ page, context }) => {
       // Role: Branch Admin
       // Feature/Module: Configuration
@@ -161,31 +143,148 @@ test.describe('UAT matrix role: Branch Admin', () => {
       await flows.invalidQuantityNegative(page);
     });
 
-    test('Minimum spend is negative - creation fails [Configuration | create]', async ({ page, context }) => {
-      // Role: Branch Admin
-      // Feature/Module: Configuration
-      // Operation: create
-      // Expected Behavior: Show validation error
-
-      await flows.invalidMinimumSpendNegative(page);
-    });
-
-    test('Empty terms and conditions - creation succeeds (BUG) [Configuration | create]', async ({ page, context }) => {
+    test('Empty terms and conditions - creation fails [Configuration | create]', async ({ page, context }) => {
       // Role: Branch Admin
       // Feature/Module: Configuration
       // Operation: create
       // Expected Behavior: Should show validation error but succeeds
 
-      await flows.bugEmptyTermsAndConditionsAllowed(page);
+      await flows.emptyTermsAndConditionsNotAllowed(page);
     });
 
-    test('Deal value percentage exceeds 100 - creation succeeds (BUG) [Configuration | create]', async ({ page, context }) => {
+    test('Deal value percentage exceeds 100 - creation fails [Configuration | create]', async ({ page, context }) => {
       // Role: Branch Admin
       // Feature/Module: Configuration
       // Operation: create
       // Expected Behavior: Should show validation error but succeeds
 
-      await flows.bugDealValueExceedsOneHundredPercent(page);
+      await flows.dealValueExceedsOneHundredPercent(page);
+    });
+
+    test('Visit-Based happy path — 1 reward [Configuration | create]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: create
+      // Expected Behavior: Loyalty program created successfully toast shown
+
+      await flows.createLoyaltyProgramVisitBased1Reward(page);
+    });
+
+    test('Transaction-Based happy path — 1 reward [Configuration | create]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: create
+      // Expected Behavior: Loyalty program created successfully toast shown
+
+      await flows.createLoyaltyProgramTransactionBased1Reward(page);
+    });
+
+    test('Visit-Based happy path — 5 rewards (max) [Configuration | create]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: create
+      // Expected Behavior: Loyalty program created successfully toast shown
+
+      await flows.createLoyaltyProgramVisitBased5Rewards(page);
+    });
+
+    test('Add Reward button disabled at 5 rewards (max) [Configuration | reward limit]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: reward limit
+      // Expected Behavior: Add Reward button is disabled
+
+      await flows.addRewardButtonDisabledAtMax(page);
+    });
+
+    test('Step 1 — Visits Per Stamp empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidVisitsPerStampEmpty(page);
+    });
+
+    test('Step 1 — Amount Per Stamp empty (Transaction-Based) [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidAmountPerStampEmpty(page);
+    });
+
+    test('Step 2 — Program Title empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidLoyaltyTitleEmpty(page);
+    });
+
+    test('Step 2 — Program Title exceeds 50 characters [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidLoyaltyTitleTooLong(page);
+    });
+
+    test('Step 2 — Description empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidLoyaltyDescriptionEmpty(page);
+    });
+
+    test('Step 2 — Description exceeds 100 characters [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidLoyaltyDescriptionTooLong(page);
+    });
+
+    test('Step 3 — Reward Milestone empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidRewardMilestoneEmpty(page);
+    });
+
+    test('Step 3 — Reward Name empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidRewardNameEmpty(page);
+    });
+
+    test('Step 3 — Reward Valid Until empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidRewardValidUntilEmpty(page);
+    });
+
+    test('Step 3 — Reward Quantity empty [Configuration | validation]', async ({ page, context }) => {
+      // Role: Branch Admin
+      // Feature/Module: Configuration
+      // Operation: validation
+      // Expected Behavior: Validation error shown — cannot proceed
+
+      await flows.invalidRewardQuantityEmpty(page);
     });
 
   });

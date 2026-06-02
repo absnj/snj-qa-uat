@@ -16,7 +16,8 @@ const SELECTORS = {
     heading: (page: Page) => page.getByRole('heading', { name: 'Deal Approval' }), // heading on deal list page
     createButton: (page: Page) => page.getByRole('button', { name: 'Create' }), // create button on deal page 
     buildOptionsPage: (page: Page) => page.getByText('How do you want to build this'), // appears after clicking Create button
-    dealRow: (page: Page, title: string) => page.getByRole('row').filter({ hasText: title }), // 
+    dealRow: (page: Page, title: string) => page.getByRole('button', { name: title }),
+    dealStatusActive: (page: Page) => page.getByText('StatusActive')
   },
 
   steps: {
@@ -42,8 +43,6 @@ const SELECTORS = {
     description: (page: Page) => page.locator('textarea'),
     fullDescription: (page: Page) => page.getByPlaceholder('Type something...'),
     keywordsInput: (page: Page) => page.getByRole('textbox', { name: 'Type keywords and press Enter' }),
-    keywordTag: (page: Page, keyword: string) =>
-      page.locator('').filter({ hasText: keyword }),        // TODO
     keywordLimitMessage: (page: Page) => page.getByText('Maximum 7 keywords allowed'),
   },
 
@@ -63,7 +62,6 @@ const SELECTORS = {
   step3: {
     dealValueTypeToggle: (page: Page) => page.getByRole('combobox').filter({ hasText: '%' }),
     dealValueInput: (page: Page) => page.getByRole('spinbutton').first(),
-    currency: (page: Page) => page.locator(''),            // TODO
     minimumSpend: (page: Page) => page.getByText('Minimum Spend Minimum amount').getByRole('spinbutton'),
     unlimitedQuantityToggle: (page: Page) => page.getByRole('switch'),
     currentQuantity: (page: Page) => page.getByRole('spinbutton').nth(2),
@@ -76,7 +74,7 @@ const SELECTORS = {
 
   // Step 5 — Preview (read-only)
   step5: {
-    previewCard: (page: Page) => page.locator('form').getByText('Preview', { exact: true }), // TODO: confirm selector
+    preview: (page: Page) => page.locator('form').getByText('Preview', { exact: true }),
   },
 
   alerts: {
@@ -87,8 +85,16 @@ const SELECTORS = {
     dateRangeError: (page: Page) => page.getByText('End date must be after start'),
     dateTimeRangeError: (page: Page) => page.getByText(/End (date|time) must be after start/i),
     dealValueError: (page: Page) => page.getByText('Deal value must be greater'),
+    dealValueExceedError: (page: Page) => page.getByText('Percentage deal value must be between 0 and 100', { exact: true }),
     quantityError: (page: Page) => page.getByText('Quantity must be greater than'),
-    minimumSpendError: (page: Page) => page.locator(''),   // TODO
+    termsError: (page: Page) => page.getByText('Terms & Conditions are required', { exact: true }),
+  },
+
+  superuser: {
+    accessDeal: (page: Page, title: string) => page.getByRole('button', { name: title }),
+    approveDeal: (page: Page) => page.getByRole('button', { name: 'Approve' }),
+    confirmApproval: (page: Page) => page.locator('.form-actions').getByRole('button', { name: 'Approve' }),
+    approvalSuccessMessage: (page: Page) => page.getByText('The deal has been successfully approved.', { exact: true }),
   },
 };
 
@@ -99,7 +105,6 @@ export { SELECTORS };
 // ---------------------------------------------------------------------------
 
 export async function navigateToDeals(page: Page): Promise<void> {
-  await expect(SELECTORS.nav.configuration(page)).toBeVisible();
   await SELECTORS.nav.configuration(page).click();
   await expect(SELECTORS.list.configHeading(page)).toBeVisible();
   await SELECTORS.nav.deals(page).click();
@@ -154,6 +159,10 @@ export async function attemptProceedFromStep2(page: Page): Promise<void> {
 }
 
 export async function attemptProceedFromStep3(page: Page): Promise<void> {
+  await SELECTORS.buttons.next(page).click();
+}
+
+export async function attemptProceedFromStep4(page: Page): Promise<void> {
   await SELECTORS.buttons.next(page).click();
 }
 
@@ -291,12 +300,16 @@ export async function expectDealValueError(page: Page): Promise<void> {
   await expect(SELECTORS.alerts.dealValueError(page)).toBeVisible();
 }
 
+export async function expectDealValueExceedError(page: Page): Promise<void> {
+  await expect(SELECTORS.alerts.dealValueExceedError(page)).toBeVisible();
+}
+
 export async function expectQuantityError(page: Page): Promise<void> {
   await expect(SELECTORS.alerts.quantityError(page)).toBeVisible();
 }
 
-export async function expectMinimumSpendError(page: Page): Promise<void> {
-  await expect(SELECTORS.alerts.minimumSpendError(page)).toBeVisible();
+export async function expectTermsError(page: Page): Promise<void> {
+  await expect(SELECTORS.alerts.termsError(page)).toBeVisible();
 }
 
 export async function expectDealInList(page: Page, title: string): Promise<void> {

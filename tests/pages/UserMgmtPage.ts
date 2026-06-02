@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { generateRandomEmail, generateRandomPhoneNumber } from '../utils/testDataGenerators';
+import { generateRandomEmail, generateRandomPhoneNumber } from '../flows/utils/testDataGenerators';
 
 // ---------------------------------------------------------------------------
 // Selectors
@@ -22,7 +22,7 @@ const SELECTORS = {
     createStaff: (page: Page) => page.getByRole('button', { name: 'Create Staff' }),
   },
   steps: {
-    basicInformation: (page: Page) => page.getByText('Basic Information'),
+    basicInformation: (page: Page) => page.getByText('Basic Information', { exact: true }),
     review: (page: Page) => page.getByText('Review', { exact: true }),
   },
   form: {
@@ -156,6 +156,10 @@ export async function expectNoValidationError(page: Page): Promise<void> {
   await expect(SELECTORS.alerts.validationError(page)).not.toBeVisible();
 }
 
+export async function expectPhoneFieldEmpty(page: Page): Promise<void> {
+  const field = SELECTORS.form.phone(page);
+  await expect(field).toHaveValue('');
+}
 // ---------------------------------------------------------------------------
 // UserCreationForm — fluent builder
 // ---------------------------------------------------------------------------

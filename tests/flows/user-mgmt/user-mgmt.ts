@@ -10,6 +10,7 @@ import {
   expectNoValidationError,
   UserCreationForm,
   navigateToUserManagement,
+  expectPhoneFieldEmpty,
 } from '../../pages/UserMgmtPage';
 
 // ---------------------------------------------------------------------------
@@ -150,8 +151,7 @@ export async function invalidPhoneEmpty(page: Page): Promise<void> {
 export async function invalidPhoneNonNumeric(page: Page): Promise<void> {
   await reachStep2(page);
   await new UserCreationForm(page).withDefaults().withPhone('abc-defg-hij').fill();
-  await attemptProceedFromStep2(page);
-  await expectValidationError(page);
+  await expectPhoneFieldEmpty(page);
 }
 
 export async function invalidPhoneTooShort(page: Page): Promise<void> {

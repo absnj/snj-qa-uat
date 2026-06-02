@@ -77,13 +77,6 @@ Merchant Admin,Configuration,create,Merchant Admin creates deal - success,High,U
 Merchant Staff,Configuration,create,Merchant Staff creates deal - success,High,UAT,Deal created and visible in list,Chromium,createDealHappyPath
 Branch Admin,Configuration,create,Branch Admin creates deal - success,High,UAT,Deal created and visible in list,Chromium,createDealHappyPath
 Branch Staff,Configuration,unable to create,Branch Staff cannot create deal - button not present,High,UAT,Create button not visible,Chromium,staffUnableToCreateDeal
-Merchant Admin,Configuration,update,Merchant Admin updates deal - success,High,UAT,Deal updated successfully,Chromium,updateDealHappyPath
-Merchant Staff,Configuration,update,Merchant Staff updates deal - success,High,UAT,Deal updated successfully,Chromium,updateDealHappyPath
-Branch Admin,Configuration,update,Branch Admin updates deal - success,High,UAT,Deal updated successfully,Chromium,updateDealHappyPath
-Branch Staff,Configuration,unable to update,Branch Staff cannot update deal - button not present,High,UAT,Edit button not visible,Chromium,staffUnableToUpdateDeal
-Merchant Admin,Configuration,manage,Merchant Admin can manage deals,High,UAT,Manage options visible,Chromium,manageDeal
-Merchant Staff,Configuration,manage,Merchant Staff can manage deals,High,UAT,Manage options visible,Chromium,manageDeal
-Branch Admin,Configuration,manage,Branch Admin can manage deals,High,UAT,Manage options visible,Chromium,manageDeal
 Merchant Admin,Configuration,create,Deal title empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealTitleEmpty
 Merchant Staff,Configuration,create,Deal title empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealTitleEmpty
 Branch Admin,Configuration,create,Deal title empty - creation fails,High,UAT,Show validation error,Chromium,invalidDealTitleEmpty
@@ -129,3 +122,46 @@ Branch Admin,Configuration,create,Empty terms and conditions - creation fails,Hi
 Merchant Admin,Configuration,create,Deal value percentage exceeds 100 - creation fails,Medium,UAT,Should show validation error but succeeds,Chromium,dealValueExceedsOneHundredPercent
 Branch Admin,Configuration,create,Deal value percentage exceeds 100 - creation fails,Medium,UAT,Should show validation error but succeeds,Chromium,dealValueExceedsOneHundredPercent
 Merchant Staff,Configuration,create,Deal value percentage exceeds 100 - creation fails,Medium,UAT,Should show validation error but succeeds,Chromium,dealValueExceedsOneHundredPercent
+Merchant Admin,Configuration,create,Visit-Based happy path — 1 reward,High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramVisitBased1Reward
+Merchant Admin,Configuration,create,Transaction-Based happy path — 1 reward,High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramTransactionBased1Reward
+Merchant Admin,Configuration,create,Visit-Based happy path — 5 rewards (max),High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramVisitBased5Rewards
+Merchant Staff,Configuration,create,Visit-Based happy path — 1 reward,High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramVisitBased1Reward
+Merchant Staff,Configuration,create,Transaction-Based happy path — 1 reward,High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramTransactionBased1Reward
+Merchant Staff,Configuration,create,Visit-Based happy path — 5 rewards (max),High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramVisitBased5Rewards
+Branch Admin,Configuration,create,Visit-Based happy path — 1 reward,High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramVisitBased1Reward
+Branch Admin,Configuration,create,Transaction-Based happy path — 1 reward,High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramTransactionBased1Reward
+Branch Admin,Configuration,create,Visit-Based happy path — 5 rewards (max),High,UAT,Loyalty program created successfully toast shown,Chromium,createLoyaltyProgramVisitBased5Rewards
+Branch Staff,Configuration,access control,Branch Staff cannot see Create button,High,UAT,Create button not visible,Chromium,staffUnableToCreateLoyaltyProgram
+Merchant Admin,Configuration,reward limit,Add Reward button disabled at 5 rewards (max),Medium,UAT,Add Reward button is disabled,Chromium,addRewardButtonDisabledAtMax
+Merchant Staff,Configuration,reward limit,Add Reward button disabled at 5 rewards (max),Medium,UAT,Add Reward button is disabled,Chromium,addRewardButtonDisabledAtMax
+Branch Admin,Configuration,reward limit,Add Reward button disabled at 5 rewards (max),Medium,UAT,Add Reward button is disabled,Chromium,addRewardButtonDisabledAtMax
+Merchant Admin,Configuration,validation,Step 1 — Visits Per Stamp empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidVisitsPerStampEmpty
+Merchant Admin,Configuration,validation,Step 1 — Amount Per Stamp empty (Transaction-Based),Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidAmountPerStampEmpty
+Merchant Admin,Configuration,validation,Step 2 — Program Title empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyTitleEmpty
+Merchant Admin,Configuration,validation,Step 2 — Program Title exceeds 50 characters,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyTitleTooLong
+Merchant Admin,Configuration,validation,Step 2 — Description empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyDescriptionEmpty
+Merchant Admin,Configuration,validation,Step 2 — Description exceeds 100 characters,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyDescriptionTooLong
+Merchant Admin,Configuration,validation,Step 3 — Reward Milestone empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardMilestoneEmpty
+Merchant Admin,Configuration,validation,Step 3 — Reward Name empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardNameEmpty
+Merchant Admin,Configuration,validation,Step 3 — Reward Valid Until empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardValidUntilEmpty
+Merchant Admin,Configuration,validation,Step 3 — Reward Quantity empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardQuantityEmpty
+Merchant Staff,Configuration,validation,Step 1 — Visits Per Stamp empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidVisitsPerStampEmpty
+Merchant Staff,Configuration,validation,Step 1 — Amount Per Stamp empty (Transaction-Based),Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidAmountPerStampEmpty
+Merchant Staff,Configuration,validation,Step 2 — Program Title empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyTitleEmpty
+Merchant Staff,Configuration,validation,Step 2 — Program Title exceeds 50 characters,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyTitleTooLong
+Merchant Staff,Configuration,validation,Step 2 — Description empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyDescriptionEmpty
+Merchant Staff,Configuration,validation,Step 2 — Description exceeds 100 characters,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyDescriptionTooLong
+Merchant Staff,Configuration,validation,Step 3 — Reward Milestone empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardMilestoneEmpty
+Merchant Staff,Configuration,validation,Step 3 — Reward Name empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardNameEmpty
+Merchant Staff,Configuration,validation,Step 3 — Reward Valid Until empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardValidUntilEmpty
+Merchant Staff,Configuration,validation,Step 3 — Reward Quantity empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardQuantityEmpty
+Branch Admin,Configuration,validation,Step 1 — Visits Per Stamp empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidVisitsPerStampEmpty
+Branch Admin,Configuration,validation,Step 1 — Amount Per Stamp empty (Transaction-Based),Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidAmountPerStampEmpty
+Branch Admin,Configuration,validation,Step 2 — Program Title empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyTitleEmpty
+Branch Admin,Configuration,validation,Step 2 — Program Title exceeds 50 characters,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyTitleTooLong
+Branch Admin,Configuration,validation,Step 2 — Description empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyDescriptionEmpty
+Branch Admin,Configuration,validation,Step 2 — Description exceeds 100 characters,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidLoyaltyDescriptionTooLong
+Branch Admin,Configuration,validation,Step 3 — Reward Milestone empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardMilestoneEmpty
+Branch Admin,Configuration,validation,Step 3 — Reward Name empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardNameEmpty
+Branch Admin,Configuration,validation,Step 3 — Reward Valid Until empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardValidUntilEmpty
+Branch Admin,Configuration,validation,Step 3 — Reward Quantity empty,Medium,UAT,Validation error shown — cannot proceed,Chromium,invalidRewardQuantityEmpty
