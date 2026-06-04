@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@core/*": ["tests/core/*"],
+      "@pages/*": ["tests/pages/*"],
+      "@components/*": ["tests/components/*"],
+      "@fixtures/*": ["tests/fixtures/*"],
+      "@helpers/*": ["tests/helpers/*"],
+      "@config/*": ["tests/config/*"]
+    },
+    "types": ["node"]
+  },
+  "include": ["tests/**/*.ts"],
+  "exclude": ["node_modules", "tests-old"]
+}

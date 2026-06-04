@@ -5,17 +5,17 @@
       "value": "",
       "domain": "admin-staging.shopnjoy.com",
       "path": "/",
-      "expires": 1781175663.993863,
+      "expires": 1781070677.918058,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Strict"
     },
     {
       "name": "accessToken",
-      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXJfMmduSmhkRXptUGlOdzZHdWZPIiwicm9sZXMiOlt7ImlkIjoidXNlcl9hY2Nlc3NfN2JMdGhwUlZSVjhEM21jaGNGIiwidXNlcklkIjoidXNlcl8yZ25KaGRFem1QaU53Nkd1Zk8iLCJyb2xlSWQiOiJicmFuY2gtc3RhZmYiLCJzaG9wcGVySWQiOm51bGwsIm1lcmNoYW50U3RhZmZJZCI6Im1lcmNoYW50X3N0YWZmX3V2MXgwQlFNdXp4ME1aMnQ3QyIsIm1lcmNoYW50U3RvcmVJZCI6Im1lcmNoYW50X3N0b3JlX0pSVzIxc2U3SjM0SWlrV2c0OSIsInNualN0YWZmSWQiOm51bGwsInJlZmVycmVySWQiOm51bGwsInJvbGUiOnsiaWQiOiJicmFuY2gtc3RhZmYiLCJuYW1lIjoiYnJhbmNoLXN0YWZmIn19XSwianRpIjoiZGQwNjhiMzYtMmY2Yy00ZjcwLTljMTItZTAzMzE0Mjg0NGQxIiwiaWF0IjoxNzgwNTcwODY0LCJleHAiOjE3ODA2NTcyNjR9.vX6nbKhZMY_okwsVAxMBcPjtW-lb5VPWgl4D2ZCnSF0",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXJfMmduSmhkRXptUGlOdzZHdWZPIiwicm9sZXMiOlt7ImlkIjoidXNlcl9hY2Nlc3NfN2JMdGhwUlZSVjhEM21jaGNGIiwidXNlcklkIjoidXNlcl8yZ25KaGRFem1QaU53Nkd1Zk8iLCJyb2xlSWQiOiJicmFuY2gtc3RhZmYiLCJzaG9wcGVySWQiOm51bGwsIm1lcmNoYW50U3RhZmZJZCI6Im1lcmNoYW50X3N0YWZmX3V2MXgwQlFNdXp4ME1aMnQ3QyIsIm1lcmNoYW50U3RvcmVJZCI6Im1lcmNoYW50X3N0b3JlX0pSVzIxc2U3SjM0SWlrV2c0OSIsInNualN0YWZmSWQiOm51bGwsInJlZmVycmVySWQiOm51bGwsInJvbGUiOnsiaWQiOiJicmFuY2gtc3RhZmYiLCJuYW1lIjoiYnJhbmNoLXN0YWZmIn19XSwianRpIjoiZjYxOTVjYjEtODU1YS00MjQxLWIxZTEtZWFiY2Y2YzI0OTM1IiwiaWF0IjoxNzgwNDY1ODc4LCJleHAiOjE3ODA1NTIyNzh9.JkgZVxu3dEeWJcg3_idlwSZm5svIKkRlhEK85kx20zo",
       "domain": "admin-staging.shopnjoy.com",
       "path": "/",
-      "expires": 1780657263.946671,
+      "expires": 1780552277.716519,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Strict"
@@ -25,7 +25,7 @@
       "value": "{\"id\":\"user_access_7bLthpRVRV8D3mchcF\",\"user_id\":\"user_2gnJhdEzmPiNw6GufO\",\"role_id\":\"branch-staff\",\"merchant_id\":\"merchant_store_JRW21se7J34IikWg49\",\"branch_id\":[\"branch_QQk2REaQHrd1KdS4R4\"],\"shopper_id\":null,\"snj_staff_id\":null,\"merchant_staff_id\":\"merchant_staff_uv1x0BQMuzx0MZ2t7C\",\"referrer_id\":null,\"role\":{\"id\":\"branch-staff\",\"name\":\"branch-staff\"}}",
       "domain": "admin-staging.shopnjoy.com",
       "path": "/",
-      "expires": 1781175664.95083,
+      "expires": 1781070678.720864,
       "httpOnly": false,
       "secure": true,
       "sameSite": "Strict"

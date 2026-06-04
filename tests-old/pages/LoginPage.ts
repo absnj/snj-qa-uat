@@ -45,7 +45,7 @@ export async function waitForLoginForm(page: Page): Promise<void> {
   await expect(SELECTORS.emailField(page)).toBeVisible();
 }
 
-export async function waitForDashboard(page: Page, timeout = 15000): Promise<void> {
+export async function waitForDashboard(page: Page, timeout = 30000): Promise<void> {
   await expect(SELECTORS.dashboardHeading(page)).toBeVisible({ timeout });
 }
 

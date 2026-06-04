@@ -1,37 +1,34 @@
 // tests/setup/global.setup.ts
 import { chromium, FullConfig } from '@playwright/test';
-import { LoginPage } from '../pages/auth/LoginPage';
+import { loginAs } from '../flows/auth/auth';
 import { loadTestEnv } from './env';
 
 loadTestEnv();
 
 const ROLES = [
   'MERCHANT_ADMIN',
-  'MERCHANT_STAFF',
+  'MERCHANT_STAFF', 
   'BRANCH_ADMIN',
   'BRANCH_STAFF',
 ];
 
 async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
+
   try {
     for (const role of ROLES) {
       console.log(`Generating auth state for ${role}`);
+
       const context = await browser.newContext();
       const page = await context.newPage();
+
       try {
-        const key = role.toUpperCase();
-        const username = process.env[`UAT_${key}_USER`]!;
-        const password = process.env[`UAT_${key}_PASSWORD`]!;
-
-        const loginPage = new LoginPage(page, context);
-        await loginPage.loginAs(username, password);
-
+        await loginAs(page, context, role);
         await context.storageState({
           path: `tests/setup/.auth/${role.toLowerCase()}.json`,
         });
       } catch (error) {
-        throw new Error(`Global setup failed for ${role}: ${(error as Error).message}`);
+        throw new Error(`Global setup login failed for ${role}: ${(error as Error).message}`);
       } finally {
         await context.close();
       }

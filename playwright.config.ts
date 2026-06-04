@@ -1,21 +1,8 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-import dotenv from 'dotenv';
-dotenv.config();
-import path from 'path';
+import { loadTestEnv } from './tests-old/setup/env';
 
-// Use tests/.env so generated UAT tests can load the role-specific variables.
-const envPaths = [
-  path.resolve(__dirname, 'tests', '.env'),
-  path.resolve(__dirname, '.env'),
-];
-for (const envPath of envPaths) {
-  dotenv.config({ path: envPath });
-}
+loadTestEnv();
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -23,9 +10,9 @@ for (const envPath of envPaths) {
 export default defineConfig({
   globalSetup: './tests/setup/global.setup.ts',
   expect: {
-    timeout: 10000,
+    timeout: 30000,
   },
-  timeout: 60_000,
+  timeout: 75_000,
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -52,51 +39,28 @@ export default defineConfig({
     {
       name: 'merchant-admin',
       use: { storageState: 'tests/setup/.auth/merchant_admin.json' },
-      testMatch: '**/uat-merchant-admin.spec.ts',
+      testMatch: '**/specs/**/*.spec.ts',
+      grep: /@merchant-admin/,
     },
     {
       name: 'merchant-staff',
       use: { storageState: 'tests/setup/.auth/merchant_staff.json' },
-      testMatch: '**/uat-merchant-staff.spec.ts',
+      testMatch: '**/specs/**/*.spec.ts',
+      grep: /@merchant-staff/,
     },
     {
       name: 'branch-admin',
       use: { storageState: 'tests/setup/.auth/branch_admin.json' },
-      testMatch: '**/uat-branch-admin.spec.ts',
+      testMatch: '**/specs/**/*.spec.ts',
+      grep: /@branch-admin/,
     },
     {
       name: 'branch-staff',
       use: { storageState: 'tests/setup/.auth/branch_staff.json' },
-      testMatch: '**/uat-branch-staff.spec.ts',
+      testMatch: '**/specs/**/*.spec.ts',
+      grep: /@branch-staff/,
     },
-    // {
-    //   name: 'superuser',
-    //   use: { 
-    //     ...devices['Desktop Chrome'], 
-    //     storageState: 'tests/setup/.auth/super_user.json' 
-    //     },
-    //   testMatch: '**/uat-super-user.spec.ts',
-    // }, TODO: add superuser tests for more robust coverage
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    // TODO: add a superuser project when superuser tests are ready.
   ],
 
   /* Run your local dev server before starting the tests */

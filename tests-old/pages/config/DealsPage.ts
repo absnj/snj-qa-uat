@@ -14,6 +14,7 @@ const SELECTORS = {
     configPage: (page: Page) => page.getByText('Configuration'), // config module on home page
     configHeading: (page: Page) => page.getByRole('heading', { name: 'Details' }), // heading on config page
     heading: (page: Page) => page.getByRole('heading', { name: 'Deal Approval' }), // heading on deal list page
+    loadingSpinner: (page: Page) => page.getByText('Loading Configuration module', { exact: true }),
     createButton: (page: Page) => page.getByRole('button', { name: 'Create' }), // create button on deal page 
     buildOptionsPage: (page: Page) => page.getByText('How do you want to build this'), // appears after clicking Create button
     dealRow: (page: Page, title: string) => page.getByRole('button', { name: title }),
@@ -107,8 +108,11 @@ export { SELECTORS };
 export async function navigateToDeals(page: Page): Promise<void> {
   await SELECTORS.nav.configuration(page).click();
   await expect(SELECTORS.list.configHeading(page)).toBeVisible();
+  await SELECTORS.list.loadingSpinner(page).waitFor({ state: 'detached' });
   await SELECTORS.nav.deals(page).click();
   await expect(SELECTORS.list.heading(page)).toBeVisible();
+  await SELECTORS.list.loadingSpinner(page).waitFor({ state: 'detached' });
+
 }
 
 export async function openCreateDealForm(page: Page): Promise<void> {

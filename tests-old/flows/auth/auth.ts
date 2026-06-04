@@ -25,8 +25,8 @@ function getUatUrl(): string {
 function getCredentials(normalizedRole: string): { username: string; password: string } {
   const roleKey = normalizedRole.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
   return {
-    username: process.env[`UAT_${roleKey}_USER`] ?? requiredEnv('UAT_USER'),
-    password: process.env[`UAT_${roleKey}_PASSWORD`] ?? requiredEnv('UAT_PASSWORD'),
+    username: requiredEnv(`UAT_${roleKey}_USER`),
+    password: requiredEnv(`UAT_${roleKey}_PASSWORD`),
   };
 }
 
@@ -36,7 +36,7 @@ function getCredentials(normalizedRole: string): { username: string; password: s
 
 export async function loginAs(page: Page, context: BrowserContext, normalizedRole: string): Promise<void> {
   const { username, password } = getCredentials(normalizedRole);
-  context.clearCookies();
+  await context.clearCookies();
   
   await page.goto(getUatUrl());
   await waitForLoginForm(page);
