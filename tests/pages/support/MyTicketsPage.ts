@@ -3,7 +3,7 @@ import { Page } from '@playwright/test';
 import { SupportBasePage } from './SupportBasePage';
 import { CreateTicketPage } from './CreateTicketPage';
 
-export class MyTicketsPage extends SupportBasePage {
+export class MyTicketsPage extends SupportBasePage { 
   private readonly createButton = this.page.getByRole('button', { name: 'Create' });
 
   constructor(page: Page) {

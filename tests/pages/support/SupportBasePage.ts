@@ -1,8 +1,8 @@
 // tests/pages/support/SupportBasePage.ts
 import { Page } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
-import { MyTicketsPage } from './MyTicketsPage';
-import { FaqPage } from './FaqPage';
+import type { MyTicketsPage } from './MyTicketsPage';
+import type { FaqPage } from './FaqPage';
 
 export abstract class SupportBasePage extends BasePage {
   // Sidebar links — available on every support page including forms
@@ -15,6 +15,7 @@ export abstract class SupportBasePage extends BasePage {
 
   async goToMyTickets(): Promise<MyTicketsPage> {
     await this.myTicketsLink.click();
+    const { MyTicketsPage } = require('./MyTicketsPage') as typeof import('./MyTicketsPage');
     const myTickets = new MyTicketsPage(this.page);
     await myTickets.waitForReady();
     return myTickets;
@@ -22,6 +23,7 @@ export abstract class SupportBasePage extends BasePage {
 
   async goToFaq(): Promise<FaqPage> {
     await this.faqLink.click();
+    const { FaqPage } = require('./FaqPage') as typeof import('./FaqPage');
     const faq = new FaqPage(this.page);
     await faq.waitForReady();
     return faq;
