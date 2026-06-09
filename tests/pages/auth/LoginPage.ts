@@ -2,7 +2,7 @@
 import { Page, BrowserContext, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import { HomePage } from '../home/HomePage';
-import { env } from '../../config/environments';
+import { getBaseUrl } from '../../config/environments';
 
 export class LoginPage extends BasePage {
   private readonly emailField    = this.page.getByRole('textbox', { name: 'Email Address' });
@@ -37,6 +37,9 @@ export class LoginPage extends BasePage {
   private async submit(): Promise<void> {
     await expect(this.signInButton).toBeEnabled();
     await this.signInButton.click();
+    await this.signInButton.click();
+    await this.signInButton.click();
+    await this.signInButton.click();
   }
 
   // ---------------------------------------------------------------------------
@@ -45,7 +48,7 @@ export class LoginPage extends BasePage {
 
   async loginAs(username: string, password: string): Promise<HomePage> {
     await this.context.clearCookies();
-    await this.page.goto(env.base);
+    await this.page.goto(getBaseUrl());
     await this.waitForReady();
 
     await this.fillEmail(username);
@@ -59,7 +62,7 @@ export class LoginPage extends BasePage {
 
   async loginWithInvalidCredentials(username: string, password: string): Promise<LoginPage> {
     await this.context.clearCookies();
-    await this.page.goto(env.base);
+    await this.page.goto(getBaseUrl());
     await this.page.evaluate(() => {
       localStorage.clear();
       sessionStorage.clear();

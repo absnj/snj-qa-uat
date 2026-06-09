@@ -5,7 +5,7 @@ export abstract class BasePage {
   constructor(protected readonly page: Page) {}
 
   async waitForReady(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.getByRole('img', { name: 'ShopNJoy' }).waitFor({ state: 'hidden'});
   }
 
   async screenshot(name: string): Promise<void> {

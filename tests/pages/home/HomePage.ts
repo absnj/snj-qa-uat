@@ -2,6 +2,7 @@
 import { Page, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import { MyTicketsPage } from '../support/MyTicketsPage';
+import { MyDetailsPage } from '../user-mgmt/MyDetailsPage';
 
 export class HomePage extends BasePage {
   readonly welcomeHeading  = this.page.getByRole('heading', { name: 'Welcome to ShopNJoy' });
@@ -54,13 +55,12 @@ export class HomePage extends BasePage {
   //   return config;
   // }
 
-  // async goToUserManagement(): Promise<UserManagementPage> {
-  //   await this.userManagementCard.click();
-  //   const { UserManagementPage } = await import('../userManagement/UserManagementPage');
-  //   const userMgmt = new UserManagementPage(this.page);
-  //   await userMgmt.waitForReady();
-  //   return userMgmt;
-  // }
+  async goToUserManagement(): Promise<MyDetailsPage> {
+    await this.userManagementCard.click();
+    const myDetails = new MyDetailsPage(this.page);
+    await myDetails.waitForReady();
+    return myDetails;
+  }
 
   async goToSupport(): Promise<MyTicketsPage> {
     await this.supportCard.click();

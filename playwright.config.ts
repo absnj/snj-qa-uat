@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
-import { loadTestEnv } from './tests-old/setup/env';
+import { loadTestEnv } from './tests/setup/env';
 
 loadTestEnv();
 
