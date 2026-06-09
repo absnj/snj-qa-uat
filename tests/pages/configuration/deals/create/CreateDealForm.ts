@@ -16,5 +16,4 @@ export abstract class CreateDealForm extends ConfigBasePage {
     }
 
     abstract fill(): Promise<void>;
-    abstract nextStep(): Promise<void>;
 }   

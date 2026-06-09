@@ -41,8 +41,7 @@ export class DealBuildOptions extends CreateDealForm {
         await this.njoyBuild.click();
         // TODO return step 2
     }
-
-
+}
 
 
 
