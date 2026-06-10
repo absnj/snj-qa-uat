@@ -37,9 +37,6 @@ export class LoginPage extends BasePage {
   private async submit(): Promise<void> {
     await expect(this.signInButton).toBeEnabled();
     await this.signInButton.click();
-    await this.signInButton.click();
-    await this.signInButton.click();
-    await this.signInButton.click();
   }
 
   // ---------------------------------------------------------------------------

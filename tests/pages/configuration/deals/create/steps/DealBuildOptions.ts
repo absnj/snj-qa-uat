@@ -25,7 +25,7 @@ export class DealBuildOptions extends CreateDealForm {
         await expect(this.pageTitle).toBeVisible();
     }
 
-    override async fill(): Promise<void> {
+    async nextPage(): Promise<void> {
         this.continue.click();
         await expect(this.branchSelectionHeading).toBeVisible();
     }

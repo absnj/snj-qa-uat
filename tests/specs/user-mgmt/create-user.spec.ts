@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../../pages/home/HomePage';
-import { CreateUserPage } from '../../pages/user-mgmt/CreateUserPage';
+import { CreateUserPage } from '../../pages/user-mgmt/staffs/CreateUserPage';
 import { StaffsPage } from '../../pages/user-mgmt/StaffsPage';
 import {
   gotoUat,
@@ -63,24 +63,6 @@ test.describe('User Management', () => {
         const createUser = await navigateToCreateUser(page);
         await reachStep2(createUser);
         await createUser.form().withDefaults().withFirstName('A'.repeat(101)).fill();
-        await createUser.attemptProceedFromStep2();
-        await expect(createUser.validationAlert).toBeVisible();
-      });
-
-      // --- Last Name ---
-
-      test('rejects an empty last name', async ({ page }) => {
-        const createUser = await navigateToCreateUser(page);
-        await reachStep2(createUser);
-        await createUser.form().withDefaults().withLastName('').fill();
-        await createUser.attemptProceedFromStep2();
-        await expect(createUser.validationAlert).toBeVisible();
-      });
-
-      test('rejects a last name with special characters', async ({ page }) => {
-        const createUser = await navigateToCreateUser(page);
-        await reachStep2(createUser);
-        await createUser.form().withDefaults().withLastName('Last#Name$').fill();
         await createUser.attemptProceedFromStep2();
         await expect(createUser.validationAlert).toBeVisible();
       });

@@ -4,7 +4,6 @@ export interface IFormStep<T> {
   next(): Promise<void>;
 }
 
-export interface ISubmitStep<T> {
-  fill(data: T): Promise<void>;
+export interface ISubmitStep {
   submit(): Promise<void>;
 }

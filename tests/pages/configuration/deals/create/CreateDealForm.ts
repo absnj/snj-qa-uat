@@ -15,5 +15,5 @@ export abstract class CreateDealForm extends ConfigBasePage {
         await expect(this.createDealHeader).toBeVisible();
     }
 
-    abstract fill(): Promise<void>;
+    abstract fill(data: any): Promise<void>;
 }   

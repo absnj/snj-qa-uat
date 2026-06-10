@@ -1,21 +1,15 @@
-import { Page } from '@playwright/test';
+import type { Page, Locator } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
-import type { StaffsPage } from './StaffsPage';
 
 export abstract class UserManagementBasePage extends BasePage {
-  private readonly userManagementLink = this.page.getByRole('link', { name: 'User Management User' });
-  readonly merchantStaffsLink = this.page.getByRole('link', { name: 'Merchant/Branch Staffs' });
+  readonly userManagementHeading: Locator; 
+  readonly userManagementLink: Locator;
+  readonly merchantStaffsLink: Locator;
 
   constructor(page: Page) {
     super(page);
+    this.userManagementHeading = this.page.getByRole('heading', { name: 'User Management' });
+    this.userManagementLink = this.page.getByRole('link', { name: 'User Management User' });
+    this.merchantStaffsLink = this.page.getByRole('link', { name: 'Merchant/Branch Staffs' });
   }
-
-  protected async navigateTo<T extends UserManagementBasePage>(
-    PageClass: new (page: Page) => T
-  ): Promise<T> {
-    const pageObject = new PageClass(this.page);
-    await pageObject.waitForReady();
-    return pageObject;
-  }
-  
 }
