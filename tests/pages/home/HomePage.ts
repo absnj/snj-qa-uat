@@ -2,7 +2,7 @@
 import { Page, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import { MyTicketsPage } from '../support/MyTicketsPage';
-import { MyDetailsPage } from '../user-mgmt/MyDetailsPage';
+import { MyDetailsPage } from '../user-mgmt/my-details/MyDetailsPage';
 
 export class HomePage extends BasePage {
   readonly welcomeHeading  = this.page.getByRole('heading', { name: 'Welcome to ShopNJoy' });

@@ -1,5 +1,6 @@
 import type { Page, Locator } from '@playwright/test';
 import { UserManagementBasePage } from '../UserManagementBasePage';
+import { SelectionStep } from './create/steps/SelectionStep'
 
 export class StaffsPage extends UserManagementBasePage {
   readonly createButton: Locator;
@@ -16,8 +17,9 @@ export class StaffsPage extends UserManagementBasePage {
     await this.staffsHeading.waitFor({ state: 'visible' });
   }
 
-  async openCreateStaffForm(): Promise<void> {
+  async openCreateStaffForm(): Promise<SelectionStep> {
     await this.createButton.click();
+    return new SelectionStep(this.page)
   }
 
 

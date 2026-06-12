@@ -23,4 +23,3 @@ export class DealsPage extends ConfigBasePage {
     }
 
 }
-

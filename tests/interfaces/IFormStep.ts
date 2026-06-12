@@ -1,9 +1,9 @@
 // tests/pages/interfaces/IFormStep.ts
-export interface IFormStep<T> {
-  fill(data: T): Promise<void>;
-  next(): Promise<void>;
+export interface IFormStep<Tdata, Tpage> {
+  fill(data: Tdata): Promise<void>;
+  next(): Promise<Tpage>;
 }
 
-export interface ISubmitStep {
-  submit(): Promise<void>;
+export interface ISubmitStep<T> {
+  submit(): Promise<T>;
 }
