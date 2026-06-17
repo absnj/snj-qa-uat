@@ -13,7 +13,7 @@ type UserData = {
     phone: string;
 }
 
-export class BasicInfoStep extends UserManagementBasePage implements IFormStep<UserData, ReviewStep> {
+export class BasicInfoStep extends UserManagementBasePage { 
     basicInfoHeading: Locator;
     nextButton: Locator;
     firstNameInput: Locator;

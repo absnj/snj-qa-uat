@@ -5,7 +5,7 @@ import { BasicInfoStep } from './BasicInfoStep';
 
 
 
-export class SelectionStep extends UserManagementBasePage implements IFormStep<void, BasicInfoStep> {
+export class SelectionStep extends UserManagementBasePage { 
     selectionHeading: Locator;
     nextButton: Locator;
     url: string;
