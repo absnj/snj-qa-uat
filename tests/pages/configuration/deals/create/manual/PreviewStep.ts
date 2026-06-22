@@ -25,7 +25,16 @@ export class PreviewStep extends ConfigBasePage {
         return new DealsPage(this.page);
     }
 
-    async verifyDealCreatedSuccess(): Promise<void> {
+    async submitAndExpectSuccess(): Promise<void> {
+        await this.createDealButton.click();
+        await this.expectDealCreatedSuccess();
+    }
+
+    async expectDealCreatedSuccess(): Promise<void> {
         await expect(this.successAlert).toBeVisible();
+    }
+
+    async verifyDealCreatedSuccess(): Promise<void> {
+        await this.expectDealCreatedSuccess();
     }
 }

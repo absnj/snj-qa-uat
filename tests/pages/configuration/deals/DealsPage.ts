@@ -4,17 +4,13 @@ import { ConfigBasePage } from '../ConfigBasePage';
 import { BranchSelection } from './create/BranchSelection';
 
 export class DealsPage extends ConfigBasePage {
-    readonly dealHeader: Locator;
-    readonly createDealButton: Locator;
-    readonly createDealTitle: Locator;
-    readonly openDealOptions: Locator;
+    private readonly dealHeader: Locator;
+    private readonly createDealButton: Locator;
 
     constructor(page: Page) {
         super(page);
         this.dealHeader = this.page.getByRole('heading', { name: 'Deal Approval' });
         this.createDealButton = this.page.getByRole('button', { name: 'Create' });
-        this.createDealTitle = this.page.getByRole('heading', { name: 'Create Deal' });
-        this.openDealOptions = this.page.getByRole('button', { name: 'Continue' });
     }
 
     override async waitForReady(): Promise<void> {
@@ -25,7 +21,17 @@ export class DealsPage extends ConfigBasePage {
     async openCreateDealForm(): Promise<BranchSelection> {
         await expect(this.createDealButton).toBeEnabled();
         await this.createDealButton.click();
-        return new BranchSelection(this.page);
+        const branchSelection = new BranchSelection(this.page);
+        await branchSelection.waitForReady();
+        return branchSelection;
+    }
+
+    async expectCreateDealAvailable(): Promise<void> {
+        await expect(this.createDealButton).toBeVisible();
+    }
+
+    async expectCreateDealUnavailable(): Promise<void> {
+        await expect(this.createDealButton).not.toBeVisible();
     }
 
 }

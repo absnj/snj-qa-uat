@@ -15,7 +15,7 @@ export class HomePage extends BasePage {
   private readonly trackCard          = this.page.getByRole('link', { name: /Track/ });
   private readonly financeCard        = this.page.getByRole('link', { name: /Finance/ });
   private readonly messageCard        = this.page.getByRole('link', { name: /Message/ });
-  private readonly configurationCard  = this.page.getByRole('link', { name: /Configuration/ });
+  private readonly configurationCard  = this.page.getByRole('link', { name: "Configuration Merchants," });
   private readonly userManagementCard = this.page.getByRole('link', { name: /User Management/ });
   private readonly supportCard        = this.page.getByRole('link', { name: /Support/ });
 

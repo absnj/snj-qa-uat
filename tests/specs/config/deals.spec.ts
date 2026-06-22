@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, type Page } from '@playwright/test';
 import { HomePage } from '@pages/home/HomePage';
 import { DealsPage } from '@pages/configuration/deals/DealsPage';
 import { BranchSelection } from '@pages/configuration/deals/create/BranchSelection';
@@ -31,6 +31,7 @@ type DealData = {
 };
 
 type DealFormFixtures = {
+  dealData: DealData;
   branchSelection: BranchSelection;
   generalDetailsStep: GeneralDetailsStep;
   dateTimeStep: DateTimeStep;
@@ -40,55 +41,51 @@ type DealFormFixtures = {
 };
 
 const formTest = test.extend<DealFormFixtures>({
+  dealData: async ({}, use) => {
+    await use(validDeal());
+  },
+
   branchSelection: async ({ page }, use) => {
     const branchSelection = new BranchSelection(page);
     await branchSelection.goto();
-    await branchSelection.waitForReady();
     await use(branchSelection);
   },
 
   generalDetailsStep: async ({ branchSelection }, use) => {
     const buildOptions = await branchSelection.next();
-    await buildOptions.waitForReady();
-
     const generalDetailsStep = await buildOptions.buildManual();
-    await generalDetailsStep.waitForReady();
     await use(generalDetailsStep);
   },
 
-  dateTimeStep: async ({ generalDetailsStep }, use) => {
-    await generalDetailsStep.fill(validDeal());
-
+  dateTimeStep: async ({ dealData, generalDetailsStep }, use) => {
+    await generalDetailsStep.fill(dealData);
     const dateTimeStep = await generalDetailsStep.next();
-    await dateTimeStep.waitForReady();
     await use(dateTimeStep);
   },
 
-  amountStep: async ({ dateTimeStep }, use) => {
-    await dateTimeStep.fill(validDeal());
-
+  amountStep: async ({ dealData, dateTimeStep }, use) => {
+    await dateTimeStep.fill(dealData);
     const amountStep = await dateTimeStep.next();
-    await amountStep.waitForReady();
     await use(amountStep);
   },
 
-  tncStep: async ({ amountStep }, use) => {
-    await amountStep.fill(validDeal());
-
+  tncStep: async ({ dealData, amountStep }, use) => {
+    await amountStep.fill(dealData);
     const tncStep = await amountStep.next();
-    await tncStep.waitForReady();
     await use(tncStep);
   },
 
-  previewStep: async ({ tncStep }, use) => {
-    const dealData = validDeal();
+  previewStep: async ({ dealData, tncStep }, use) => {
     await tncStep.fill({ terms: dealData.terms });
-
     const previewStep = await tncStep.next();
-    await previewStep.waitForReady();
     await use(previewStep);
   },
 });
+
+function futureDate(daysFromNow: number): string {
+  const date = new Date(Date.now() + daysFromNow * 24 * 60 * 60 * 1000);
+  return date.toISOString().slice(0, 10);
+}
 
 function validDeal(overrides: Partial<DealData> = {}): DealData {
   return {
@@ -96,8 +93,8 @@ function validDeal(overrides: Partial<DealData> = {}): DealData {
     desc: 'Test deal description',
     fullDesc: 'Full description for an automated UAT deal.',
     keywords: ['uat', 'deal', 'test'],
-    startDate: '2026-07-01',
-    endDate: '2026-07-31',
+    startDate: futureDate(7),
+    endDate: futureDate(30),
     startHour: '09',
     startMin: '00',
     endHour: '23',
@@ -115,15 +112,7 @@ async function navigateToDeals(page: Page): Promise<DealsPage> {
   await home.goto();
 
   const configOverview = await home.goToConfiguration();
-  await configOverview.dealsTab.click();
-
-  const dealsPage = new DealsPage(page);
-  await dealsPage.waitForReady();
-  return dealsPage;
-}
-
-async function expectValidationError(page: Page): Promise<void> {
-  await expect(page.getByRole('alert', { name: 'Please fix the following' })).toBeVisible();
+  return configOverview.goToDeals();
 }
 
 test.describe('Configuration - Deals', () => {
@@ -136,152 +125,149 @@ test.describe('Configuration - Deals', () => {
       test('creates a deal successfully', async ({ page }) => {
         const dealsPage = await navigateToDeals(page);
         const branchSelection = await dealsPage.openCreateDealForm();
-        await branchSelection.waitForReady();
 
         const dealData = validDeal();
 
         const buildOptions = await branchSelection.next();
-        await buildOptions.waitForReady();
-
         const generalDetailsStep = await buildOptions.buildManual();
-        await generalDetailsStep.waitForReady();
         await generalDetailsStep.fill(dealData);
 
         const dateTimeStep = await generalDetailsStep.next();
-        await dateTimeStep.waitForReady();
         await dateTimeStep.fill(dealData);
 
         const amountStep = await dateTimeStep.next();
-        await amountStep.waitForReady();
         await amountStep.fill(dealData);
 
         const tncStep = await amountStep.next();
-        await tncStep.waitForReady();
         await tncStep.fill({ terms: dealData.terms });
 
         const previewStep = await tncStep.next();
-        await previewStep.waitForReady();
-        await previewStep.submit();
-        await previewStep.verifyDealCreatedSuccess();
+        await previewStep.submitAndExpectSuccess();
       });
     });
   }
 
   for (const role of DEAL_CREATOR_ROLES) {
     formTest.describe(`${role.label} validation ${role.tag}`, () => {
-      formTest('rejects an empty deal title', async ({ page, generalDetailsStep }) => {
-        await generalDetailsStep.fill(validDeal({ title: '' }));
-        await generalDetailsStep.next();
-        await expectValidationError(page);
+      formTest('rejects an empty deal title', async ({ dealData, generalDetailsStep }) => {
+        await generalDetailsStep.fill({ ...dealData, title: '' });
+        await generalDetailsStep.nextExpectingValidationError();
+        await generalDetailsStep.expectTitleValidationError();
       });
 
-      formTest('rejects a deal title over 50 characters', async ({ page, generalDetailsStep }) => {
-        await generalDetailsStep.fill(validDeal({ title: 'a'.repeat(51) }));
-        await generalDetailsStep.next();
-        await expectValidationError(page);
+      formTest('rejects a deal title over 50 characters', async ({ dealData, generalDetailsStep }) => {
+        await generalDetailsStep.fill({ ...dealData, title: 'a'.repeat(51) });
+        await generalDetailsStep.nextExpectingValidationError();
+        await generalDetailsStep.expectTitleValidationError();
       });
 
-      formTest('rejects an empty description', async ({ page, generalDetailsStep }) => {
-        await generalDetailsStep.fill(validDeal({ desc: '' }));
-        await generalDetailsStep.next();
-        await expectValidationError(page);
+      formTest('rejects an empty description', async ({ dealData, generalDetailsStep }) => {
+        await generalDetailsStep.fill({ ...dealData, desc: '' });
+        await generalDetailsStep.nextExpectingValidationError();
+        await generalDetailsStep.expectDescriptionValidationError();
       });
 
-      formTest('rejects a description over 100 characters', async ({ page, generalDetailsStep }) => {
-        await generalDetailsStep.fill(validDeal({ desc: 'a'.repeat(101) }));
-        await generalDetailsStep.next();
-        await expectValidationError(page);
+      formTest('rejects a description over 100 characters', async ({ dealData, generalDetailsStep }) => {
+        await generalDetailsStep.fill({ ...dealData, desc: 'a'.repeat(101) });
+        await generalDetailsStep.nextExpectingValidationError();
+        await generalDetailsStep.expectDescriptionValidationError();
       });
 
-      formTest('rejects an empty start date', async ({ page, dateTimeStep }) => {
-        await dateTimeStep.fill(validDeal({ startDate: '' }));
-        await dateTimeStep.next();
-        await expectValidationError(page);
+      formTest('rejects an empty start date', async ({ dealData, dateTimeStep }) => {
+        await dateTimeStep.fill({ ...dealData, startDate: '' });
+        await dateTimeStep.nextExpectingValidationError();
+        await dateTimeStep.expectStartDateValidationError();
       });
 
-      formTest('rejects an empty end date', async ({ page, dateTimeStep }) => {
-        await dateTimeStep.fill(validDeal({ endDate: '' }));
-        await dateTimeStep.next();
-        await expectValidationError(page);
+      formTest('rejects an empty end date', async ({ dealData, dateTimeStep }) => {
+        await dateTimeStep.fill({ ...dealData, endDate: '' });
+        await dateTimeStep.nextExpectingValidationError();
+        await dateTimeStep.expectEndDateValidationError();
       });
 
-      formTest('rejects an end date before the start date', async ({ page, dateTimeStep }) => {
+      formTest('rejects an end date before the start date', async ({ dealData, dateTimeStep }) => {
         await dateTimeStep.fill(
-          validDeal({
-            startDate: '2026-07-31',
-            endDate: '2026-07-01',
-          }),
+          {
+            ...dealData,
+            startDate: futureDate(30),
+            endDate: futureDate(7),
+          },
         );
-        await dateTimeStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('End date must be after start')).toBeVisible();
+        await dateTimeStep.nextExpectingValidationError();
+        await dateTimeStep.expectEndDateBeforeStartError();
       });
 
-      formTest('rejects an end time before the start time', async ({ page, dateTimeStep }) => {
+      formTest('rejects an end time before the start time', async ({ dealData, dateTimeStep }) => {
         await dateTimeStep.fill(
-          validDeal({
-            startDate: '2026-07-01',
-            endDate: '2026-07-01',
+          {
+            ...dealData,
+            startDate: dealData.startDate,
+            endDate: dealData.startDate,
             startHour: '23',
             startMin: '58',
             endHour: '09',
             endMin: '00',
-          }),
+          },
         );
-        await dateTimeStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText(/End (date|time) must be after start/i)).toBeVisible();
+        await dateTimeStep.nextExpectingValidationError();
+        await dateTimeStep.expectEndTimeBeforeStartError();
       });
 
-      formTest('rejects a zero deal value', async ({ page, amountStep }) => {
-        await amountStep.fill(validDeal({ dealValue: '0' }));
-        await amountStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('Deal value must be greater')).toBeVisible();
+      formTest('rejects a zero deal value', async ({ amountStep }) => {
+        await amountStep.fillDealValue('0');
+        await amountStep.nextExpectingValidationError();
+        await amountStep.expectDealValueValidationError();
       });
 
-      formTest('rejects an empty deal value', async ({ page, amountStep }) => {
-        await amountStep.fill(validDeal({ dealValue: '' }));
-        await amountStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('Deal value must be greater')).toBeVisible();
+      formTest('rejects an empty deal value', async ({ amountStep }) => {
+        await amountStep.fillDealValue('');
+        await amountStep.nextExpectingValidationError();
+        await amountStep.expectDealValueValidationError();
       });
 
-      formTest('rejects a negative deal value', async ({ page, amountStep }) => {
-        await amountStep.fill(validDeal({ dealValue: '-1' }));
-        await amountStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('Deal value must be greater')).toBeVisible();
+      formTest('rejects a negative deal value', async ({ amountStep }) => {
+        await amountStep.fillDealValue('-1');
+        await amountStep.nextExpectingValidationError();
+        await amountStep.expectDealValueValidationError();
       });
 
-      formTest('rejects a zero quantity', async ({ page, amountStep }) => {
-        await amountStep.fill(validDeal({ currentQuantity: '0' }));
-        await amountStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('Quantity must be greater than')).toBeVisible();
+      formTest('rejects a zero quantity', async ({ amountStep }) => {
+        await amountStep.toggleUnlimitedQuantity();
+        await amountStep.fillCurrentQuantity('0');
+        await amountStep.nextExpectingValidationError();
+        await amountStep.expectQuantityValidationError();
       });
 
-      formTest('rejects a negative quantity', async ({ page, amountStep }) => {
-        await amountStep.fill(validDeal({ currentQuantity: '-1' }));
-        await amountStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('Quantity must be greater than')).toBeVisible();
+      formTest('rejects a negative quantity', async ({ amountStep }) => {
+        await amountStep.toggleUnlimitedQuantity();
+        await amountStep.fillCurrentQuantity('-1');
+        await amountStep.nextExpectingValidationError();
+        await amountStep.expectQuantityValidationError();
       });
 
-      formTest('rejects empty terms and conditions', async ({ page, tncStep }) => {
+      formTest('rejects empty terms and conditions', async ({ tncStep }) => {
         await tncStep.clearTermsAndConditions();
-        await tncStep.next();
-        await expectValidationError(page);
-        await expect(page.getByText('Terms & Conditions are required', { exact: true })).toBeVisible();
+        await tncStep.nextExpectingValidationError();
+        await tncStep.expectTermsRequiredError();
       });
 
-      formTest('rejects a deal value percentage over 100', async ({ page, amountStep }) => {
-        await amountStep.fill(validDeal({ dealValue: '101' }));
-        await amountStep.next();
-        await expectValidationError(page);
-        await expect(
-          page.getByText('Percentage deal value must be between 0 and 100', { exact: true }),
-        ).toBeVisible();
+      formTest('rejects a deal value percentage over 100', async ({ amountStep }) => {
+        await amountStep.fillDealValue('101');
+        await amountStep.nextExpectingValidationError();
+        await amountStep.expectPercentageDealValueValidationError();
+      });
+    });
+  }
+
+  for (const role of DEAL_READ_ONLY_ROLES) {
+    test.describe(`${role.label} ${role.tag}`, () => {
+      test('shows the deal list', async ({ page }) => {
+        await navigateToDeals(page);
+      });
+
+      test('does not show the create deal button', async ({ page }) => {
+        const dealsPage = await navigateToDeals(page);
+        await dealsPage.expectCreateDealUnavailable();
       });
     });
   }

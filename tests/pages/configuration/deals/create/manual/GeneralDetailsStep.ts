@@ -17,6 +17,7 @@ export class GeneralDetailsStep extends ConfigBasePage {
     private readonly inputFullDesc: Locator;
     private readonly inputKeywords: Locator;
     private readonly keywordLimitMessage: Locator;
+    private readonly validationError: Locator;
     private readonly nextButton: Locator;
 
     constructor(page: Page) {
@@ -27,6 +28,7 @@ export class GeneralDetailsStep extends ConfigBasePage {
         this.inputFullDesc = this.page.locator('.tiptap');
         this.inputKeywords = this.page.getByRole('textbox', { name: 'Type keywords and press Enter' });
         this.keywordLimitMessage = this.page.getByText('Maximum 7 keywords allowed');
+        this.validationError = this.page.getByRole('alert', { name: 'Please fix the following' });
         this.nextButton = this.page.getByRole('button', { name: 'Next', exact: true });
     }
 
@@ -44,35 +46,54 @@ export class GeneralDetailsStep extends ConfigBasePage {
 
     async next(): Promise<DateTimeStep> {
         await this.nextButton.click();
-        return new DateTimeStep(this.page);
+        const dateTimeStep = new DateTimeStep(this.page);
+        await dateTimeStep.waitForReady();
+        return dateTimeStep;
+    }
+
+    async nextExpectingValidationError(): Promise<void> {
+        await this.nextButton.click();
+        await this.expectValidationError();
+    }
+
+    async expectTitleValidationError(): Promise<void> {
+        await this.expectValidationError();
+    }
+
+    async expectDescriptionValidationError(): Promise<void> {
+        await this.expectValidationError();
+    }
+
+    async expectValidationError(): Promise<void> {
+        await expect(this.validationError).toBeVisible();
     }
 
     async verifyKeywordLimit(): Promise<void> {
         await expect(this.keywordLimitMessage).toBeVisible();
     }
 
-    private async fillDealTitle(value: string): Promise<void> {
+    async fillDealTitle(value: string): Promise<void> {
         await this.inputDealTitle.click();
         await this.inputDealTitle.fill(value);
     }
 
-    private async fillDescription(value: string): Promise<void> {
+    async fillDescription(value: string): Promise<void> {
         await this.inputDesc.click();
         await this.inputDesc.fill(value);
     }
 
-    private async fillFullDescription(value: string): Promise<void> {
+    async fillFullDescription(value: string): Promise<void> {
         await this.inputFullDesc.click();
         await this.inputFullDesc.fill(value);
     }
 
-    private async addKeyword(keyword: string): Promise<void> {
+    async addKeyword(keyword: string): Promise<void> {
         await this.inputKeywords.click();
         await this.inputKeywords.fill(keyword);
         await this.inputKeywords.press('Enter');
     }
 
-    private async addKeywords(keywords: string[]): Promise<void> {
+    async addKeywords(keywords: string[]): Promise<void> {
         for (const keyword of keywords) {
             await this.addKeyword(keyword);
         }

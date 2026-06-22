@@ -21,7 +21,7 @@ export class DateTimeStep extends ConfigBasePage {
     private readonly hourDropdown: Locator;
     private readonly minDropdown: Locator;
     private readonly dateRangeError: Locator;
-    private readonly dateRangeErrorMessage: Locator;
+    private readonly dateTimeRangeError: Locator;
     private readonly nextButton: Locator;
 
     constructor(page: Page) {
@@ -34,7 +34,7 @@ export class DateTimeStep extends ConfigBasePage {
         this.hourDropdown = this.page.getByRole('combobox').first();
         this.minDropdown = this.page.getByRole('combobox').nth(1);
         this.dateRangeError = this.page.getByRole('alert', { name: 'Please fix the following' });
-        this.dateRangeErrorMessage = this.page.getByText('• End date', { exact: true });
+        this.dateTimeRangeError = this.page.getByText(/End (date|time) must be after start/i);
         this.nextButton = this.page.getByRole('button', { name: 'Next', exact: true });
     }
 
@@ -52,26 +52,55 @@ export class DateTimeStep extends ConfigBasePage {
 
     async next(): Promise<AmountStep> {
         await this.nextButton.click();
-        return new AmountStep(this.page);
+        const amountStep = new AmountStep(this.page);
+        await amountStep.waitForReady();
+        return amountStep;
     }
 
-    private async fillStartDate(value: string): Promise<void> {
+    async nextExpectingValidationError(): Promise<void> {
+        await this.nextButton.click();
+        await this.expectValidationError();
+    }
+
+    async expectStartDateValidationError(): Promise<void> {
+        await this.expectValidationError();
+    }
+
+    async expectEndDateValidationError(): Promise<void> {
+        await this.expectValidationError();
+    }
+
+    async expectEndDateBeforeStartError(): Promise<void> {
+        await this.expectValidationError();
+        await expect(this.dateTimeRangeError).toBeVisible();
+    }
+
+    async expectEndTimeBeforeStartError(): Promise<void> {
+        await this.expectValidationError();
+        await expect(this.dateTimeRangeError).toBeVisible();
+    }
+
+    async expectValidationError(): Promise<void> {
+        await expect(this.dateRangeError).toBeVisible();
+    }
+
+    async fillStartDate(value: string): Promise<void> {
         await this.startDateInput.click();
         await this.startDateInput.fill(value);
     }
 
-    private async fillEndDate(value: string): Promise<void> {
+    async fillEndDate(value: string): Promise<void> {
         await this.endDateInput.click();
         await this.endDateInput.fill(value);
     }
 
-    private async fillStartTime(hour: string, min: string): Promise<void> {
+    async fillStartTime(hour: string, min: string): Promise<void> {
         await this.startTimeButton.click();
         await this.hourDropdown.selectOption(hour);
         await this.minDropdown.selectOption(min);
     }
 
-    private async fillEndTime(hour: string, min: string): Promise<void> {
+    async fillEndTime(hour: string, min: string): Promise<void> {
         await this.endTimeButton.click();
         await this.hourDropdown.selectOption(hour);
         await this.minDropdown.selectOption(min);

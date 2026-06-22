@@ -17,6 +17,10 @@ export class AmountStep extends ConfigBasePage {
     private readonly minimumSpendInput: Locator;
     private readonly unlimitedQuantityToggle: Locator;
     private readonly currentQuantityInput: Locator;
+    private readonly validationError: Locator;
+    private readonly dealValueError: Locator;
+    private readonly percentageDealValueError: Locator;
+    private readonly quantityError: Locator;
     private readonly nextButton: Locator;
 
     constructor(page: Page) {
@@ -27,6 +31,10 @@ export class AmountStep extends ConfigBasePage {
         this.minimumSpendInput = this.page.getByText('Minimum Spend Minimum amount').getByRole('spinbutton');
         this.unlimitedQuantityToggle = this.page.getByRole('switch');
         this.currentQuantityInput = this.page.getByRole('spinbutton').nth(2);
+        this.validationError = this.page.getByRole('alert', { name: 'Please fix the following' });
+        this.dealValueError = this.page.getByText('Deal value must be greater');
+        this.percentageDealValueError = this.page.getByText('Percentage deal value must be between 0 and 100', { exact: true });
+        this.quantityError = this.page.getByText('Quantity must be greater than');
         this.nextButton = this.page.getByRole('button', { name: 'Next', exact: true });
     }
 
@@ -49,28 +57,54 @@ export class AmountStep extends ConfigBasePage {
 
     async next(): Promise<TncStep> {
         await this.nextButton.click();
-        return new TncStep(this.page);
+        const tncStep = new TncStep(this.page);
+        await tncStep.waitForReady();
+        return tncStep;
+    }
+
+    async nextExpectingValidationError(): Promise<void> {
+        await this.nextButton.click();
+        await this.expectValidationError();
+    }
+
+    async expectDealValueValidationError(): Promise<void> {
+        await this.expectValidationError();
+        await expect(this.dealValueError).toBeVisible();
+    }
+
+    async expectPercentageDealValueValidationError(): Promise<void> {
+        await this.expectValidationError();
+        await expect(this.percentageDealValueError).toBeVisible();
+    }
+
+    async expectQuantityValidationError(): Promise<void> {
+        await this.expectValidationError();
+        await expect(this.quantityError).toBeVisible();
+    }
+
+    async expectValidationError(): Promise<void> {
+        await expect(this.validationError).toBeVisible();
     }
 
     async selectDealValueType(value: string): Promise<void> {
         await this.dealValueTypeToggle.selectOption(value);
     }
 
-    private async fillDealValue(value: string): Promise<void> {
+    async fillDealValue(value: string): Promise<void> {
         await this.dealValueInput.click();
         await this.dealValueInput.fill(value);
     }
 
-    private async fillMinimumSpend(value: string): Promise<void> {
+    async fillMinimumSpend(value: string): Promise<void> {
         await this.minimumSpendInput.click();
         await this.minimumSpendInput.fill(value);
     }
 
-    private async toggleUnlimitedQuantity(): Promise<void> {
+    async toggleUnlimitedQuantity(): Promise<void> {
         await this.unlimitedQuantityToggle.click();
     }
 
-    private async fillCurrentQuantity(value: string): Promise<void> {
+    async fillCurrentQuantity(value: string): Promise<void> {
         await this.currentQuantityInput.click();
         await this.currentQuantityInput.fill(value);
     }

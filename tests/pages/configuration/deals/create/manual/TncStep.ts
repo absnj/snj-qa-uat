@@ -12,6 +12,8 @@ export class TncStep extends ConfigBasePage {
     private readonly pageTitle: Locator;
     private readonly termsEditor: Locator;
     private readonly resetButton: Locator;
+    private readonly validationError: Locator;
+    private readonly termsRequiredError: Locator;
     private readonly nextButton: Locator;
 
     constructor(page: Page) {
@@ -19,6 +21,8 @@ export class TncStep extends ConfigBasePage {
         this.pageTitle = this.page.locator('form').getByText('Terms & Conditions');
         this.termsEditor = this.page.locator('.tiptap');
         this.resetButton = this.page.getByRole('button', { name: 'Reset to Auto-generated' });
+        this.validationError = this.page.getByRole('alert', { name: 'Please fix the following' });
+        this.termsRequiredError = this.page.getByText('Terms & Conditions are required', { exact: true });
         this.nextButton = this.page.getByRole('button', { name: 'Next', exact: true });
     }
 
@@ -39,12 +43,28 @@ export class TncStep extends ConfigBasePage {
 
     async next(): Promise<PreviewStep> {
         await this.nextButton.click();
-        return new PreviewStep(this.page);
+        const previewStep = new PreviewStep(this.page);
+        await previewStep.waitForReady();
+        return previewStep;
+    }
+
+    async nextExpectingValidationError(): Promise<void> {
+        await this.nextButton.click();
+        await this.expectValidationError();
+    }
+
+    async expectTermsRequiredError(): Promise<void> {
+        await this.expectValidationError();
+        await expect(this.termsRequiredError).toBeVisible();
+    }
+
+    async expectValidationError(): Promise<void> {
+        await expect(this.validationError).toBeVisible();
     }
 
     async clearTermsAndConditions(): Promise<void> {
         await this.termsEditor.click();
-        await this.page.keyboard.press('Meta+a');
+        await this.page.keyboard.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
         await this.page.keyboard.press('Backspace');
     }
 

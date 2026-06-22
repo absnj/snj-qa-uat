@@ -3,11 +3,6 @@ import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
 import { DealBuildOptions } from './DealBuildOptions';
 
-type BranchSelectionData = {
-    branches?: string[];
-    allBranches?: boolean;
-};
-
 export class BranchSelection extends ConfigBasePage {
     private readonly pageTitle: Locator;
     private readonly continueButton: Locator;
@@ -31,10 +26,13 @@ export class BranchSelection extends ConfigBasePage {
     async next(): Promise<DealBuildOptions> {
         await expect(this.continueButton).toBeEnabled();
         await this.continueButton.click();
-        return new DealBuildOptions(this.page);
+        const dealBuildOptions = new DealBuildOptions(this.page);
+        await dealBuildOptions.waitForReady();
+        return dealBuildOptions;
     }
 
     async goto(): Promise<void> {
         await this.page.goto(this.url);
+        await this.waitForReady();
     }
 }

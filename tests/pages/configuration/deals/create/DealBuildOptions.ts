@@ -24,7 +24,9 @@ export class DealBuildOptions extends ConfigBasePage {
     async buildManual(): Promise<GeneralDetailsStep> {
         await expect(this.createManual).toBeEnabled();
         await this.createManual.click();
-        return new GeneralDetailsStep(this.page);
+        const generalDetailsStep = new GeneralDetailsStep(this.page);
+        await generalDetailsStep.waitForReady();
+        return generalDetailsStep;
     }
 
     async nJoyBuild(): Promise<void> {
