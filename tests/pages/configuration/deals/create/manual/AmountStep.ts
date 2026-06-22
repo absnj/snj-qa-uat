@@ -39,14 +39,12 @@ export class AmountStep extends ConfigBasePage {
         await this.fillDealValue(data.dealValue);
         await this.fillMinimumSpend(data.minimumSpend);
 
-        if (data.unlimitedQuantity) {
-            await this.toggleUnlimitedQuantity();
-            return;
-        }
-
+        if (data.unlimitedQuantity) { return; }
         if (data.currentQuantity) {
+            await this.toggleUnlimitedQuantity();
             await this.fillCurrentQuantity(data.currentQuantity);
         }
+        return;
     }
 
     async next(): Promise<TncStep> {

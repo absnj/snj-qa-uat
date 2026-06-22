@@ -3,6 +3,7 @@ import { Page, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import { MyTicketsPage } from '../support/MyTicketsPage';
 import { MyDetailsPage } from '../user-mgmt/my-details/MyDetailsPage';
+import { ConfigOverview } from '../configuration/overview/ConfigOverview'
 
 export class HomePage extends BasePage {
   readonly welcomeHeading  = this.page.getByRole('heading', { name: 'Welcome to ShopNJoy' });
@@ -47,13 +48,12 @@ export class HomePage extends BasePage {
   //   return finance;
   // }
 
-  // async goToConfiguration(): Promise<ConfigurationPage> {
-  //   await this.configurationCard.click();
-  //   const { ConfigurationPage } = await import('../configuration/ConfigurationPage');
-  //   const config = new ConfigurationPage(this.page);
-  //   await config.waitForReady();
-  //   return config;
-  // }
+  async goToConfiguration(): Promise<ConfigOverview> {
+    await this.configurationCard.click();
+    const config = new ConfigOverview(this.page); 
+    await config.waitForReady();
+    return config;
+  }
 
   async goToUserManagement(): Promise<MyDetailsPage> {
     await this.userManagementCard.click();

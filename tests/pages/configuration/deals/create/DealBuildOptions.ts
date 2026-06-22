@@ -11,7 +11,7 @@ export class DealBuildOptions extends ConfigBasePage {
 
     constructor(page: Page) {
         super(page);
-        this.pageTitle = this.page.getByText('How do you want to build this deal', { exact: true });
+        this.pageTitle = this.page.getByText('How do you want to build this');
         this.createManual = page.getByRole('button', { name: 'Manual Walk through each step' });
         this.njoyBuild = page.getByRole('button', { name: 'NJoyBuild Credit NJoyBuild' });
     }

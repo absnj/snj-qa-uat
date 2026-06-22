@@ -24,7 +24,7 @@ export class GeneralDetailsStep extends ConfigBasePage {
         this.pageTitle = this.page.locator('form').getByText('General Details');
         this.inputDealTitle = this.page.getByRole('textbox').first();
         this.inputDesc = this.page.locator('textarea');
-        this.inputFullDesc = this.page.getByPlaceholder('Type something...');
+        this.inputFullDesc = this.page.locator('.tiptap');
         this.inputKeywords = this.page.getByRole('textbox', { name: 'Type keywords and press Enter' });
         this.keywordLimitMessage = this.page.getByText('Maximum 7 keywords allowed');
         this.nextButton = this.page.getByRole('button', { name: 'Next', exact: true });
