@@ -1,6 +1,5 @@
 import type { Page, Locator } from '@playwright/test';
 import { UserManagementBasePage } from '../../../UserManagementBasePage';
-import { IFormStep } from 'tests/interfaces/IFormStep';
 import { ReviewStep } from './ReviewStep'
 
 type UserData = {

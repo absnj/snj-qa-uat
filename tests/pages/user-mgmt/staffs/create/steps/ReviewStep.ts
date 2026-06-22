@@ -1,7 +1,6 @@
 import type { Page, Locator } from '@playwright/test';
 import { UserManagementBasePage } from '../../../UserManagementBasePage';
 import { StaffsPage } from '../../StaffsPage'
-import { ISubmitStep } from 'tests/interfaces/IFormStep';
 
 export class ReviewStep extends UserManagementBasePage { 
     reviewHeading: Locator;
