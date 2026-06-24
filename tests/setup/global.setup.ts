@@ -24,7 +24,7 @@ async function globalSetup(_config: FullConfig) {
   await fs.mkdir('tests/setup/traces', { recursive: true });
 
   const browser = await chromium.launch({
-  headless: false, // try headed first to confirm
+  headless: true, // try headed first to confirm
   args: [
     '--disable-blink-features=AutomationControlled',
   ]
