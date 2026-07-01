@@ -66,6 +66,13 @@ export const LOYALTY_READ_ONLY_ROLES = [
   ROLES.branchStaff,
 ];
 
+export const NJOYBOOK_CONFIG_ROLES = [
+  ROLES.merchantAdmin,
+  ROLES.branchAdmin,
+  ROLES.merchantStaff,
+  ROLES.branchStaff,
+]
+
 export async function gotoUat(page: Page): Promise<void> {
   await page.goto(process.env.UAT_URL!);
 }
