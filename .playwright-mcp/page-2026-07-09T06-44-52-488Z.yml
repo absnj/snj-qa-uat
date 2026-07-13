@@ -1,0 +1,193 @@
+- generic [ref=f21e1]:
+  - generic [ref=f21e7]:
+    - generic [ref=f21e8]:
+      - generic [ref=f21e10]:
+        - button "Open navigation menu" [ref=f21e13] [cursor=pointer]:
+          - img [ref=f21e14]
+        - link "Shop n Joy Logo" [ref=f21e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f21e18]
+        - button "Hi, Regina" [ref=f21e20] [cursor=pointer]:
+          - generic [ref=f21e22]: Hi, Regina
+      - main [ref=f21e24]:
+        - generic [ref=f21e25]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f21e32]:
+            - generic [ref=f21e33]:
+              - button "Back" [ref=f21e34]:
+                - img [ref=f21e35]
+              - button "Details" [ref=f21e37] [cursor=pointer]:
+                - img [ref=f21e38]
+                - text: Details
+              - button "Schedule" [ref=f21e40] [cursor=pointer]:
+                - img [ref=f21e41]
+                - text: Schedule
+              - button "NJoyBook" [ref=f21e43] [cursor=pointer]:
+                - img [ref=f21e44]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f21e46] [cursor=pointer]:
+                - img [ref=f21e47]
+                - text: Smart QR
+              - button "Media" [ref=f21e49] [cursor=pointer]:
+                - img [ref=f21e50]
+                - text: Media
+              - button "Logs" [ref=f21e52] [cursor=pointer]:
+                - img [ref=f21e53]
+                - text: Logs
+              - button "Remarks" [ref=f21e55] [cursor=pointer]:
+                - img [ref=f21e56]
+                - text: Remarks
+            - generic [ref=f21e58]:
+              - heading "NJoyBook" [level=3] [ref=f21e60]
+              - generic [ref=f21e62]:
+                - tablist "NJoyBook Menu" [ref=f21e64]:
+                  - paragraph [ref=f21e65]: NJoyBook Menu
+                  - generic [ref=f21e66]:
+                    - button "Bookings" [ref=f21e67] [cursor=pointer]:
+                      - img [ref=f21e68]
+                      - text: Bookings
+                    - button "Guest History" [ref=f21e70] [cursor=pointer]:
+                      - img [ref=f21e71]
+                      - text: Guest History
+                    - button "Rules" [ref=f21e73] [cursor=pointer]:
+                      - img [ref=f21e74]
+                      - text: Rules
+                    - button "Time Slots" [active] [ref=f21e76] [cursor=pointer]:
+                      - img [ref=f21e77]
+                      - text: Time Slots
+                    - button "Staff" [ref=f21e79] [cursor=pointer]:
+                      - img [ref=f21e80]
+                      - text: Staff
+                    - button "Blockouts" [ref=f21e82] [cursor=pointer]:
+                      - img [ref=f21e83]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=f21e85] [cursor=pointer]:
+                      - img [ref=f21e86]
+                      - text: Booking Page
+                - generic [ref=f21e89]:
+                  - generic [ref=f21e90]:
+                    - generic [ref=f21e92]:
+                      - heading "Time Slots" [level=3] [ref=f21e93]
+                      - button "Time Slots help" [ref=f21e94]:
+                        - img [ref=f21e95]
+                    - generic [ref=f21e97]:
+                      - button "Add Time Slot" [ref=f21e98] [cursor=pointer]:
+                        - img [ref=f21e99]
+                        - generic [ref=f21e101]: Add Time Slot
+                      - button "Bulk Edit" [ref=f21e102] [cursor=pointer]:
+                        - img [ref=f21e103]
+                        - generic [ref=f21e105]: Bulk Edit
+                  - generic [ref=f21e106]:
+                    - generic [ref=f21e107]:
+                      - img [ref=f21e108]
+                      - text: Weekday
+                    - generic [ref=f21e110]:
+                      - button "Sunday 10" [ref=f21e111]:
+                        - generic [ref=f21e112]: Sunday
+                        - generic [ref=f21e113]: "10"
+                      - button "Monday 10" [pressed] [ref=f21e114]:
+                        - generic [ref=f21e115]: Monday
+                        - generic [ref=f21e116]: "10"
+                      - button "Tuesday 10" [ref=f21e117]:
+                        - generic [ref=f21e118]: Tuesday
+                        - generic [ref=f21e119]: "10"
+                      - button "Wednesday 10" [ref=f21e120]:
+                        - generic [ref=f21e121]: Wednesday
+                        - generic [ref=f21e122]: "10"
+                      - button "Thursday 10" [ref=f21e123]:
+                        - generic [ref=f21e124]: Thursday
+                        - generic [ref=f21e125]: "10"
+                      - button "Friday 10" [ref=f21e126]:
+                        - generic [ref=f21e127]: Friday
+                        - generic [ref=f21e128]: "10"
+                      - button "Saturday 10" [ref=f21e129]:
+                        - generic [ref=f21e130]: Saturday
+                        - generic [ref=f21e131]: "10"
+                  - generic [ref=f21e133]:
+                    - button "11:30 – 12:30 Standard slot · Max 200 Active" [ref=f21e134] [cursor=pointer]:
+                      - generic [ref=f21e135]:
+                        - generic [ref=f21e136]:
+                          - paragraph [ref=f21e137]: 11:30 – 12:30
+                          - paragraph [ref=f21e138]: Standard slot · Max 200
+                        - generic [ref=f21e139]:
+                          - generic [ref=f21e140]: Active
+                          - img [ref=f21e141]
+                    - button "12:30 – 13:30 Standard slot · Max 200 Active" [ref=f21e143] [cursor=pointer]:
+                      - generic [ref=f21e144]:
+                        - generic [ref=f21e145]:
+                          - paragraph [ref=f21e146]: 12:30 – 13:30
+                          - paragraph [ref=f21e147]: Standard slot · Max 200
+                        - generic [ref=f21e148]:
+                          - generic [ref=f21e149]: Active
+                          - img [ref=f21e150]
+                    - button "13:30 – 14:30 Standard slot · Max 200 Active" [ref=f21e152] [cursor=pointer]:
+                      - generic [ref=f21e153]:
+                        - generic [ref=f21e154]:
+                          - paragraph [ref=f21e155]: 13:30 – 14:30
+                          - paragraph [ref=f21e156]: Standard slot · Max 200
+                        - generic [ref=f21e157]:
+                          - generic [ref=f21e158]: Active
+                          - img [ref=f21e159]
+                    - button "14:30 – 15:30 Standard slot · Max 200 Active" [ref=f21e161] [cursor=pointer]:
+                      - generic [ref=f21e162]:
+                        - generic [ref=f21e163]:
+                          - paragraph [ref=f21e164]: 14:30 – 15:30
+                          - paragraph [ref=f21e165]: Standard slot · Max 200
+                        - generic [ref=f21e166]:
+                          - generic [ref=f21e167]: Active
+                          - img [ref=f21e168]
+                    - button "15:30 – 16:30 Standard slot · Max 200 Active" [ref=f21e170] [cursor=pointer]:
+                      - generic [ref=f21e171]:
+                        - generic [ref=f21e172]:
+                          - paragraph [ref=f21e173]: 15:30 – 16:30
+                          - paragraph [ref=f21e174]: Standard slot · Max 200
+                        - generic [ref=f21e175]:
+                          - generic [ref=f21e176]: Active
+                          - img [ref=f21e177]
+                    - button "16:30 – 17:30 Standard slot · Max 200 Active" [ref=f21e179] [cursor=pointer]:
+                      - generic [ref=f21e180]:
+                        - generic [ref=f21e181]:
+                          - paragraph [ref=f21e182]: 16:30 – 17:30
+                          - paragraph [ref=f21e183]: Standard slot · Max 200
+                        - generic [ref=f21e184]:
+                          - generic [ref=f21e185]: Active
+                          - img [ref=f21e186]
+                    - button "17:30 – 18:30 Standard slot · Max 200 Active" [ref=f21e188] [cursor=pointer]:
+                      - generic [ref=f21e189]:
+                        - generic [ref=f21e190]:
+                          - paragraph [ref=f21e191]: 17:30 – 18:30
+                          - paragraph [ref=f21e192]: Standard slot · Max 200
+                        - generic [ref=f21e193]:
+                          - generic [ref=f21e194]: Active
+                          - img [ref=f21e195]
+                    - button "18:30 – 19:30 Standard slot · Max 200 Active" [ref=f21e197] [cursor=pointer]:
+                      - generic [ref=f21e198]:
+                        - generic [ref=f21e199]:
+                          - paragraph [ref=f21e200]: 18:30 – 19:30
+                          - paragraph [ref=f21e201]: Standard slot · Max 200
+                        - generic [ref=f21e202]:
+                          - generic [ref=f21e203]: Active
+                          - img [ref=f21e204]
+                    - button "19:30 – 20:30 Standard slot · Max 200 Active" [ref=f21e206] [cursor=pointer]:
+                      - generic [ref=f21e207]:
+                        - generic [ref=f21e208]:
+                          - paragraph [ref=f21e209]: 19:30 – 20:30
+                          - paragraph [ref=f21e210]: Standard slot · Max 200
+                        - generic [ref=f21e211]:
+                          - generic [ref=f21e212]: Active
+                          - img [ref=f21e213]
+                    - button "20:30 – 21:30 Standard slot · Max 200 Active" [ref=f21e215] [cursor=pointer]:
+                      - generic [ref=f21e216]:
+                        - generic [ref=f21e217]:
+                          - paragraph [ref=f21e218]: 20:30 – 21:30
+                          - paragraph [ref=f21e219]: Standard slot · Max 200
+                        - generic [ref=f21e220]:
+                          - generic [ref=f21e221]: Active
+                          - img [ref=f21e222]
+    - button "Toggle floating actions" [ref=f21e224] [cursor=pointer]:
+      - img [ref=f21e225]
+  - region "Notifications (F8)":
+    - list

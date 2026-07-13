@@ -1,0 +1,92 @@
+- generic [ref=f32e1]:
+  - generic [ref=f32e7]:
+    - generic [ref=f32e8]:
+      - generic [ref=f32e10]:
+        - button "Open navigation menu" [ref=f32e13] [cursor=pointer]:
+          - img [ref=f32e14]
+        - link "Shop n Joy Logo" [ref=f32e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f32e18]
+        - button "Hi, Regina" [ref=f32e20] [cursor=pointer]:
+          - generic [ref=f32e22]: Hi, Regina
+      - main [ref=f32e24]:
+        - generic [ref=f32e25]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f32e32]:
+            - generic [ref=f32e33]:
+              - button "Back" [ref=f32e34]:
+                - img [ref=f32e35]
+              - button "Details" [ref=f32e37] [cursor=pointer]:
+                - img [ref=f32e38]
+                - text: Details
+              - button "Schedule" [ref=f32e40] [cursor=pointer]:
+                - img [ref=f32e41]
+                - text: Schedule
+              - button "NJoyBook" [ref=f32e43] [cursor=pointer]:
+                - img [ref=f32e44]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f32e46] [cursor=pointer]:
+                - img [ref=f32e47]
+                - text: Smart QR
+              - button "Media" [ref=f32e49] [cursor=pointer]:
+                - img [ref=f32e50]
+                - text: Media
+              - button "Logs" [ref=f32e52] [cursor=pointer]:
+                - img [ref=f32e53]
+                - text: Logs
+              - button "Remarks" [ref=f32e55] [cursor=pointer]:
+                - img [ref=f32e56]
+                - text: Remarks
+            - generic [ref=f32e58]:
+              - heading "NJoyBook" [level=3] [ref=f32e60]
+              - generic [ref=f32e62]:
+                - tablist "NJoyBook Menu" [ref=f32e64]:
+                  - paragraph [ref=f32e65]: NJoyBook Menu
+                  - generic [ref=f32e66]:
+                    - button "Bookings" [ref=f32e67] [cursor=pointer]:
+                      - img [ref=f32e68]
+                      - text: Bookings
+                    - button "Guest History" [ref=f32e70] [cursor=pointer]:
+                      - img [ref=f32e71]
+                      - text: Guest History
+                    - button "Rules" [ref=f32e73] [cursor=pointer]:
+                      - img [ref=f32e74]
+                      - text: Rules
+                    - button "Time Slots" [ref=f32e76] [cursor=pointer]:
+                      - img [ref=f32e77]
+                      - text: Time Slots
+                    - button "Staff" [ref=f32e79] [cursor=pointer]:
+                      - img [ref=f32e80]
+                      - text: Staff
+                    - button "Blockouts" [ref=f32e82] [cursor=pointer]:
+                      - img [ref=f32e83]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=f32e85] [cursor=pointer]:
+                      - img [ref=f32e86]
+                      - text: Booking Page
+                - generic [ref=f32e89]:
+                  - generic [ref=f32e92]:
+                    - heading "Rules and Regulations" [level=3] [ref=f32e93]
+                    - button "Rules and Regulations help" [ref=f32e94]:
+                      - img [ref=f32e95]
+                  - generic [ref=f32e98]:
+                    - generic [ref=f32e99]:
+                      - img [ref=f32e101]
+                      - generic [ref=f32e103]:
+                        - paragraph [ref=f32e104]: Enable booking
+                        - paragraph [ref=f32e105]: Turn on to accept bookings at this branch.
+                    - switch [active] [ref=f32e106] [cursor=pointer]
+                  - generic [ref=f32e367]:
+                    - button "Set to Default" [ref=f32e368] [cursor=pointer]:
+                      - img [ref=f32e369]
+                      - text: Set to Default
+                    - button "Save Booking Settings" [ref=f32e371] [cursor=pointer]:
+                      - img [ref=f32e372]
+                      - text: Save Booking Settings
+    - button "Toggle floating actions" [ref=f32e374] [cursor=pointer]:
+      - img [ref=f32e375]
+  - region "Notifications (F8)":
+    - list

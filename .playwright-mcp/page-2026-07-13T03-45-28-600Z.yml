@@ -1,0 +1,131 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e7]:
+    - generic [ref=f9e8]:
+      - generic [ref=f9e10]:
+        - link "Shop n Joy Logo" [ref=f9e12] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f9e13]
+        - button "Hi, Regina" [ref=f9e15] [cursor=pointer]:
+          - generic [ref=f9e17]: Hi, Regina
+      - generic [ref=f9e18]:
+        - complementary [ref=f9e19]:
+          - generic [ref=f9e21]:
+            - paragraph [ref=f9e22]: Configuration
+            - list [ref=f9e23]:
+              - listitem [ref=f9e24]:
+                - link "Overview" [ref=f9e25] [cursor=pointer]:
+                  - /url: /configuration
+                  - img [ref=f9e27]
+                  - generic [ref=f9e29]: Overview
+              - listitem [ref=f9e30]:
+                - link "Deals" [ref=f9e31] [cursor=pointer]:
+                  - /url: /configuration/deal/deal-list
+                  - img [ref=f9e33]
+                  - generic [ref=f9e35]: Deals
+              - listitem [ref=f9e36]:
+                - link "Loyalty Programs" [ref=f9e37] [cursor=pointer]:
+                  - /url: /configuration/loyalty-program/loyalty-program-list
+                  - img [ref=f9e39]
+                  - generic [ref=f9e41]: Loyalty Programs
+              - listitem [ref=f9e42]:
+                - button "NJoyBoost" [ref=f9e44]:
+                  - img [ref=f9e46]
+                  - generic [ref=f9e48]: NJoyBoost
+                  - img [ref=f9e49]
+        - main [ref=f9e51]:
+          - generic [ref=f9e52]:
+            - generic:
+              - generic:
+                - img
+                - generic: Pull to refresh
+            - generic [ref=f9e59]:
+              - generic [ref=f9e60]:
+                - button "Back" [ref=f9e61]:
+                  - img [ref=f9e62]
+                - button "Details" [ref=f9e64] [cursor=pointer]:
+                  - img [ref=f9e65]
+                  - text: Details
+                - button "Schedule" [ref=f9e67] [cursor=pointer]:
+                  - img [ref=f9e68]
+                  - text: Schedule
+                - button "NJoyBook" [ref=f9e70] [cursor=pointer]:
+                  - img [ref=f9e71]
+                  - text: NJoyBook
+                - button "Smart QR" [ref=f9e73] [cursor=pointer]:
+                  - img [ref=f9e74]
+                  - text: Smart QR
+                - button "Media" [ref=f9e76] [cursor=pointer]:
+                  - img [ref=f9e77]
+                  - text: Media
+                - button "Logs" [ref=f9e79] [cursor=pointer]:
+                  - img [ref=f9e80]
+                  - text: Logs
+                - button "Remarks" [ref=f9e82] [cursor=pointer]:
+                  - img [ref=f9e83]
+                  - text: Remarks
+              - generic [ref=f9e85]:
+                - heading "NJoyBook" [level=3] [ref=f9e87]
+                - generic [ref=f9e446]:
+                  - tablist "NJoyBook Menu" [ref=f9e448]:
+                    - paragraph [ref=f9e449]: NJoyBook Menu
+                    - generic [ref=f9e450]:
+                      - button "Bookings" [ref=f9e451] [cursor=pointer]:
+                        - img [ref=f9e452]
+                        - text: Bookings
+                      - button "Guest History" [ref=f9e454] [cursor=pointer]:
+                        - img [ref=f9e455]
+                        - text: Guest History
+                      - button "Rules" [ref=f9e457] [cursor=pointer]:
+                        - img [ref=f9e458]
+                        - text: Rules
+                      - button "Time Slots" [ref=f9e460] [cursor=pointer]:
+                        - img [ref=f9e461]
+                        - text: Time Slots
+                      - button "Staff" [ref=f9e463] [cursor=pointer]:
+                        - img [ref=f9e464]
+                        - text: Staff
+                      - button "Blockouts" [ref=f9e466] [cursor=pointer]:
+                        - img [ref=f9e467]
+                        - text: Blockouts
+                      - button "Booking Page" [ref=f9e469] [cursor=pointer]:
+                        - img [ref=f9e470]
+                        - text: Booking Page
+                  - generic [ref=f9e473]:
+                    - generic [ref=f9e474]:
+                      - generic [ref=f9e476]:
+                        - heading "Blockouts" [level=3] [ref=f9e477]
+                        - button "Blockouts help" [ref=f9e478]:
+                          - img [ref=f9e479]
+                      - button "Add Blockout" [ref=f9e481] [cursor=pointer]:
+                        - img [ref=f9e482]
+                        - generic [ref=f9e484]: Add Blockout
+                    - generic [ref=f9e485]:
+                      - generic [ref=f9e487]:
+                        - generic [ref=f9e488]:
+                          - paragraph [ref=f9e489]: 13 Jul 2026, 08:00 – 16 Jul 2026, 08:00
+                          - paragraph [ref=f9e490]: Closed period
+                        - generic [ref=f9e491]:
+                          - generic [ref=f9e492]: Closed
+                          - button "Edit blockout" [ref=f9e493] [cursor=pointer]:
+                            - img [ref=f9e494]
+                            - generic [ref=f9e496]: Edit blockout
+                      - generic [ref=f9e498]:
+                        - generic [ref=f9e499]:
+                          - paragraph [ref=f9e500]: 3 Aug 2026 · 08:00 – 08:00
+                          - paragraph [ref=f9e501]: Closed period
+                        - generic [ref=f9e502]:
+                          - generic [ref=f9e503]: Closed
+                          - button "Edit blockout" [ref=f9e504] [cursor=pointer]:
+                            - img [ref=f9e505]
+                            - generic [ref=f9e507]: Edit blockout
+    - alert [ref=f9e508]: Notification [ "Blockout added", "Booking availability override has been created." ]
+    - button "Toggle floating actions" [ref=f9e140] [cursor=pointer]:
+      - img [ref=f9e141]
+  - region "Notifications (F8)":
+    - list [ref=f9e510]:
+      - alert "Blockout added" [ref=f9e511]:
+        - generic [ref=f9e512]:
+          - generic [ref=f9e514]: Blockout added
+          - generic [ref=f9e515]: Booking availability override has been created.
+          - button [ref=f9e516]:
+            - img [ref=f9e517]

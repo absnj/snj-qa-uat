@@ -1,0 +1,208 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e113]:
+      - generic [ref=e115]:
+        - button "Open navigation menu" [ref=e118] [cursor=pointer]:
+          - img [ref=e119]
+        - link "Shop n Joy Logo" [ref=e122] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=e123]
+        - button [ref=e125] [cursor=pointer]
+      - main [ref=e128]:
+        - generic [ref=e129]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=e556]:
+            - generic [ref=e557]:
+              - button "Back" [ref=e558]:
+                - img [ref=e559]
+              - button "Details" [ref=e561] [cursor=pointer]:
+                - img [ref=e562]
+                - text: Details
+              - button "Schedule" [ref=e564] [cursor=pointer]:
+                - img [ref=e565]
+                - text: Schedule
+              - button "NJoyBook" [ref=e567] [cursor=pointer]:
+                - img [ref=e568]
+                - text: NJoyBook
+              - button "Smart QR" [ref=e570] [cursor=pointer]:
+                - img [ref=e571]
+                - text: Smart QR
+              - button "Media" [ref=e573] [cursor=pointer]:
+                - img [ref=e574]
+                - text: Media
+              - button "Logs" [ref=e576] [cursor=pointer]:
+                - img [ref=e577]
+                - text: Logs
+              - button "Remarks" [ref=e579] [cursor=pointer]:
+                - img [ref=e580]
+                - text: Remarks
+            - generic [ref=e582]:
+              - heading "NJoyBook" [level=3] [ref=e584]
+              - generic [ref=e586]:
+                - tablist "NJoyBook Menu" [ref=e588]:
+                  - paragraph [ref=e589]: NJoyBook Menu
+                  - generic [ref=e590]:
+                    - button "Bookings" [ref=e591] [cursor=pointer]:
+                      - img [ref=e592]
+                      - text: Bookings
+                    - button "Guest History" [ref=e594] [cursor=pointer]:
+                      - img [ref=e595]
+                      - text: Guest History
+                    - button "Rules" [ref=e597] [cursor=pointer]:
+                      - img [ref=e598]
+                      - text: Rules
+                    - button "Time Slots" [ref=e600] [cursor=pointer]:
+                      - img [ref=e601]
+                      - text: Time Slots
+                    - button "Staff" [ref=e896] [cursor=pointer]:
+                      - img [ref=e897]
+                      - text: Staff
+                    - button "Blockouts" [ref=e603] [cursor=pointer]:
+                      - img [ref=e604]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=e606] [cursor=pointer]:
+                      - img [ref=e607]
+                      - text: Booking Page
+                - generic [ref=e934]:
+                  - generic [ref=e935]:
+                    - generic [ref=e937]:
+                      - heading "Bookable Staff" [level=3] [ref=e938]
+                      - button "Staff help" [ref=e939]:
+                        - img [ref=e940]
+                    - button [ref=e942] [cursor=pointer]:
+                      - img [ref=e943]
+                  - generic [ref=e946]:
+                    - generic [ref=e948]:
+                      - paragraph [ref=e950]: Jeffry Zhou
+                      - generic [ref=e951]:
+                        - generic [ref=e952]: Active
+                        - button "Edit staff" [active] [ref=e953] [cursor=pointer]:
+                          - img [ref=e954]
+                    - generic [ref=e957]:
+                      - paragraph [ref=e959]: Regina George
+                      - generic [ref=e960]:
+                        - generic [ref=e961]: Active
+                        - button "Edit staff" [ref=e962] [cursor=pointer]:
+                          - img [ref=e963]
+    - button "Toggle floating actions" [ref=e933] [cursor=pointer]:
+      - img [ref=e100]
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e966]:
+    - generic [ref=e967]:
+      - generic [ref=e970]:
+        - heading "Edit staff" [level=2] [ref=e971]
+        - button "Show dialog description" [ref=e972]:
+          - img [ref=e973]
+      - button "Close modal" [ref=e975] [cursor=pointer]:
+        - img [ref=e976]
+    - generic [ref=e978]:
+      - generic [ref=e979]:
+        - generic [ref=e980]:
+          - img [ref=e981]
+          - heading "Staff source" [level=3] [ref=e984]
+        - generic [ref=e985]:
+          - generic [ref=e986]:
+            - img [ref=e987]
+            - paragraph [ref=e989]: The linked merchant staff account cannot be changed after creation. Remove this bookable staff and add it again if you need to point at a different account.
+          - generic [ref=e990]:
+            - generic [ref=e991]:
+              - generic [ref=e992]:
+                - img [ref=e993]
+                - text: Staff ID
+              - textbox [disabled] [ref=e995]: merchant_staff_COb4I1gi0QwPZwGEPW
+            - generic [ref=e996]:
+              - generic [ref=e997]:
+                - img [ref=e998]
+                - text: Bookable staff ID
+              - textbox [disabled] [ref=e1000]: bookable_staff_eiZfGrQ1mbmvBJa2Jq
+      - generic [ref=e1001]:
+        - generic [ref=e1002]:
+          - img [ref=e1003]
+          - heading "Auto-filled details" [level=3] [ref=e1005]
+        - generic [ref=e1007]:
+          - generic [ref=e1008]:
+            - generic [ref=e1009]:
+              - img [ref=e1010]
+              - text: Display name
+            - textbox [disabled] [ref=e1012]: Jeffry Zhou
+          - generic [ref=e1013]:
+            - generic [ref=e1014]:
+              - img [ref=e1015]
+              - text: Photo URL
+            - textbox [disabled] [ref=e1017]: "-"
+          - generic [ref=e1018]:
+            - generic [ref=e1019]:
+              - img [ref=e1020]
+              - text: Notification email
+            - textbox [disabled] [ref=e1022]: owlzhou306@gmail.com
+          - generic [ref=e1023]:
+            - generic [ref=e1024]:
+              - img [ref=e1025]
+              - text: Notification phone
+            - textbox [disabled] [ref=e1027]: "-"
+      - generic [ref=e1028]:
+        - generic [ref=e1029]:
+          - img [ref=e1030]
+          - heading "Booking profile" [level=3] [ref=e1032]
+        - generic [ref=e1033]:
+          - generic [ref=e1034]:
+            - generic [ref=e1035]:
+              - img [ref=e1036]
+              - text: Display order
+            - spinbutton "Display order" [ref=e1038]: "0"
+          - generic [ref=e1039]:
+            - generic [ref=e1040]:
+              - img [ref=e1041]
+              - text: Bio
+            - generic [ref=e1045]:
+              - generic [ref=e1046]:
+                - button "Bold" [ref=e1047]:
+                  - img [ref=e1048]
+                - button "Italic" [ref=e1050]:
+                  - img [ref=e1051]
+                - button "Bullet List" [ref=e1054]:
+                  - img [ref=e1055]
+                - button "Ordered List" [ref=e1057]:
+                  - img [ref=e1058]
+                - button "Link" [ref=e1061]:
+                  - img [ref=e1062]
+                - button "Unlink" [disabled] [ref=e1066]:
+                  - img [ref=e1067]
+              - paragraph [ref=e1071]: test bio
+          - generic [ref=e1073]:
+            - generic [ref=e1075]:
+              - generic [ref=e1076]:
+                - img [ref=e1077]
+                - text: Specializations
+                - generic [ref=e1079]: (0/7)
+              - button "Specializations help" [ref=e1080]:
+                - img [ref=e1081]
+            - textbox "Type a specialization and press Enter..." [ref=e1084]
+          - generic [ref=e1085]:
+            - generic [ref=e1086]:
+              - generic [ref=e1087]:
+                - img [ref=e1089]
+                - generic [ref=e1091]:
+                  - paragraph [ref=e1092]: Bookable
+                  - paragraph [ref=e1093]: Allow this staff member to receive bookings.
+              - switch [checked] [ref=e1094] [cursor=pointer]
+              - checkbox [checked]
+            - generic [ref=e1095]:
+              - generic [ref=e1096]:
+                - img [ref=e1098]
+                - generic [ref=e1100]:
+                  - paragraph [ref=e1101]: Active
+                  - paragraph [ref=e1102]: Keep active to show in booking operations.
+              - switch [checked] [ref=e1103] [cursor=pointer]
+              - checkbox [checked]
+      - generic [ref=e1104]:
+        - button "Delete staff" [ref=e1105] [cursor=pointer]:
+          - img [ref=e1106]
+          - text: Delete staff
+        - button "Save changes" [ref=e1108] [cursor=pointer]:
+          - img [ref=e1109]
+          - text: Save changes

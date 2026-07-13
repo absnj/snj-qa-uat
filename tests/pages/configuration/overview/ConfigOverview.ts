@@ -3,13 +3,16 @@ import { expect } from '@playwright/test';
 import { ConfigBasePage } from '../ConfigBasePage';
 import { DealsPage } from '../deals/DealsPage';
 import { LoyaltyPage } from '../loyalty/LoyaltyPage';
+import { BranchConfigPage } from '../branch/BranchConfigPage';
 
 export class ConfigOverview extends ConfigBasePage {
     private readonly overviewHeader: Locator;
+    private readonly branchesTab: Locator;
 
     constructor(page: Page) {
         super(page);
         this.overviewHeader = this.page.getByRole('heading', { name: 'Details' });
+        this.branchesTab = this.page.getByRole('button', { name: 'Branches' });
     }
 
     async goToDeals(): Promise<DealsPage> {
@@ -27,7 +30,31 @@ export class ConfigOverview extends ConfigBasePage {
     }
 
     async waitForReady(): Promise<void> {
-       await expect(this.overviewHeader).toBeVisible(); 
+       await expect(this.overviewHeader).toBeVisible();
        await super.waitForReady();
+    }
+
+    /**
+     * Opens the Branches tab and drills into a specific branch by name. Branch
+     * cards are clickable tiles whose name is a level-4 heading (not a button).
+     */
+    async goToBranch(branchName: string): Promise<BranchConfigPage> {
+        return this.openBranchConfig(branchName);
+    }
+
+    /**
+     * Reaches a branch's configuration regardless of role scope. Merchant-level
+     * roles see a "Branches" tab and pick the branch by name; branch-scoped roles
+     * (branch admin/staff) have no such tab and land directly on their single
+     * branch's config, so this returns that page without navigating.
+     */
+    async openBranchConfig(branchName: string): Promise<BranchConfigPage> {
+        if (await this.branchesTab.count()) {
+            await this.branchesTab.click();
+            await this.page.getByRole('heading', { name: branchName, level: 4 }).click();
+        }
+        const branchConfig = new BranchConfigPage(this.page);
+        await branchConfig.waitForReady();
+        return branchConfig;
     }
 }

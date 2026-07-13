@@ -1,0 +1,73 @@
+- generic [ref=f38e1]:
+  - generic [ref=f38e7]:
+    - generic [ref=f38e8]:
+      - generic [ref=f38e10]:
+        - button "Open navigation menu" [ref=f38e13] [cursor=pointer]:
+          - img [ref=f38e14]
+        - link "Shop n Joy Logo" [ref=f38e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f38e18]
+        - button "Hi, Regina" [ref=f38e20] [cursor=pointer]:
+          - generic [ref=f38e22]: Hi, Regina
+      - main [ref=f38e24]:
+        - generic [ref=f38e25]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f38e32]:
+            - generic [ref=f38e33]:
+              - button "Back" [ref=f38e34]:
+                - img [ref=f38e35]
+              - button "Details" [ref=f38e37] [cursor=pointer]:
+                - img [ref=f38e38]
+                - text: Details
+              - button "Schedule" [ref=f38e40] [cursor=pointer]:
+                - img [ref=f38e41]
+                - text: Schedule
+              - button "NJoyBook" [ref=f38e43] [cursor=pointer]:
+                - img [ref=f38e44]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f38e46] [cursor=pointer]:
+                - img [ref=f38e47]
+                - text: Smart QR
+              - button "Media" [ref=f38e49] [cursor=pointer]:
+                - img [ref=f38e50]
+                - text: Media
+              - button "Logs" [ref=f38e52] [cursor=pointer]:
+                - img [ref=f38e53]
+                - text: Logs
+              - button "Remarks" [ref=f38e55] [cursor=pointer]:
+                - img [ref=f38e56]
+                - text: Remarks
+            - generic [ref=f38e58]:
+              - heading "NJoyBook" [level=3] [ref=f38e60]
+              - generic [ref=f38e62]:
+                - tablist "NJoyBook Menu" [ref=f38e64]:
+                  - paragraph [ref=f38e65]: NJoyBook Menu
+                  - button "Rules" [active] [ref=f38e67] [cursor=pointer]:
+                    - img [ref=f38e68]
+                    - text: Rules
+                - generic [ref=f38e71]:
+                  - generic [ref=f38e74]:
+                    - heading "Rules and Regulations" [level=3] [ref=f38e75]
+                    - button "Rules and Regulations help" [ref=f38e76]:
+                      - img [ref=f38e77]
+                  - generic [ref=f38e80]:
+                    - generic [ref=f38e81]:
+                      - img [ref=f38e83]
+                      - generic [ref=f38e85]:
+                        - paragraph [ref=f38e86]: Enable booking
+                        - paragraph [ref=f38e87]: Turn on to accept bookings at this branch.
+                    - switch [ref=f38e88] [cursor=pointer]
+                  - generic [ref=f38e89]:
+                    - button "Set to Default" [ref=f38e90] [cursor=pointer]:
+                      - img [ref=f38e91]
+                      - text: Set to Default
+                    - button "Save Booking Settings" [ref=f38e93] [cursor=pointer]:
+                      - img [ref=f38e94]
+                      - text: Save Booking Settings
+    - button "Toggle floating actions" [ref=f38e96] [cursor=pointer]:
+      - img [ref=f38e97]
+  - region "Notifications (F8)":
+    - list

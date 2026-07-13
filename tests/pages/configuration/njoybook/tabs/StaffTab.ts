@@ -18,15 +18,20 @@ export class StaffTab extends ConfigBasePage {
         await expect(this.heading).toBeVisible();
     }
 
+    // Each staff entry is a `.booking-slot-item` row holding the name, an
+    // Active/Inactive badge, and the Edit button.
+    private staffRow(staffName: string): Locator {
+        return this.page.locator('.booking-slot-item').filter({ hasText: staffName });
+    }
+
     async expectStaffVisible(staffName: string, status: 'Active' | 'Inactive' = 'Active'): Promise<void> {
-        const row = this.page.getByText(staffName);
+        const row = this.staffRow(staffName);
         await expect(row).toBeVisible();
-        await expect(row.locator('..').getByText(status)).toBeVisible();
+        await expect(row.getByText(status)).toBeVisible();
     }
 
     async editStaff(staffName: string): Promise<StaffEditModal> {
-        const row = this.page.getByText(staffName).locator('..');
-        await row.getByRole('button', { name: 'Edit staff' }).click();
+        await this.staffRow(staffName).getByRole('button', { name: 'Edit staff' }).click();
         const modal = new StaffEditModal(this.page);
         await modal.waitForReady();
         return modal;

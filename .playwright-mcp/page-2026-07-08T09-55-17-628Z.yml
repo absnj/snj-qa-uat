@@ -1,0 +1,63 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e36]:
+      - generic [ref=e38]:
+        - button "Open notifications" [ref=e40] [cursor=pointer]:
+          - img [ref=e41]
+        - link "Shop n Joy Logo" [ref=e43] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=e44]
+        - button "Hi, Regina" [ref=e46] [cursor=pointer]:
+          - generic [ref=e48]: Hi, Regina
+      - main [ref=e49]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "Welcome to ShopNJoy" [level=1] [ref=e53]
+            - paragraph [ref=e54]: Choose a module to get started
+          - generic [ref=e56]:
+            - link "Track Performance dashboards, sales and relationships" [ref=e57] [cursor=pointer]:
+              - /url: /track/my-performance
+              - img [ref=e59]
+              - generic [ref=e60]:
+                - heading "Track" [level=3] [ref=e61]
+                - paragraph [ref=e62]: Performance dashboards, sales and relationships
+            - link "Finance Transactions, invoices and commissions" [ref=e63] [cursor=pointer]:
+              - /url: /finance
+              - img [ref=e65]
+              - generic [ref=e66]:
+                - heading "Finance" [level=3] [ref=e67]
+                - paragraph [ref=e68]: Transactions, invoices and commissions
+            - link "Message Chat, channels and broadcast" [ref=e69] [cursor=pointer]:
+              - /url: /message
+              - img [ref=e71]
+              - generic [ref=e72]:
+                - heading "Message" [level=3] [ref=e73]
+                - paragraph [ref=e74]: Chat, channels and broadcast
+            - link "Configuration Merchants, branches, deals, loyalty, NJoyBoost" [ref=e75] [cursor=pointer]:
+              - /url: /configuration
+              - img [ref=e77]
+              - generic [ref=e78]:
+                - heading "Configuration" [level=3] [ref=e79]
+                - paragraph [ref=e80]: Merchants, branches, deals, loyalty, NJoyBoost
+            - link "Marketplace Public marketplace views" [ref=e81] [cursor=pointer]:
+              - /url: /marketplace/my-reward
+              - img [ref=e83]
+              - generic [ref=e84]:
+                - heading "Marketplace" [level=3] [ref=e85]
+                - paragraph [ref=e86]: Public marketplace views
+            - link "User Management User registration, roles and user operations" [ref=e87] [cursor=pointer]:
+              - /url: /user-management/my-details
+              - img [ref=e89]
+              - generic [ref=e90]:
+                - heading "User Management" [level=3] [ref=e91]
+                - paragraph [ref=e92]: User registration, roles and user operations
+            - link "Support Help center, tickets, and FAQs" [ref=e93] [cursor=pointer]:
+              - /url: /support/ticket/my-ticket
+              - img [ref=e95]
+              - generic [ref=e96]:
+                - heading "Support" [level=3] [ref=e97]
+                - paragraph [ref=e98]: Help center, tickets, and FAQs
+    - button "Toggle floating actions" [ref=e99] [cursor=pointer]:
+      - img [ref=e100]
+  - region "Notifications (F8)":
+    - list

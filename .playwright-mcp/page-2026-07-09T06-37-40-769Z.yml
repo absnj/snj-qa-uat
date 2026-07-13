@@ -1,0 +1,300 @@
+- generic [ref=f15e1]:
+  - generic [ref=f15e7]:
+    - generic [ref=f15e8]:
+      - generic [ref=f15e10]:
+        - button "Open navigation menu" [ref=f15e13] [cursor=pointer]:
+          - img [ref=f15e14]
+        - link "Shop n Joy Logo" [ref=f15e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f15e18]
+        - button "Hi, Regina" [ref=f15e20] [cursor=pointer]:
+          - generic [ref=f15e22]: Hi, Regina
+      - main [ref=f15e24]:
+        - generic [ref=f15e25]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f15e32]:
+            - generic [ref=f15e33]:
+              - button "Back" [ref=f15e34]:
+                - img [ref=f15e35]
+              - button "Details" [ref=f15e37] [cursor=pointer]:
+                - img [ref=f15e38]
+                - text: Details
+              - button "Schedule" [ref=f15e40] [cursor=pointer]:
+                - img [ref=f15e41]
+                - text: Schedule
+              - button "NJoyBook" [ref=f15e43] [cursor=pointer]:
+                - img [ref=f15e44]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f15e46] [cursor=pointer]:
+                - img [ref=f15e47]
+                - text: Smart QR
+              - button "Media" [ref=f15e49] [cursor=pointer]:
+                - img [ref=f15e50]
+                - text: Media
+              - button "Logs" [ref=f15e52] [cursor=pointer]:
+                - img [ref=f15e53]
+                - text: Logs
+              - button "Remarks" [ref=f15e55] [cursor=pointer]:
+                - img [ref=f15e56]
+                - text: Remarks
+            - generic [ref=f15e58]:
+              - heading "NJoyBook" [level=3] [ref=f15e60]
+              - generic [ref=f15e62]:
+                - tablist "NJoyBook Menu" [ref=f15e64]:
+                  - paragraph [ref=f15e65]: NJoyBook Menu
+                  - generic [ref=f15e66]:
+                    - button "Bookings" [ref=f15e67] [cursor=pointer]:
+                      - img [ref=f15e68]
+                      - text: Bookings
+                    - button "Guest History" [ref=f15e70] [cursor=pointer]:
+                      - img [ref=f15e71]
+                      - text: Guest History
+                    - button "Rules" [ref=f15e73] [cursor=pointer]:
+                      - img [ref=f15e74]
+                      - text: Rules
+                    - button "Time Slots" [ref=f15e76] [cursor=pointer]:
+                      - img [ref=f15e77]
+                      - text: Time Slots
+                    - button "Staff" [ref=f15e79] [cursor=pointer]:
+                      - img [ref=f15e80]
+                      - text: Staff
+                    - button "Blockouts" [ref=f15e82] [cursor=pointer]:
+                      - img [ref=f15e83]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=f15e85] [cursor=pointer]:
+                      - img [ref=f15e86]
+                      - text: Booking Page
+                - generic [ref=f15e89]:
+                  - generic [ref=f15e90]:
+                    - generic [ref=f15e92]:
+                      - heading "Time Slots" [level=3] [ref=f15e93]
+                      - button "Time Slots help" [ref=f15e94]:
+                        - img [ref=f15e95]
+                    - generic [ref=f15e97]:
+                      - button "Add Time Slot" [ref=f15e98] [cursor=pointer]:
+                        - img [ref=f15e99]
+                        - generic [ref=f15e101]: Add Time Slot
+                      - button "Bulk Edit" [active] [ref=f15e102] [cursor=pointer]:
+                        - img [ref=f15e103]
+                        - generic [ref=f15e105]: Bulk Edit
+                  - generic [ref=f15e227]:
+                    - button "Back to time slots" [ref=f15e229]:
+                      - img [ref=f15e230]
+                    - generic [ref=f15e232]:
+                      - generic [ref=f15e234]:
+                        - heading "11:30 – 12:30" [level=4] [ref=f15e235]
+                        - generic [ref=f15e236]: Active
+                      - generic [ref=f15e237]:
+                        - generic [ref=f15e238]:
+                          - heading "Slot details" [level=5] [ref=f15e239]
+                          - generic [ref=f15e240]:
+                            - generic [ref=f15e241]:
+                              - term [ref=f15e242]: Label
+                              - definition [ref=f15e243]: Standard slot
+                            - generic [ref=f15e244]:
+                              - term [ref=f15e245]: Time
+                              - definition [ref=f15e246]: 11:30 – 12:30
+                            - generic [ref=f15e247]:
+                              - term [ref=f15e248]: Max bookings
+                              - definition [ref=f15e249]: "200"
+                            - generic [ref=f15e250]:
+                              - term [ref=f15e251]: Max party size
+                              - definition [ref=f15e252]: —
+                            - generic [ref=f15e253]:
+                              - term [ref=f15e254]: Discount
+                              - definition [ref=f15e255]: —
+                            - generic [ref=f15e256]:
+                              - term [ref=f15e257]: Status
+                              - definition [ref=f15e258]: Active
+                        - generic [ref=f15e259]:
+                          - heading "Bookable staff" [level=5] [ref=f15e260]
+                          - paragraph [ref=f15e261]: Staff assigned to this time slot for bookings and scheduling.
+                          - generic [ref=f15e262]: No staff assigned to this slot.
+    - button "Toggle floating actions" [ref=f15e224] [cursor=pointer]:
+      - img [ref=f15e225]
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=f15e264]:
+    - generic [ref=f15e265]:
+      - generic [ref=f15e268]:
+        - heading "Bulk Edit Time Slots" [level=2] [ref=f15e269]
+        - button "Show dialog description" [ref=f15e270]:
+          - img [ref=f15e271]
+      - button "Close modal" [ref=f15e273] [cursor=pointer]:
+        - img [ref=f15e274]
+    - generic [ref=f15e276]:
+      - generic [ref=f15e277]:
+        - generic [ref=f15e278]:
+          - img [ref=f15e279]
+          - heading "Select weekdays and slots" [level=3] [ref=f15e282]
+        - generic [ref=f15e283]:
+          - generic [ref=f15e284]:
+            - generic [ref=f15e285]:
+              - generic [ref=f15e286]:
+                - checkbox "Sunday 10" [ref=f15e287]
+                - text: Sunday
+              - generic [ref=f15e288]: "10"
+            - generic [ref=f15e289]:
+              - generic [ref=f15e290]:
+                - checkbox "Monday 10" [checked] [ref=f15e291]
+                - text: Monday
+              - generic [ref=f15e292]: "10"
+            - generic [ref=f15e293]:
+              - generic [ref=f15e294]:
+                - checkbox "Tuesday 10" [ref=f15e295]
+                - text: Tuesday
+              - generic [ref=f15e296]: "10"
+            - generic [ref=f15e297]:
+              - generic [ref=f15e298]:
+                - checkbox "Wednesday 10" [ref=f15e299]
+                - text: Wednesday
+              - generic [ref=f15e300]: "10"
+            - generic [ref=f15e301]:
+              - generic [ref=f15e302]:
+                - checkbox "Thursday 10" [ref=f15e303]
+                - text: Thursday
+              - generic [ref=f15e304]: "10"
+            - generic [ref=f15e305]:
+              - generic [ref=f15e306]:
+                - checkbox "Friday 10" [ref=f15e307]
+                - text: Friday
+              - generic [ref=f15e308]: "10"
+            - generic [ref=f15e309]:
+              - generic [ref=f15e310]:
+                - checkbox "Saturday 10" [ref=f15e311]
+                - text: Saturday
+              - generic [ref=f15e312]: "10"
+          - generic [ref=f15e313]:
+            - generic [ref=f15e314]:
+              - checkbox "Select all slots in selected weekdays 0 selected" [ref=f15e315]
+              - text: Select all slots in selected weekdays
+            - generic [ref=f15e316]: 0 selected
+          - generic [ref=f15e318]:
+            - generic [ref=f15e319]:
+              - generic [ref=f15e320]:
+                - button "Collapse Monday slots" [expanded] [ref=f15e321] [cursor=pointer]:
+                  - img [ref=f15e322]
+                - generic [ref=f15e324]:
+                  - checkbox "Monday (10)" [ref=f15e325]
+                  - generic [ref=f15e326]: Monday (10)
+              - generic [ref=f15e327]: 0 selected
+            - generic [ref=f15e329]:
+              - generic [ref=f15e330]:
+                - 'checkbox "11:30 – 12:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e331]'
+                - generic [ref=f15e332]:
+                  - paragraph [ref=f15e333]: 11:30 – 12:30
+                  - paragraph [ref=f15e334]: Standard slot · Max 200
+                  - paragraph [ref=f15e335]: "Staff: Unassigned"
+                - generic [ref=f15e336]: Active
+              - generic [ref=f15e337]:
+                - 'checkbox "12:30 – 13:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e338]'
+                - generic [ref=f15e339]:
+                  - paragraph [ref=f15e340]: 12:30 – 13:30
+                  - paragraph [ref=f15e341]: Standard slot · Max 200
+                  - paragraph [ref=f15e342]: "Staff: Unassigned"
+                - generic [ref=f15e343]: Active
+              - generic [ref=f15e344]:
+                - 'checkbox "13:30 – 14:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e345]'
+                - generic [ref=f15e346]:
+                  - paragraph [ref=f15e347]: 13:30 – 14:30
+                  - paragraph [ref=f15e348]: Standard slot · Max 200
+                  - paragraph [ref=f15e349]: "Staff: Unassigned"
+                - generic [ref=f15e350]: Active
+              - generic [ref=f15e351]:
+                - 'checkbox "14:30 – 15:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e352]'
+                - generic [ref=f15e353]:
+                  - paragraph [ref=f15e354]: 14:30 – 15:30
+                  - paragraph [ref=f15e355]: Standard slot · Max 200
+                  - paragraph [ref=f15e356]: "Staff: Unassigned"
+                - generic [ref=f15e357]: Active
+              - generic [ref=f15e358]:
+                - 'checkbox "15:30 – 16:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e359]'
+                - generic [ref=f15e360]:
+                  - paragraph [ref=f15e361]: 15:30 – 16:30
+                  - paragraph [ref=f15e362]: Standard slot · Max 200
+                  - paragraph [ref=f15e363]: "Staff: Unassigned"
+                - generic [ref=f15e364]: Active
+              - generic [ref=f15e365]:
+                - 'checkbox "16:30 – 17:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e366]'
+                - generic [ref=f15e367]:
+                  - paragraph [ref=f15e368]: 16:30 – 17:30
+                  - paragraph [ref=f15e369]: Standard slot · Max 200
+                  - paragraph [ref=f15e370]: "Staff: Unassigned"
+                - generic [ref=f15e371]: Active
+              - generic [ref=f15e372]:
+                - 'checkbox "17:30 – 18:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e373]'
+                - generic [ref=f15e374]:
+                  - paragraph [ref=f15e375]: 17:30 – 18:30
+                  - paragraph [ref=f15e376]: Standard slot · Max 200
+                  - paragraph [ref=f15e377]: "Staff: Unassigned"
+                - generic [ref=f15e378]: Active
+              - generic [ref=f15e379]:
+                - 'checkbox "18:30 – 19:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e380]'
+                - generic [ref=f15e381]:
+                  - paragraph [ref=f15e382]: 18:30 – 19:30
+                  - paragraph [ref=f15e383]: Standard slot · Max 200
+                  - paragraph [ref=f15e384]: "Staff: Unassigned"
+                - generic [ref=f15e385]: Active
+              - generic [ref=f15e386]:
+                - 'checkbox "19:30 – 20:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e387]'
+                - generic [ref=f15e388]:
+                  - paragraph [ref=f15e389]: 19:30 – 20:30
+                  - paragraph [ref=f15e390]: Standard slot · Max 200
+                  - paragraph [ref=f15e391]: "Staff: Unassigned"
+                - generic [ref=f15e392]: Active
+              - generic [ref=f15e393]:
+                - 'checkbox "20:30 – 21:30 Standard slot · Max 200 Staff: Unassigned Active" [ref=f15e394]'
+                - generic [ref=f15e395]:
+                  - paragraph [ref=f15e396]: 20:30 – 21:30
+                  - paragraph [ref=f15e397]: Standard slot · Max 200
+                  - paragraph [ref=f15e398]: "Staff: Unassigned"
+                - generic [ref=f15e399]: Active
+      - generic [ref=f15e400]:
+        - generic [ref=f15e401]:
+          - img [ref=f15e402]
+          - heading "Bulk update details" [level=3] [ref=f15e404]
+        - generic [ref=f15e405]:
+          - generic [ref=f15e406]:
+            - generic [ref=f15e407]:
+              - generic [ref=f15e408]:
+                - img [ref=f15e409]
+                - text: Label
+              - textbox "e.g. Lunch, Peak hour" [ref=f15e412]
+            - generic [ref=f15e413]:
+              - generic [ref=f15e414]:
+                - img [ref=f15e415]
+                - text: Max bookings
+              - spinbutton "Optional" [ref=f15e417]
+            - generic [ref=f15e418]:
+              - generic [ref=f15e419]:
+                - img [ref=f15e420]
+                - text: Discount %
+              - spinbutton "Optional" [ref=f15e422]
+          - paragraph [ref=f15e423]: "These values are applied to all selected slots across: Monday."
+      - generic [ref=f15e424]:
+        - generic [ref=f15e425]:
+          - img [ref=f15e426]
+          - heading "Staff assignment (optional)" [level=3] [ref=f15e428]
+        - generic [ref=f15e430]: Select at least one slot above to review or change staffing.
+      - generic [ref=f15e431]:
+        - generic [ref=f15e432]:
+          - img [ref=f15e433]
+          - heading "Visibility" [level=3] [ref=f15e436]
+        - generic [ref=f15e438]:
+          - generic [ref=f15e439]:
+            - img [ref=f15e441]
+            - generic [ref=f15e443]:
+              - paragraph [ref=f15e444]: Set selected slots as active
+              - paragraph [ref=f15e445]: Disable this to hide all selected slots from the booking calendar.
+          - switch [checked] [ref=f15e446] [cursor=pointer]
+          - checkbox [checked]
+      - generic [ref=f15e447]:
+        - button "Delete selected" [disabled] [ref=f15e448]:
+          - img [ref=f15e449]
+          - text: Delete selected
+        - button "Apply to selected" [disabled] [ref=f15e452]:
+          - img [ref=f15e453]
+          - text: Apply to selected

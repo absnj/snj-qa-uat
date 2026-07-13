@@ -4,8 +4,9 @@ import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
 
 export type ServiceType = 'General';
 
-export type BookingMode = 'Staff';
+export type BookingMode = 'Branch' | 'Staff';
 
+// Staff Visibility only appears in the Rules form when Booking Mode is 'Staff'.
 export type StaffVisibility = 'Own only' | 'All staff';
 
 export type SessionLength =
@@ -26,11 +27,11 @@ export type AdvanceBookingWindow =
 
 export type MinimumNotice =
     | 'Allow immediate bookings'
-    | '30 minutes'
-    | '1 hour'
-    | '2 hours'
-    | '4 hours'
-    | '1 day';
+    | 'At least 15 minutes ahead'
+    | 'At least 30 minutes ahead'
+    | 'At least 1 hour ahead'
+    | 'At least 2 hours ahead'
+    | 'At least 1 day ahead';
 
 export type NoShowWindow =
     | '5 minutes after start'
@@ -99,6 +100,7 @@ export class RulesTab extends ConfigBasePage {
     private readonly bookingTermsEditor: Locator;
 
     // Save
+    private readonly setToDefaultButton: Locator;
     private readonly saveButton: Locator;
 
     // Heading (waitForReady anchor)
@@ -116,6 +118,10 @@ export class RulesTab extends ConfigBasePage {
         this.bookingModeDropdown = this.page.getByRole('combobox', { name: 'Booking Mode' });
 
         // Approval & Staff Controls
+        // NOTE: only the auto-confirm switch is present when Booking Mode is
+        // 'Branch'. Staff Visibility and the two staff switches (nth(2)/nth(3))
+        // are rendered only when Booking Mode is 'Staff' — set it first (and
+        // save) or these locators won't resolve.
         this.autoConfirmToggle = this.page.getByRole('switch').nth(1);
         this.staffVisibilityDropdown = this.page.getByRole('combobox', { name: 'Staff Visibility' });
         this.allowCustomerChooseStaffToggle = this.page.getByRole('switch').nth(2);
@@ -138,6 +144,7 @@ export class RulesTab extends ConfigBasePage {
         this.confirmationMessageEditor = this.page.locator('.tiptap').first();
         this.bookingTermsEditor = this.page.locator('.tiptap').nth(1);
 
+        this.setToDefaultButton = this.page.getByRole('button', { name: 'Set to Default' });
         this.saveButton = this.page.getByRole('button', { name: 'Save Booking Settings' });
     }
 
@@ -302,13 +309,31 @@ export class RulesTab extends ConfigBasePage {
         if (data.bookingTerms) await this.setBookingTerms(data.bookingTerms);
     }
 
+    /**
+     * Clicks "Set to Default", which repopulates the form with the recommended
+     * defaults (notably Booking Mode = 'Staff', which reveals the Staff tab and
+     * staff controls). This only fills the form — call save() to persist. Scope
+     * is the Rules tab only; it does not reset Time Slots or per-staff toggles.
+     */
+    async setToDefault(): Promise<void> {
+        await this.setToDefaultButton.click();
+        await expect(this.page.getByText('Defaults applied', { exact: true })).toBeVisible();
+    }
+
     async save(): Promise<void> {
         await this.saveButton.click();
+        // Wait for the persist request to settle before callers navigate away
+        // (e.g. to the public page), otherwise the change may not be visible yet.
+        await this.page.waitForLoadState('networkidle');
     }
 
     // --- Assertions ---
 
     async expectValidationError(): Promise<void> {
         await expect(this.page.getByRole('alert', { name: /Please fix the following/ })).toBeVisible();
+    }
+
+    async expectRuleValidationError(): Promise<void> {
+        await expect(this.page.getByRole('alert', { name: /Unable to save booking settings/ })).toBeVisible();
     }
 }

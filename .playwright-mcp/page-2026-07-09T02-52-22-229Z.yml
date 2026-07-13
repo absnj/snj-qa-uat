@@ -1,0 +1,315 @@
+- generic:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - button:
+                  - img
+            - generic:
+              - link:
+                - /url: /
+                - img
+            - generic:
+              - button
+        - generic:
+          - main:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic: Pull to refresh
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button:
+                                - img
+                              - button:
+                                - img
+                                - text: Details
+                              - button:
+                                - img
+                                - text: Schedule
+                              - button:
+                                - img
+                                - text: NJoyBook
+                              - button:
+                                - img
+                                - text: Smart QR
+                              - button:
+                                - img
+                                - text: Media
+                              - button:
+                                - img
+                                - text: Logs
+                              - button:
+                                - img
+                                - text: Remarks
+                            - generic:
+                              - generic:
+                                - heading [level=3]: NJoyBook
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - tablist:
+                                      - paragraph: NJoyBook Menu
+                                      - generic:
+                                        - button:
+                                          - img
+                                          - text: Bookings
+                                        - button:
+                                          - img
+                                          - text: Guest History
+                                        - button:
+                                          - img
+                                          - text: Rules
+                                        - button:
+                                          - img
+                                          - text: Time Slots
+                                        - button:
+                                          - img
+                                          - text: Blockouts
+                                        - button:
+                                          - img
+                                          - text: Booking Page
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - heading [level=3]: Rules and Regulations
+                                            - button:
+                                              - img
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic:
+                                              - paragraph: Enable booking
+                                              - paragraph: Turn on to accept bookings at this branch.
+                                          - switch [checked]
+                                        - generic:
+                                          - generic:
+                                            - img
+                                            - generic:
+                                              - heading [level=4]: Service & Booking Mode
+                                              - button:
+                                                - img
+                                          - generic:
+                                            - generic:
+                                              - generic: Service Type
+                                              - combobox:
+                                                - generic: General
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                            - generic:
+                                              - generic:
+                                                - generic: Booking Mode
+                                                - button:
+                                                  - img
+                                              - combobox:
+                                                - generic: Branch
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                        - generic:
+                                          - generic:
+                                            - img
+                                            - generic:
+                                              - heading [level=4]: Approval & Staff Controls
+                                              - button:
+                                                - img
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - img
+                                                - generic:
+                                                  - paragraph: Auto-confirm bookings
+                                                  - paragraph: Confirm incoming bookings automatically without manual approval.
+                                              - switch [checked]
+                                        - generic:
+                                          - generic:
+                                            - img
+                                            - generic:
+                                              - heading [level=4]: Capacity & Sessions
+                                              - button:
+                                                - img
+                                          - generic:
+                                            - generic:
+                                              - generic: Minimum Party Size
+                                              - spinbutton: "1"
+                                            - generic:
+                                              - generic: Maximum Party Size
+                                              - spinbutton: "5"
+                                            - generic:
+                                              - generic: Session Length
+                                              - combobox:
+                                                - generic: 1 hour (recommended)
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                            - generic:
+                                              - generic: New Slot Opens Every
+                                              - combobox:
+                                                - generic: Back to back (recommended)
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                            - generic:
+                                              - generic: Bookings Allowed Per Slot
+                                              - spinbutton: "5"
+                                            - generic:
+                                              - generic: Extra Buffer (Overbooking)
+                                              - spinbutton: "1"
+                                        - generic:
+                                          - generic:
+                                            - img
+                                            - generic:
+                                              - heading [level=4]: Booking Window
+                                              - button:
+                                                - img
+                                          - generic:
+                                            - generic:
+                                              - generic: How Far Ahead Customers Can Book
+                                              - combobox:
+                                                - generic: Up to 1 month ahead
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                            - generic:
+                                              - generic: Minimum Notice Required
+                                              - combobox [expanded]:
+                                                - generic: At least 15 minutes ahead
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                            - generic:
+                                              - generic: Mark As No-Show After
+                                              - combobox:
+                                                - generic: 15 minutes after start (recommended)
+                                                - generic:
+                                                  - img
+                                              - combobox
+                                        - generic:
+                                          - generic:
+                                            - img
+                                            - generic:
+                                              - heading [level=4]: Customer Communication
+                                              - button:
+                                                - img
+                                          - generic:
+                                            - generic:
+                                              - generic: Customer Reminders
+                                              - generic:
+                                                - generic:
+                                                  - checkbox
+                                                  - generic: 1 day before
+                                                - generic:
+                                                  - checkbox [checked]
+                                                  - generic: 3 hours before
+                                                - generic:
+                                                  - checkbox
+                                                  - generic: 2 hours before
+                                                - generic:
+                                                  - checkbox
+                                                  - generic: 1 hour before
+                                                - generic:
+                                                  - checkbox
+                                                  - generic: 30 minutes before
+                                              - paragraph: Select one or more reminder timings to notify customers before their booking.
+                                            - generic:
+                                              - generic: Confirmation Message
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button [disabled]:
+                                                        - img
+                                                    - generic:
+                                                      - generic:
+                                                        - paragraph: Thank you for your NJoyBook request. Please arrive 10 minutes early.
+                                            - generic:
+                                              - generic: Booking Terms
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button:
+                                                        - img
+                                                      - button [disabled]:
+                                                        - img
+                                                    - generic:
+                                                      - generic:
+                                                        - paragraph: Add booking terms and conditions...
+                                        - generic:
+                                          - generic:
+                                            - img
+                                            - generic:
+                                              - heading [level=4]: Booking Photos
+                                              - button:
+                                                - img
+                                          - generic:
+                                            - generic:
+                                              - text: Photos
+                                              - button:
+                                                - img
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - button:
+                                                    - paragraph:
+                                                      - img
+                                            - paragraph: Add up to 5 booking photos.
+                                      - generic:
+                                        - button:
+                                          - img
+                                          - text: Set to Default
+                                        - button:
+                                          - img
+                                          - text: Save Booking Settings
+      - button [ref=e1698] [cursor=pointer]:
+        - img [ref=e1231]
+  - list
+  - listbox [ref=e1699]:
+    - group [ref=e1700]:
+      - option "Allow immediate bookings" [ref=e1701] [cursor=pointer]:
+        - generic [ref=e1703]: Allow immediate bookings
+      - option "At least 15 minutes ahead" [active] [selected] [ref=e1704] [cursor=pointer]:
+        - img [ref=e1707]
+        - generic [ref=e1709]: At least 15 minutes ahead
+      - option "At least 30 minutes ahead" [ref=e1710] [cursor=pointer]:
+        - generic [ref=e1712]: At least 30 minutes ahead
+      - option "At least 1 hour ahead" [ref=e1713] [cursor=pointer]:
+        - generic [ref=e1715]: At least 1 hour ahead
+      - option "At least 2 hours ahead" [ref=e1716] [cursor=pointer]:
+        - generic [ref=e1718]: At least 2 hours ahead
+      - option "At least 1 day ahead" [ref=e1719] [cursor=pointer]:
+        - generic [ref=e1721]: At least 1 day ahead

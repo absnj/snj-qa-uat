@@ -1,0 +1,102 @@
+- generic [active] [ref=f16e1]:
+  - generic [ref=f16e3]:
+    - banner [ref=f16e4]:
+      - link "ShopNJoy" [ref=f16e8] [cursor=pointer]:
+        - /url: /
+        - img "ShopNJoy" [ref=f16e9]
+    - main [ref=f16e10]:
+      - alert [ref=f16e11]
+      - generic [ref=f16e12]:
+        - generic [ref=f16e16]:
+          - generic [ref=f16e17]: Book an appointment
+          - heading "Hajime Tonkatsu & Ramen" [level=1] [ref=f16e51]
+          - paragraph [ref=f16e52]: Food & Beverage
+        - generic [ref=f16e19]:
+          - complementary [ref=f16e53]:
+            - region "Branch photo gallery" [ref=f16e54]:
+              - tablist "Gallery sections" [ref=f16e55]:
+                - tab "Images" [selected] [ref=f16e56] [cursor=pointer]:
+                  - img [ref=f16e57]
+                  - text: Images
+                - tab "Menu" [ref=f16e61] [cursor=pointer]:
+                  - img [ref=f16e62]
+                  - text: Menu
+              - generic [ref=f16e64]:
+                - button "Open photo 1 for closer view" [ref=f16e65]:
+                  - img "Hajime - My Village photo 1" [ref=f16e66]
+                - generic: 1 / 3
+                - button "Previous photo" [ref=f16e67] [cursor=pointer]:
+                  - img [ref=f16e68]
+                - button "Next photo" [ref=f16e70] [cursor=pointer]:
+                  - img [ref=f16e71]
+              - tablist "Photo thumbnails" [ref=f16e73]:
+                - tab "Show photo 1" [selected] [ref=f16e74] [cursor=pointer]
+                - tab "Show photo 2" [ref=f16e75] [cursor=pointer]
+                - tab "Show photo 3" [ref=f16e76] [cursor=pointer]
+          - generic [ref=f16e77]:
+            - navigation "Booking progress" [ref=f16e78]:
+              - list [ref=f16e79]:
+                - listitem [ref=f16e80]:
+                  - button "Date & time" [ref=f16e81] [cursor=pointer]:
+                    - img [ref=f16e186]
+                    - generic [ref=f16e83]: Date & time
+                - listitem [ref=f16e84]:
+                  - button "Specialist" [ref=f16e85] [cursor=pointer]:
+                    - generic [ref=f16e86]: "2"
+                    - generic [ref=f16e87]: Specialist
+                - listitem [ref=f16e88]:
+                  - button "Your details" [disabled] [ref=f16e89]:
+                    - generic [ref=f16e90]: "3"
+                    - generic [ref=f16e91]: Your details
+                - listitem [ref=f16e92]:
+                  - button "Review & confirm" [disabled] [ref=f16e93]:
+                    - generic [ref=f16e94]: "4"
+                    - generic [ref=f16e95]: Review & confirm
+            - text: "Limited or no appointments expected Allowed: 1–5 guests"
+            - region "Choose your specialist" [ref=f16e188]:
+              - heading "Choose your specialist" [level=2] [ref=f16e189]
+              - generic "Choose your specialist" [ref=f16e190]:
+                - generic [ref=f16e191]:
+                  - heading "Choose your specialist" [level=3] [ref=f16e192]
+                  - paragraph [ref=f16e193]: This time is available with the specialist below.
+                - listbox "Available staff" [ref=f16e194]:
+                  - option "booking-tester-staff-A" [selected] [ref=f16e195] [cursor=pointer]:
+                    - generic [ref=f16e197]: BO
+                    - generic [ref=f16e199]: booking-tester-staff-A
+                - article "Selected staff details" [ref=f16e200]:
+                  - generic [ref=f16e201]:
+                    - generic [ref=f16e203]: BO
+                    - heading "booking-tester-staff-A" [level=4] [ref=f16e205]
+            - generic [ref=f16e184]:
+              - button "Back" [ref=f16e206] [cursor=pointer]
+              - button "Continue" [ref=f16e185] [cursor=pointer]
+    - contentinfo [ref=f16e24]:
+      - generic [ref=f16e25]:
+        - generic [ref=f16e26]:
+          - generic [ref=f16e27]:
+            - generic [ref=f16e28]:
+              - paragraph [ref=f16e29]: ShopNJoy Pte. Ltd.
+              - img "ShopNJoy" [ref=f16e30]
+            - generic [ref=f16e31]:
+              - link "LinkedIn" [ref=f16e32] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/theshopnjoy
+                - img [ref=f16e33]
+              - link "WhatsApp" [ref=f16e35] [cursor=pointer]:
+                - /url: https://wa.me/6588170291
+                - img [ref=f16e36]
+          - generic [ref=f16e38]:
+            - heading "Quick Links" [level=4] [ref=f16e39]
+            - list [ref=f16e40]:
+              - listitem [ref=f16e41]:
+                - link "Frequently Asked Questions" [ref=f16e42] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=f16e43]:
+                - link "Terms and Conditions" [ref=f16e44] [cursor=pointer]:
+                  - /url: /terms-and-conditions
+        - paragraph [ref=f16e47]: © 2026 ShopNJoy Pte. Ltd. All rights reserved.
+    - button "Back to top" [ref=f16e208] [cursor=pointer]:
+      - img [ref=f16e209]
+  - iframe [ref=f16e50]:
+    - generic [ref=f17e6]:
+      - text: protected by
+      - strong [ref=f17e7]: reCAPTCHA

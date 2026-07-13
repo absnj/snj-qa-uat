@@ -1,0 +1,119 @@
+- generic [active] [ref=f44e1]:
+  - generic [ref=f44e7]:
+    - generic [ref=f44e8]:
+      - generic [ref=f44e10]:
+        - button "Open navigation menu" [ref=f44e13] [cursor=pointer]:
+          - img [ref=f44e14]
+        - link "Shop n Joy Logo" [ref=f44e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f44e18]
+        - button "Hi, Regina" [ref=f44e20] [cursor=pointer]:
+          - generic [ref=f44e22]: Hi, Regina
+      - main [ref=f44e24]:
+        - generic [ref=f44e25]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f44e32]:
+            - generic [ref=f44e33]:
+              - button "Back" [ref=f44e34]:
+                - img [ref=f44e35]
+              - button "Details" [ref=f44e37] [cursor=pointer]:
+                - img [ref=f44e38]
+                - text: Details
+              - button "Schedule" [ref=f44e40] [cursor=pointer]:
+                - img [ref=f44e41]
+                - text: Schedule
+              - button "NJoyBook" [ref=f44e43] [cursor=pointer]:
+                - img [ref=f44e44]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f44e46] [cursor=pointer]:
+                - img [ref=f44e47]
+                - text: Smart QR
+              - button "Media" [ref=f44e49] [cursor=pointer]:
+                - img [ref=f44e50]
+                - text: Media
+              - button "Logs" [ref=f44e52] [cursor=pointer]:
+                - img [ref=f44e53]
+                - text: Logs
+              - button "Remarks" [ref=f44e55] [cursor=pointer]:
+                - img [ref=f44e56]
+                - text: Remarks
+            - generic [ref=f44e58]:
+              - heading "NJoyBook" [level=3] [ref=f44e60]
+              - generic [ref=f44e62]:
+                - tablist "NJoyBook Menu" [ref=f44e64]:
+                  - paragraph [ref=f44e65]: NJoyBook Menu
+                  - generic [ref=f44e66]:
+                    - button "Bookings" [ref=f44e67] [cursor=pointer]:
+                      - img [ref=f44e68]
+                      - text: Bookings
+                    - button "Guest History" [ref=f44e70] [cursor=pointer]:
+                      - img [ref=f44e71]
+                      - text: Guest History
+                    - button "Rules" [ref=f44e73] [cursor=pointer]:
+                      - img [ref=f44e74]
+                      - text: Rules
+                    - button "Time Slots" [ref=f44e76] [cursor=pointer]:
+                      - img [ref=f44e77]
+                      - text: Time Slots
+                    - button "Staff" [ref=f44e79] [cursor=pointer]:
+                      - img [ref=f44e80]
+                      - text: Staff
+                    - button "Blockouts" [ref=f44e82] [cursor=pointer]:
+                      - img [ref=f44e83]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=f44e85] [cursor=pointer]:
+                      - img [ref=f44e86]
+                      - text: Booking Page
+                - generic [ref=f44e89]:
+                  - generic [ref=f44e90]:
+                    - generic [ref=f44e92]:
+                      - heading "Time Slots" [level=3] [ref=f44e93]
+                      - button "Time Slots help" [ref=f44e94]:
+                        - img [ref=f44e95]
+                    - generic [ref=f44e97]:
+                      - button "Add Time Slot" [ref=f44e98] [cursor=pointer]:
+                        - img [ref=f44e99]
+                        - generic [ref=f44e101]: Add Time Slot
+                      - button "Bulk Edit" [ref=f44e102] [cursor=pointer]:
+                        - img [ref=f44e103]
+                        - generic [ref=f44e105]: Bulk Edit
+                  - generic [ref=f44e227]:
+                    - button "Back to time slots" [ref=f44e229]:
+                      - img [ref=f44e230]
+                    - generic [ref=f44e232]:
+                      - generic [ref=f44e234]:
+                        - heading "11:30 – 12:30" [level=4] [ref=f44e235]
+                        - generic [ref=f44e236]: Active
+                      - generic [ref=f44e237]:
+                        - generic [ref=f44e238]:
+                          - heading "Slot details" [level=5] [ref=f44e239]
+                          - generic [ref=f44e240]:
+                            - generic [ref=f44e241]:
+                              - term [ref=f44e242]: Label
+                              - definition [ref=f44e243]: Standard slot
+                            - generic [ref=f44e244]:
+                              - term [ref=f44e245]: Time
+                              - definition [ref=f44e246]: 11:30 – 12:30
+                            - generic [ref=f44e247]:
+                              - term [ref=f44e248]: Max bookings
+                              - definition [ref=f44e249]: "5"
+                            - generic [ref=f44e250]:
+                              - term [ref=f44e251]: Max party size
+                              - definition [ref=f44e252]: —
+                            - generic [ref=f44e253]:
+                              - term [ref=f44e254]: Discount
+                              - definition [ref=f44e255]: —
+                            - generic [ref=f44e256]:
+                              - term [ref=f44e257]: Status
+                              - definition [ref=f44e258]: Active
+                        - generic [ref=f44e259]:
+                          - heading "Bookable staff" [level=5] [ref=f44e260]
+                          - paragraph [ref=f44e261]: Staff assigned to this time slot for bookings and scheduling.
+                          - generic [ref=f44e262]: No staff assigned to this slot.
+    - button "Toggle floating actions" [ref=f44e224] [cursor=pointer]:
+      - img [ref=f44e225]
+  - region "Notifications (F8)":
+    - list

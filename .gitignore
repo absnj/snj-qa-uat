@@ -15,3 +15,8 @@ logs/
 
 # Setup Config Files
 tests/setup/.auth
+
+*.ipa
+appium.log
+render-tree.json
+page-source.txt

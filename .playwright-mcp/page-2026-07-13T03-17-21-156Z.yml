@@ -1,0 +1,274 @@
+- generic [ref=f7e1]:
+  - generic [ref=f7e7]:
+    - generic [ref=f7e8]:
+      - generic [ref=f7e10]:
+        - link "Shop n Joy Logo" [ref=f7e12] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f7e13]
+        - button "Hi, Regina" [ref=f7e15] [cursor=pointer]:
+          - generic [ref=f7e17]: Hi, Regina
+      - generic [ref=f7e18]:
+        - complementary [ref=f7e19]:
+          - generic [ref=f7e21]:
+            - paragraph [ref=f7e22]: Configuration
+            - list [ref=f7e23]:
+              - listitem [ref=f7e24]:
+                - link "Overview" [ref=f7e25] [cursor=pointer]:
+                  - /url: /configuration
+                  - img [ref=f7e27]
+                  - generic [ref=f7e29]: Overview
+              - listitem [ref=f7e30]:
+                - link "Deals" [ref=f7e31] [cursor=pointer]:
+                  - /url: /configuration/deal/deal-list
+                  - img [ref=f7e33]
+                  - generic [ref=f7e35]: Deals
+              - listitem [ref=f7e36]:
+                - link "Loyalty Programs" [ref=f7e37] [cursor=pointer]:
+                  - /url: /configuration/loyalty-program/loyalty-program-list
+                  - img [ref=f7e39]
+                  - generic [ref=f7e41]: Loyalty Programs
+              - listitem [ref=f7e42]:
+                - button "NJoyBoost" [ref=f7e44]:
+                  - img [ref=f7e46]
+                  - generic [ref=f7e48]: NJoyBoost
+                  - img [ref=f7e49]
+        - main [ref=f7e51]:
+          - generic [ref=f7e52]:
+            - generic:
+              - generic:
+                - img
+                - generic: Pull to refresh
+            - generic [ref=f7e59]:
+              - generic [ref=f7e60]:
+                - button "Back" [ref=f7e61]:
+                  - img [ref=f7e62]
+                - button "Details" [ref=f7e64] [cursor=pointer]:
+                  - img [ref=f7e65]
+                  - text: Details
+                - button "Schedule" [ref=f7e67] [cursor=pointer]:
+                  - img [ref=f7e68]
+                  - text: Schedule
+                - button "NJoyBook" [ref=f7e70] [cursor=pointer]:
+                  - img [ref=f7e71]
+                  - text: NJoyBook
+                - button "Smart QR" [ref=f7e73] [cursor=pointer]:
+                  - img [ref=f7e74]
+                  - text: Smart QR
+                - button "Media" [ref=f7e76] [cursor=pointer]:
+                  - img [ref=f7e77]
+                  - text: Media
+                - button "Logs" [ref=f7e79] [cursor=pointer]:
+                  - img [ref=f7e80]
+                  - text: Logs
+                - button "Remarks" [ref=f7e82] [cursor=pointer]:
+                  - img [ref=f7e83]
+                  - text: Remarks
+              - generic [ref=f7e85]:
+                - heading "NJoyBook" [level=3] [ref=f7e87]
+                - generic [ref=f7e89]:
+                  - generic [ref=f7e90]:
+                    - tablist "NJoyBook Menu" [ref=f7e91]:
+                      - paragraph [ref=f7e92]: NJoyBook Menu
+                      - generic [ref=f7e93]:
+                        - button "Bookings" [ref=f7e94] [cursor=pointer]:
+                          - img [ref=f7e95]
+                          - text: Bookings
+                        - button "Guest History" [ref=f7e97] [cursor=pointer]:
+                          - img [ref=f7e98]
+                          - text: Guest History
+                        - button "Rules" [ref=f7e100] [cursor=pointer]:
+                          - img [ref=f7e101]
+                          - text: Rules
+                        - button "Time Slots" [ref=f7e103] [cursor=pointer]:
+                          - img [ref=f7e104]
+                          - text: Time Slots
+                        - button "Staff" [ref=f7e106] [cursor=pointer]:
+                          - img [ref=f7e107]
+                          - text: Staff
+                        - button "Blockouts" [ref=f7e109] [cursor=pointer]:
+                          - img [ref=f7e110]
+                          - text: Blockouts
+                        - button "Booking Page" [ref=f7e112] [cursor=pointer]:
+                          - img [ref=f7e113]
+                          - text: Booking Page
+                    - tablist "Booking detail section" [ref=f7e1250]:
+                      - paragraph [ref=f7e1251]: Selected booking
+                      - generic [ref=f7e1252]:
+                        - button "Details" [ref=f7e1253] [cursor=pointer]:
+                          - img [ref=f7e1254]
+                          - text: Details
+                        - button "Logs" [ref=f7e1256] [cursor=pointer]:
+                          - img [ref=f7e1257]
+                          - text: Logs
+                  - generic [ref=f7e196]:
+                    - button "Back to bookings" [ref=f7e198]:
+                      - img [ref=f7e199]
+                    - generic [ref=f7e1259]:
+                      - generic [ref=f7e1260]:
+                        - generic [ref=f7e1261]:
+                          - heading "BK-20260713-0004" [level=4] [ref=f7e1262]
+                          - generic [ref=f7e1263]: Confirmed
+                        - generic [ref=f7e1265]:
+                          - button "Change status" [ref=f7e1266] [cursor=pointer]:
+                            - img [ref=f7e1267]
+                            - generic [ref=f7e1269]: Change status
+                          - button "Edit details" [ref=f7e1270] [cursor=pointer]:
+                            - img [ref=f7e1271]
+                            - generic [ref=f7e1273]: Edit details
+                      - generic [ref=f7e1274]:
+                        - generic [ref=f7e1275]:
+                          - heading "Guest and contact" [level=5] [ref=f7e1276]
+                          - paragraph [ref=f7e1277]: Anonymous booking — contact details are stored on this booking only.
+                          - generic [ref=f7e1278]:
+                            - generic [ref=f7e1279]:
+                              - term [ref=f7e1280]: Name
+                              - definition [ref=f7e1281]: MCP Verify 1013
+                            - generic [ref=f7e1282]:
+                              - term [ref=f7e1283]: Email
+                              - definition [ref=f7e1284]: mcp-verify@example.com
+                            - generic [ref=f7e1285]:
+                              - term [ref=f7e1286]: Phone
+                              - definition [ref=f7e1287]: "+6591234500"
+                        - generic [ref=f7e1288]:
+                          - heading "Booking" [level=5] [ref=f7e1289]
+                          - generic [ref=f7e1290]:
+                            - generic [ref=f7e1291]:
+                              - term [ref=f7e1292]: Booking date
+                              - definition [ref=f7e1293]: 13 Jul 2026
+                            - generic [ref=f7e1294]:
+                              - term [ref=f7e1295]: Start time
+                              - definition [ref=f7e1296]: 14:30
+                            - generic [ref=f7e1297]:
+                              - term [ref=f7e1298]: Party size
+                              - definition [ref=f7e1299]: "2"
+                            - generic [ref=f7e1300]:
+                              - term [ref=f7e1301]: Occasion
+                              - definition [ref=f7e1302]: —
+                            - generic [ref=f7e1303]:
+                              - term [ref=f7e1304]: Special requests
+                              - definition [ref=f7e1305]: —
+                        - generic [ref=f7e1306]:
+                          - heading "Assignment" [level=5] [ref=f7e1307]
+                          - generic [ref=f7e1309]:
+                            - term [ref=f7e1310]: Staff
+                            - definition [ref=f7e1311]: booking-tester-staff-A
+                        - generic [ref=f7e1312]:
+                          - heading "Record" [level=5] [ref=f7e1313]
+                          - generic [ref=f7e1314]:
+                            - generic [ref=f7e1315]:
+                              - term [ref=f7e1316]: Created
+                              - definition [ref=f7e1317]: 13 Jul 2026, 10:29
+                            - generic [ref=f7e1318]:
+                              - term [ref=f7e1319]: Last updated
+                              - definition [ref=f7e1320]: 13 Jul 2026, 10:29
+                            - generic [ref=f7e1321]:
+                              - term [ref=f7e1322]: Source
+                              - definition [ref=f7e1323]: website
+    - button "Toggle floating actions" [ref=f7e2429] [cursor=pointer]:
+      - img [ref=f7e185]
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=f7e2553]:
+    - generic [ref=f7e2554]:
+      - generic [ref=f7e2557]:
+        - heading "Add booking" [level=2] [ref=f7e2558]
+        - button "Show dialog description" [ref=f7e2559]:
+          - img [ref=f7e2560]
+      - button "Close modal" [ref=f7e2562] [cursor=pointer]:
+        - img [ref=f7e2563]
+    - generic [ref=f7e2565]:
+      - generic [ref=f7e2566]:
+        - generic [ref=f7e2567]:
+          - img [ref=f7e2568]
+          - heading "Schedule" [level=3] [ref=f7e2571]
+        - generic [ref=f7e2573]:
+          - generic [ref=f7e2574]:
+            - generic [ref=f7e2575]:
+              - img [ref=f7e2576]
+              - text: Booking date
+            - generic [ref=f7e2578]:
+              - textbox "Booking date" [ref=f7e2579]:
+                - /placeholder: YYYY-MM-DD
+                - text: 2026-07-20
+              - button "July 20, 2026" [active] [ref=f7e2771]:
+                - img [ref=f7e2581]
+            - paragraph [ref=f7e2583]: Time slots follow the weekly schedule for this weekday.
+          - generic [ref=f7e2584]:
+            - generic [ref=f7e2585]:
+              - img [ref=f7e2586]
+              - text: Start time *
+            - combobox "Start time *" [ref=f7e2588] [cursor=pointer]:
+              - generic: "-- Select --"
+              - img [ref=f7e2590]
+            - combobox [ref=f7e2592]
+          - generic [ref=f7e2593]:
+            - generic [ref=f7e2594]:
+              - img [ref=f7e2595]
+              - text: Party size
+            - spinbutton "Party size" [ref=f7e2597]: "1"
+      - generic [ref=f7e2598]:
+        - generic [ref=f7e2599]:
+          - img [ref=f7e2600]
+          - heading "Assignment" [level=3] [ref=f7e2602]
+        - generic [ref=f7e2604]:
+          - generic [ref=f7e2605]:
+            - generic [ref=f7e2606]:
+              - img [ref=f7e2607]
+              - text: Staff
+            - button "Staff field help" [ref=f7e2609]:
+              - img [ref=f7e2610]
+          - combobox "Staff" [ref=f7e2612] [cursor=pointer]:
+            - generic: No preference
+            - img [ref=f7e2614]
+          - combobox [ref=f7e2616]
+      - generic [ref=f7e2617]:
+        - generic [ref=f7e2618]:
+          - img [ref=f7e2619]
+          - heading "Guest" [level=3] [ref=f7e2621]
+        - generic [ref=f7e2623]:
+          - generic [ref=f7e2624]:
+            - generic [ref=f7e2625]:
+              - img [ref=f7e2626]
+              - text: Name
+            - textbox "Name" [ref=f7e2628]:
+              - /placeholder: Guest name
+          - generic [ref=f7e2629]:
+            - generic [ref=f7e2631]:
+              - img [ref=f7e2632]
+              - text: Email & phone
+            - generic [ref=f7e2634]:
+              - generic [ref=f7e2635]:
+                - generic [ref=f7e2636]:
+                  - img [ref=f7e2637]
+                  - text: Email *
+                - textbox "Email *" [ref=f7e2639]:
+                  - /placeholder: name@example.com
+              - generic [ref=f7e2640]:
+                - generic [ref=f7e2641]:
+                  - img [ref=f7e2642]
+                  - text: Phone *
+                - generic [ref=f7e2647]:
+                  - generic [ref=f7e2649]: "+65"
+                  - textbox [ref=f7e2651]
+                  - generic:
+                    - img
+      - generic [ref=f7e2652]:
+        - generic [ref=f7e2653]:
+          - img [ref=f7e2654]
+          - heading "Notes" [level=3] [ref=f7e2656]
+        - generic [ref=f7e2658]:
+          - generic [ref=f7e2659]:
+            - generic [ref=f7e2660]:
+              - img [ref=f7e2661]
+              - text: Occasion
+            - textbox "Occasion" [ref=f7e2663]:
+              - /placeholder: Optional
+          - generic [ref=f7e2664]:
+            - generic [ref=f7e2665]:
+              - img [ref=f7e2666]
+              - text: Special requests
+            - textbox "Special requests" [ref=f7e2669]:
+              - /placeholder: Optional notes from the guest
+      - button "Create booking" [ref=f7e2671] [cursor=pointer]:
+        - img [ref=f7e2672]
+        - text: Create booking

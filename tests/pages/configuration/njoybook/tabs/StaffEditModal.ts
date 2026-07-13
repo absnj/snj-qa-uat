@@ -34,16 +34,20 @@ export class StaffEditModal extends ConfigBasePage {
 
     constructor(page: Page) {
         super(page);
-        this.modal = this.page.getByRole('dialog');
+        // The modal has no role="dialog"; it's a plain container div
+        // (.modal-container.popup-style.booking-popup).
+        this.modal = this.page.locator('.modal-container');
 
         this.closeButton = this.modal.getByRole('button', { name: 'Close modal' });
 
-        // Read-only source fields
+        // Read-only source fields, in DOM order:
+        // 0 Staff ID, 1 Bookable staff ID, 2 Display name, 3 Photo URL,
+        // 4 Notification email, 5 Notification phone.
         this.staffIdInput = this.modal.getByRole('textbox').nth(0);
         this.bookableStaffIdInput = this.modal.getByRole('textbox').nth(1);
         this.displayNameInput = this.modal.getByRole('textbox').nth(2);
-        this.notificationEmailInput = this.modal.getByRole('textbox').nth(3);
-        this.notificationPhoneInput = this.modal.getByRole('textbox').nth(4);
+        this.notificationEmailInput = this.modal.getByRole('textbox').nth(4);
+        this.notificationPhoneInput = this.modal.getByRole('textbox').nth(5);
 
         // Editable profile fields
         this.displayOrderInput = this.modal.getByRole('spinbutton', { name: 'Display order' });

@@ -66,12 +66,19 @@ export const LOYALTY_READ_ONLY_ROLES = [
   ROLES.branchStaff,
 ];
 
-export const NJOYBOOK_CONFIG_ROLES = [
+// Only the merchant admin can reach the "rich" NJoyBook configuration — Rules,
+// Time Slots, Staff, Blockouts, Guest History.
+export const NJOYBOOK_FULL_ACCESS_ROLES = [
   ROLES.merchantAdmin,
-  ROLES.branchAdmin,
+];
+
+// Everyone else sees only the Bookings and Booking Page tabs (with an
+// "Access Restricted" banner); the advanced tabs are not rendered for them.
+export const NJOYBOOK_LIMITED_ROLES = [
   ROLES.merchantStaff,
+  ROLES.branchAdmin,
   ROLES.branchStaff,
-]
+];
 
 export async function gotoUat(page: Page): Promise<void> {
   await page.goto(process.env.UAT_URL!);

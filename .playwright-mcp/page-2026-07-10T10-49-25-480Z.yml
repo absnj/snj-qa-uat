@@ -1,0 +1,171 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e7]:
+    - generic [ref=f1e8]:
+      - generic [ref=f1e10]:
+        - link "Shop n Joy Logo" [ref=f1e12] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f1e13]
+        - button "Hi, Regina" [ref=f1e15] [cursor=pointer]:
+          - generic [ref=f1e17]: Hi, Regina
+      - generic [ref=f1e18]:
+        - complementary [ref=f1e19]:
+          - generic [ref=f1e21]:
+            - paragraph [ref=f1e22]: Configuration
+            - list [ref=f1e23]:
+              - listitem [ref=f1e24]:
+                - link "Overview" [ref=f1e25] [cursor=pointer]:
+                  - /url: /configuration
+                  - img [ref=f1e27]
+                  - generic [ref=f1e29]: Overview
+              - listitem [ref=f1e30]:
+                - link "Deals" [ref=f1e31] [cursor=pointer]:
+                  - /url: /configuration/deal/deal-list
+                  - img [ref=f1e33]
+                  - generic [ref=f1e35]: Deals
+              - listitem [ref=f1e36]:
+                - link "Loyalty Programs" [ref=f1e37] [cursor=pointer]:
+                  - /url: /configuration/loyalty-program/loyalty-program-list
+                  - img [ref=f1e39]
+                  - generic [ref=f1e41]: Loyalty Programs
+              - listitem [ref=f1e42]:
+                - button "NJoyBoost" [ref=f1e44]:
+                  - img [ref=f1e46]
+                  - generic [ref=f1e48]: NJoyBoost
+                  - img [ref=f1e49]
+        - main [ref=f1e51]:
+          - generic [ref=f1e52]:
+            - generic:
+              - generic:
+                - img
+                - generic: Pull to refresh
+            - generic [ref=f1e266]:
+              - generic [ref=f1e267]:
+                - button "Back" [ref=f1e268]:
+                  - img [ref=f1e269]
+                - button "Details" [ref=f1e271] [cursor=pointer]:
+                  - img [ref=f1e272]
+                  - text: Details
+                - button "Schedule" [ref=f1e274] [cursor=pointer]:
+                  - img [ref=f1e275]
+                  - text: Schedule
+                - button "NJoyBook" [ref=f1e276] [cursor=pointer]:
+                  - img [ref=f1e277]
+                  - text: NJoyBook
+                - button "Smart QR" [ref=f1e278] [cursor=pointer]:
+                  - img [ref=f1e279]
+                  - text: Smart QR
+                - button "Media" [ref=f1e280] [cursor=pointer]:
+                  - img [ref=f1e281]
+                  - text: Media
+                - button "Logs" [ref=f1e283] [cursor=pointer]:
+                  - img [ref=f1e284]
+                  - text: Logs
+                - button "Remarks" [ref=f1e286] [cursor=pointer]:
+                  - img [ref=f1e287]
+                  - text: Remarks
+              - generic [ref=f1e479]:
+                - heading "NJoyBook" [level=3] [ref=f1e481]
+                - generic [ref=f1e483]:
+                  - tablist "NJoyBook Menu" [ref=f1e485]:
+                    - paragraph [ref=f1e486]: NJoyBook Menu
+                    - generic [ref=f1e487]:
+                      - button "Bookings" [ref=f1e488] [cursor=pointer]:
+                        - img [ref=f1e489]
+                        - text: Bookings
+                      - button "Guest History" [ref=f1e491] [cursor=pointer]:
+                        - img [ref=f1e492]
+                        - text: Guest History
+                      - button "Rules" [ref=f1e494] [cursor=pointer]:
+                        - img [ref=f1e495]
+                        - text: Rules
+                      - button "Time Slots" [ref=f1e497] [cursor=pointer]:
+                        - img [ref=f1e498]
+                        - text: Time Slots
+                      - button "Staff" [ref=f1e500] [cursor=pointer]:
+                        - img [ref=f1e501]
+                        - text: Staff
+                      - button "Blockouts" [ref=f1e503] [cursor=pointer]:
+                        - img [ref=f1e504]
+                        - text: Blockouts
+                      - button "Booking Page" [ref=f1e506] [cursor=pointer]:
+                        - img [ref=f1e507]
+                        - text: Booking Page
+                  - generic [ref=f1e511]:
+                    - generic [ref=f1e513]:
+                      - generic [ref=f1e515]:
+                        - heading "Bookings" [level=3] [ref=f1e516]
+                        - button "Bookings help" [ref=f1e517]:
+                          - img [ref=f1e518]
+                      - button "Add booking" [ref=f1e520] [cursor=pointer]:
+                        - img [ref=f1e521]
+                        - generic [ref=f1e523]: Add booking
+                    - generic [ref=f1e524]:
+                      - button "Filters" [expanded] [active] [ref=f1e526] [cursor=pointer]:
+                        - generic [ref=f1e527]:
+                          - img [ref=f1e528]
+                          - text: Filters
+                        - img [ref=f1e530]
+                      - generic [ref=f1e658]:
+                        - generic [ref=f1e659]:
+                          - generic [ref=f1e660]: Date
+                          - group "Date" [ref=f1e661]:
+                            - button "Previous week" [ref=f1e662] [cursor=pointer]:
+                              - img [ref=f1e663]
+                            - button "10 Jul, 0 bookings" [ref=f1e665] [cursor=pointer]:
+                              - generic [ref=f1e666]: 10 Jul
+                              - generic [ref=f1e667]: "0"
+                            - button "11 Jul, 0 bookings" [ref=f1e668] [cursor=pointer]:
+                              - generic [ref=f1e669]: 11 Jul
+                              - generic [ref=f1e670]: "0"
+                            - button "12 Jul, 0 bookings" [ref=f1e671] [cursor=pointer]:
+                              - generic [ref=f1e672]: 12 Jul
+                              - generic [ref=f1e673]: "0"
+                            - button "13 Jul, 1 booking" [ref=f1e674] [cursor=pointer]:
+                              - generic [ref=f1e675]: 13 Jul
+                              - generic [ref=f1e676]: "1"
+                            - button "14 Jul, 0 bookings" [ref=f1e677] [cursor=pointer]:
+                              - generic [ref=f1e678]: 14 Jul
+                              - generic [ref=f1e679]: "0"
+                            - button "15 Jul, 0 bookings" [ref=f1e680] [cursor=pointer]:
+                              - generic [ref=f1e681]: 15 Jul
+                              - generic [ref=f1e682]: "0"
+                            - button "16 Jul, 0 bookings" [ref=f1e683] [cursor=pointer]:
+                              - generic [ref=f1e684]: 16 Jul
+                              - generic [ref=f1e685]: "0"
+                            - button "Next week" [ref=f1e686] [cursor=pointer]:
+                              - img [ref=f1e687]
+                        - generic [ref=f1e689]:
+                          - generic [ref=f1e690]: Staff
+                          - combobox "Staff" [ref=f1e691] [cursor=pointer]:
+                            - generic: All staff
+                            - img [ref=f1e693]
+                          - combobox [ref=f1e695]
+                        - generic [ref=f1e696]:
+                          - generic [ref=f1e697]: Status
+                          - group "Filter by status" [ref=f1e698]:
+                            - button "All 0" [pressed] [ref=f1e699] [cursor=pointer]:
+                              - generic [ref=f1e700]: All
+                              - generic [ref=f1e701]: "0"
+                            - button "Pending 0" [ref=f1e702] [cursor=pointer]:
+                              - generic [ref=f1e703]: Pending
+                              - generic [ref=f1e704]: "0"
+                            - button "Confirmed 0" [ref=f1e705] [cursor=pointer]:
+                              - generic [ref=f1e706]: Confirmed
+                              - generic [ref=f1e707]: "0"
+                            - button "Checked in 0" [ref=f1e708] [cursor=pointer]:
+                              - generic [ref=f1e709]: Checked in
+                              - generic [ref=f1e710]: "0"
+                            - button "Completed 0" [ref=f1e711] [cursor=pointer]:
+                              - generic [ref=f1e712]: Completed
+                              - generic [ref=f1e713]: "0"
+                            - button "Cancelled 0" [ref=f1e714] [cursor=pointer]:
+                              - generic [ref=f1e715]: Cancelled
+                              - generic [ref=f1e716]: "0"
+                            - button "No show 0" [ref=f1e717] [cursor=pointer]:
+                              - generic [ref=f1e718]: No show
+                              - generic [ref=f1e719]: "0"
+                    - generic [ref=f1e533]: No bookings on 10 Jul 2026.
+    - button "Toggle floating actions" [ref=f1e218] [cursor=pointer]:
+      - img [ref=f1e219]
+  - region "Notifications (F8)":
+    - list

@@ -1,0 +1,71 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e113]:
+      - generic [ref=e115]:
+        - button "Open navigation menu" [ref=e118] [cursor=pointer]:
+          - img [ref=e119]
+        - link "Shop n Joy Logo" [ref=e122] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=e123]
+        - button [ref=e125] [cursor=pointer]
+      - main [ref=e128]:
+        - generic [ref=e129]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - button "Back" [ref=e137]:
+                - img [ref=e138]
+              - button "Details" [ref=e140] [cursor=pointer]:
+                - img [ref=e141]
+                - text: Details
+              - button "Branches" [active] [ref=e143] [cursor=pointer]:
+                - img [ref=e144]
+                - text: Branches
+              - button "Payment Configuration" [ref=e146] [cursor=pointer]:
+                - img [ref=e147]
+                - text: Payment Configuration
+              - button "Media" [ref=e151] [cursor=pointer]:
+                - img [ref=e152]
+                - text: Media
+              - button "Logs" [ref=e154] [cursor=pointer]:
+                - img [ref=e155]
+                - text: Logs
+              - button "Remarks" [ref=e157] [cursor=pointer]:
+                - img [ref=e158]
+                - text: Remarks
+            - generic [ref=e294]:
+              - heading "Branches" [level=3] [ref=e297]
+              - generic [ref=e298]:
+                - generic [ref=e300] [cursor=pointer]:
+                  - img "Hajime - Thomson Plaza logo" [ref=e302]
+                  - generic [ref=e303]:
+                    - heading "Hajime - Thomson Plaza" [level=4] [ref=e304]
+                    - paragraph [ref=e305]: "301 Upper Thomson Rd, #01-110 Thomson Plaza, Singapore 574408"
+                    - paragraph [ref=e306]: "Floor: - | Unit: -"
+                    - generic [ref=e307]:
+                      - generic [ref=e308]:
+                        - img [ref=e309]
+                        - text: Active
+                      - generic [ref=e313]: •
+                      - generic [ref=e314]: Singapore, Singapore
+                  - img [ref=e315]
+                - generic [ref=e318] [cursor=pointer]:
+                  - img "Hajime - My Village logo" [ref=e320]
+                  - generic [ref=e321]:
+                    - heading "Hajime - My Village" [level=4] [ref=e322]
+                    - paragraph [ref=e323]: "1 Maju Ave, #02 07 8 9, Singapore 556679"
+                    - paragraph [ref=e324]: "Floor: - | Unit: -"
+                    - generic [ref=e325]:
+                      - generic [ref=e326]:
+                        - img [ref=e327]
+                        - text: Active
+                      - generic [ref=e331]: •
+                      - generic [ref=e332]: Singapore, Singapore
+                  - img [ref=e333]
+    - button "Toggle floating actions" [ref=e99] [cursor=pointer]:
+      - img [ref=e100]
+  - region "Notifications (F8)":
+    - list

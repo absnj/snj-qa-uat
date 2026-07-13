@@ -1,0 +1,83 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e113]:
+      - generic [ref=e115]:
+        - button "Open navigation menu" [ref=e118] [cursor=pointer]:
+          - img [ref=e119]
+        - link "Shop n Joy Logo" [ref=e122] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=e123]
+        - button [ref=e125] [cursor=pointer]
+      - main [ref=e128]:
+        - generic [ref=e129]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=e556]:
+            - generic [ref=e557]:
+              - button "Back" [ref=e558]:
+                - img [ref=e559]
+              - button "Details" [ref=e561] [cursor=pointer]:
+                - img [ref=e562]
+                - text: Details
+              - button "Schedule" [ref=e564] [cursor=pointer]:
+                - img [ref=e565]
+                - text: Schedule
+              - button "NJoyBook" [ref=e567] [cursor=pointer]:
+                - img [ref=e568]
+                - text: NJoyBook
+              - button "Smart QR" [ref=e570] [cursor=pointer]:
+                - img [ref=e571]
+                - text: Smart QR
+              - button "Media" [ref=e573] [cursor=pointer]:
+                - img [ref=e574]
+                - text: Media
+              - button "Logs" [ref=e576] [cursor=pointer]:
+                - img [ref=e577]
+                - text: Logs
+              - button "Remarks" [ref=e579] [cursor=pointer]:
+                - img [ref=e580]
+                - text: Remarks
+            - generic [ref=e582]:
+              - heading "NJoyBook" [level=3] [ref=e584]
+              - generic [ref=e586]:
+                - tablist "NJoyBook Menu" [ref=e588]:
+                  - paragraph [ref=e589]: NJoyBook Menu
+                  - generic [ref=e590]:
+                    - button "Bookings" [ref=e591] [cursor=pointer]:
+                      - img [ref=e592]
+                      - text: Bookings
+                    - button "Guest History" [ref=e594] [cursor=pointer]:
+                      - img [ref=e595]
+                      - text: Guest History
+                    - button "Rules" [ref=e597] [cursor=pointer]:
+                      - img [ref=e598]
+                      - text: Rules
+                    - button "Time Slots" [ref=e600] [cursor=pointer]:
+                      - img [ref=e601]
+                      - text: Time Slots
+                    - button "Blockouts" [ref=e603] [cursor=pointer]:
+                      - img [ref=e604]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=e606] [cursor=pointer]:
+                      - img [ref=e607]
+                      - text: Booking Page
+                - generic [ref=e610]:
+                  - generic [ref=e612]:
+                    - generic [ref=e614]:
+                      - heading "Bookings" [level=3] [ref=e615]
+                      - button "Bookings help" [ref=e616]:
+                        - img [ref=e617]
+                    - button [ref=e619] [cursor=pointer]:
+                      - img [ref=e620]
+                  - button "Filters" [ref=e624] [cursor=pointer]:
+                    - generic [ref=e625]:
+                      - img [ref=e626]
+                      - text: Filters
+                    - img [ref=e628]
+                  - generic [ref=e631]: No bookings on 8 Jul 2026.
+    - button "Toggle floating actions" [ref=e99] [cursor=pointer]:
+      - img [ref=e100]
+  - region "Notifications (F8)":
+    - list

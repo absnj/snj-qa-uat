@@ -1,0 +1,371 @@
+- generic [ref=f7e1]:
+  - generic [ref=f7e7]:
+    - generic [ref=f7e8]:
+      - generic [ref=f7e10]:
+        - link "Shop n Joy Logo" [ref=f7e12] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f7e13]
+        - button "Hi, Regina" [ref=f7e15] [cursor=pointer]:
+          - generic [ref=f7e17]: Hi, Regina
+      - generic [ref=f7e18]:
+        - complementary [ref=f7e19]:
+          - generic [ref=f7e21]:
+            - paragraph [ref=f7e22]: Configuration
+            - list [ref=f7e23]:
+              - listitem [ref=f7e24]:
+                - link "Overview" [ref=f7e25] [cursor=pointer]:
+                  - /url: /configuration
+                  - img [ref=f7e27]
+                  - generic [ref=f7e29]: Overview
+              - listitem [ref=f7e30]:
+                - link "Deals" [ref=f7e31] [cursor=pointer]:
+                  - /url: /configuration/deal/deal-list
+                  - img [ref=f7e33]
+                  - generic [ref=f7e35]: Deals
+              - listitem [ref=f7e36]:
+                - link "Loyalty Programs" [ref=f7e37] [cursor=pointer]:
+                  - /url: /configuration/loyalty-program/loyalty-program-list
+                  - img [ref=f7e39]
+                  - generic [ref=f7e41]: Loyalty Programs
+              - listitem [ref=f7e42]:
+                - button "NJoyBoost" [ref=f7e44]:
+                  - img [ref=f7e46]
+                  - generic [ref=f7e48]: NJoyBoost
+                  - img [ref=f7e49]
+        - main [ref=f7e51]:
+          - generic [ref=f7e52]:
+            - generic:
+              - generic:
+                - img
+                - generic: Pull to refresh
+            - generic [ref=f7e59]:
+              - generic [ref=f7e60]:
+                - button "Back" [ref=f7e61]:
+                  - img [ref=f7e62]
+                - button "Details" [ref=f7e64] [cursor=pointer]:
+                  - img [ref=f7e65]
+                  - text: Details
+                - button "Schedule" [ref=f7e67] [cursor=pointer]:
+                  - img [ref=f7e68]
+                  - text: Schedule
+                - button "NJoyBook" [ref=f7e70] [cursor=pointer]:
+                  - img [ref=f7e71]
+                  - text: NJoyBook
+                - button "Smart QR" [ref=f7e73] [cursor=pointer]:
+                  - img [ref=f7e74]
+                  - text: Smart QR
+                - button "Media" [ref=f7e76] [cursor=pointer]:
+                  - img [ref=f7e77]
+                  - text: Media
+                - button "Logs" [ref=f7e79] [cursor=pointer]:
+                  - img [ref=f7e80]
+                  - text: Logs
+                - button "Remarks" [ref=f7e82] [cursor=pointer]:
+                  - img [ref=f7e83]
+                  - text: Remarks
+              - generic [ref=f7e85]:
+                - heading "NJoyBook" [level=3] [ref=f7e87]
+                - generic [ref=f7e89]:
+                  - generic [ref=f7e90]:
+                    - tablist "NJoyBook Menu" [ref=f7e91]:
+                      - paragraph [ref=f7e92]: NJoyBook Menu
+                      - generic [ref=f7e93]:
+                        - button "Bookings" [ref=f7e94] [cursor=pointer]:
+                          - img [ref=f7e95]
+                          - text: Bookings
+                        - button "Guest History" [ref=f7e97] [cursor=pointer]:
+                          - img [ref=f7e98]
+                          - text: Guest History
+                        - button "Rules" [ref=f7e100] [cursor=pointer]:
+                          - img [ref=f7e101]
+                          - text: Rules
+                        - button "Time Slots" [ref=f7e103] [cursor=pointer]:
+                          - img [ref=f7e104]
+                          - text: Time Slots
+                        - button "Staff" [ref=f7e106] [cursor=pointer]:
+                          - img [ref=f7e107]
+                          - text: Staff
+                        - button "Blockouts" [ref=f7e109] [cursor=pointer]:
+                          - img [ref=f7e110]
+                          - text: Blockouts
+                        - button "Booking Page" [ref=f7e112] [cursor=pointer]:
+                          - img [ref=f7e113]
+                          - text: Booking Page
+                    - tablist "Booking detail section" [ref=f7e1250]:
+                      - paragraph [ref=f7e1251]: Selected booking
+                      - generic [ref=f7e1252]:
+                        - button "Details" [ref=f7e1253] [cursor=pointer]:
+                          - img [ref=f7e1254]
+                          - text: Details
+                        - button "Logs" [ref=f7e1256] [cursor=pointer]:
+                          - img [ref=f7e1257]
+                          - text: Logs
+                  - generic [ref=f7e196]:
+                    - button "Back to bookings" [ref=f7e198]:
+                      - img [ref=f7e199]
+                    - generic [ref=f7e1259]:
+                      - generic [ref=f7e1260]:
+                        - generic [ref=f7e1261]:
+                          - heading "BK-20260713-0004" [level=4] [ref=f7e1262]
+                          - generic [ref=f7e1263]: Confirmed
+                        - generic [ref=f7e1265]:
+                          - button "Change status" [ref=f7e1266] [cursor=pointer]:
+                            - img [ref=f7e1267]
+                            - generic [ref=f7e1269]: Change status
+                          - button "Edit details" [ref=f7e1270] [cursor=pointer]:
+                            - img [ref=f7e1271]
+                            - generic [ref=f7e1273]: Edit details
+                      - generic [ref=f7e1274]:
+                        - generic [ref=f7e1275]:
+                          - heading "Guest and contact" [level=5] [ref=f7e1276]
+                          - paragraph [ref=f7e1277]: Anonymous booking — contact details are stored on this booking only.
+                          - generic [ref=f7e1278]:
+                            - generic [ref=f7e1279]:
+                              - term [ref=f7e1280]: Name
+                              - definition [ref=f7e1281]: MCP Verify 1013
+                            - generic [ref=f7e1282]:
+                              - term [ref=f7e1283]: Email
+                              - definition [ref=f7e1284]: mcp-verify@example.com
+                            - generic [ref=f7e1285]:
+                              - term [ref=f7e1286]: Phone
+                              - definition [ref=f7e1287]: "+6591234500"
+                        - generic [ref=f7e1288]:
+                          - heading "Booking" [level=5] [ref=f7e1289]
+                          - generic [ref=f7e1290]:
+                            - generic [ref=f7e1291]:
+                              - term [ref=f7e1292]: Booking date
+                              - definition [ref=f7e1293]: 13 Jul 2026
+                            - generic [ref=f7e1294]:
+                              - term [ref=f7e1295]: Start time
+                              - definition [ref=f7e1296]: 14:30
+                            - generic [ref=f7e1297]:
+                              - term [ref=f7e1298]: Party size
+                              - definition [ref=f7e1299]: "2"
+                            - generic [ref=f7e1300]:
+                              - term [ref=f7e1301]: Occasion
+                              - definition [ref=f7e1302]: —
+                            - generic [ref=f7e1303]:
+                              - term [ref=f7e1304]: Special requests
+                              - definition [ref=f7e1305]: —
+                        - generic [ref=f7e1306]:
+                          - heading "Assignment" [level=5] [ref=f7e1307]
+                          - generic [ref=f7e1309]:
+                            - term [ref=f7e1310]: Staff
+                            - definition [ref=f7e1311]: booking-tester-staff-A
+                        - generic [ref=f7e1312]:
+                          - heading "Record" [level=5] [ref=f7e1313]
+                          - generic [ref=f7e1314]:
+                            - generic [ref=f7e1315]:
+                              - term [ref=f7e1316]: Created
+                              - definition [ref=f7e1317]: 13 Jul 2026, 10:29
+                            - generic [ref=f7e1318]:
+                              - term [ref=f7e1319]: Last updated
+                              - definition [ref=f7e1320]: 13 Jul 2026, 10:29
+                            - generic [ref=f7e1321]:
+                              - term [ref=f7e1322]: Source
+                              - definition [ref=f7e1323]: website
+    - button "Toggle floating actions" [ref=f7e2429] [cursor=pointer]:
+      - img [ref=f7e185]
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=f7e2177]:
+    - generic [ref=f7e2178]:
+      - generic [ref=f7e2181]:
+        - heading "Add booking" [level=2] [ref=f7e2182]
+        - button "Show dialog description" [ref=f7e2183]:
+          - img [ref=f7e2184]
+      - button "Close modal" [ref=f7e2186] [cursor=pointer]:
+        - img [ref=f7e2187]
+    - generic [ref=f7e2189]:
+      - generic [ref=f7e2190]:
+        - generic [ref=f7e2191]:
+          - img [ref=f7e2192]
+          - heading "Schedule" [level=3] [ref=f7e2195]
+        - generic [ref=f7e2197]:
+          - generic [ref=f7e2198]:
+            - generic [ref=f7e2199]:
+              - img [ref=f7e2200]
+              - text: Booking date
+            - generic [ref=f7e2202]:
+              - textbox "Booking date" [ref=f7e2203]:
+                - /placeholder: YYYY-MM-DD
+                - text: 2026-07-14
+              - button "July 14, 2026" [expanded] [ref=f7e2395]:
+                - img [ref=f7e2205]
+            - paragraph [ref=f7e2207]: Time slots follow the weekly schedule for this weekday.
+          - generic [ref=f7e2208]:
+            - generic [ref=f7e2209]:
+              - img [ref=f7e2210]
+              - text: Start time *
+            - combobox "Start time *" [ref=f7e2212] [cursor=pointer]:
+              - generic: 14:30
+              - img [ref=f7e2214]
+            - combobox [ref=f7e2430]
+          - generic [ref=f7e2217]:
+            - generic [ref=f7e2218]:
+              - img [ref=f7e2219]
+              - text: Party size
+            - spinbutton "Party size" [ref=f7e2221]: "1"
+      - generic [ref=f7e2222]:
+        - generic [ref=f7e2223]:
+          - img [ref=f7e2224]
+          - heading "Assignment" [level=3] [ref=f7e2226]
+        - generic [ref=f7e2228]:
+          - generic [ref=f7e2230]:
+            - img [ref=f7e2231]
+            - text: Staff
+          - generic [ref=f7e2431]:
+            - img [ref=f7e2432]
+            - paragraph [ref=f7e2434]: This time slot has no staff attached. Staff assignment and new bookings are unavailable for this slot.
+          - combobox "Staff" [disabled] [ref=f7e2236]:
+            - generic: No preference
+            - img [ref=f7e2238]
+          - combobox [disabled] [ref=f7e2435]
+      - generic [ref=f7e2241]:
+        - generic [ref=f7e2242]:
+          - img [ref=f7e2243]
+          - heading "Guest" [level=3] [ref=f7e2245]
+        - generic [ref=f7e2247]:
+          - generic [ref=f7e2248]:
+            - generic [ref=f7e2249]:
+              - img [ref=f7e2250]
+              - text: Name
+            - textbox "Name" [ref=f7e2252]:
+              - /placeholder: Guest name
+              - text: Picker Verify 2
+          - generic [ref=f7e2253]:
+            - generic [ref=f7e2255]:
+              - img [ref=f7e2256]
+              - text: Email & phone
+            - generic [ref=f7e2258]:
+              - generic [ref=f7e2259]:
+                - generic [ref=f7e2260]:
+                  - img [ref=f7e2261]
+                  - text: Email *
+                - textbox "Email *" [ref=f7e2263]:
+                  - /placeholder: name@example.com
+                  - text: picker2@example.com
+              - generic [ref=f7e2264]:
+                - generic [ref=f7e2265]:
+                  - img [ref=f7e2266]
+                  - text: Phone *
+                - generic [ref=f7e2271]:
+                  - generic [ref=f7e2273]: "+65"
+                  - textbox [ref=f7e2275]: "91234512"
+                  - generic:
+                    - img
+      - generic [ref=f7e2276]:
+        - generic [ref=f7e2277]:
+          - img [ref=f7e2278]
+          - heading "Notes" [level=3] [ref=f7e2280]
+        - generic [ref=f7e2282]:
+          - generic [ref=f7e2283]:
+            - generic [ref=f7e2284]:
+              - img [ref=f7e2285]
+              - text: Occasion
+            - textbox "Occasion" [ref=f7e2287]:
+              - /placeholder: Optional
+          - generic [ref=f7e2288]:
+            - generic [ref=f7e2289]:
+              - img [ref=f7e2290]
+              - text: Special requests
+            - textbox "Special requests" [ref=f7e2293]:
+              - /placeholder: Optional notes from the guest
+      - button "Create booking" [disabled] [ref=f7e2295]:
+        - img [ref=f7e2296]
+        - text: Create booking
+  - dialog [ref=f7e2437]:
+    - application "Event Date, July 2026" [ref=f7e2438]:
+      - generic [ref=f7e2439]:
+        - button "Previous page" [disabled]:
+          - img
+        - generic [ref=f7e2440]: July 2026
+        - button "Next page" [ref=f7e2441] [cursor=pointer]:
+          - img [ref=f7e2442]
+      - grid [ref=f7e2445]:
+        - rowgroup [ref=f7e2446]:
+          - row [ref=f7e2447]:
+            - columnheader [ref=f7e2448]: S
+            - columnheader [ref=f7e2449]: M
+            - columnheader [ref=f7e2450]: T
+            - columnheader [ref=f7e2451]: W
+            - columnheader [ref=f7e2452]: T
+            - columnheader [ref=f7e2453]: F
+            - columnheader [ref=f7e2454]: S
+        - rowgroup [ref=f7e2455]:
+          - row "Sunday, June 28, 2026 Monday, June 29, 2026 Tuesday, June 30, 2026 Wednesday, July 1, 2026 Thursday, July 2, 2026 Friday, July 3, 2026 Saturday, July 4, 2026" [ref=f7e2456]:
+            - gridcell "Sunday, June 28, 2026" [disabled] [ref=f7e2457]:
+              - button "Sunday, June 28, 2026" [disabled] [ref=f7e2458]: "28"
+            - gridcell "Monday, June 29, 2026" [disabled] [ref=f7e2459]:
+              - button "Monday, June 29, 2026" [disabled] [ref=f7e2460]: "29"
+            - gridcell "Tuesday, June 30, 2026" [disabled] [ref=f7e2461]:
+              - button "Tuesday, June 30, 2026" [disabled] [ref=f7e2462]: "30"
+            - gridcell "Wednesday, July 1, 2026" [disabled] [ref=f7e2463]:
+              - button "Wednesday, July 1, 2026" [disabled] [ref=f7e2464]: "1"
+            - gridcell "Thursday, July 2, 2026" [disabled] [ref=f7e2465]:
+              - button "Thursday, July 2, 2026" [disabled] [ref=f7e2466]: "2"
+            - gridcell "Friday, July 3, 2026" [disabled] [ref=f7e2467]:
+              - button "Friday, July 3, 2026" [disabled] [ref=f7e2468]: "3"
+            - gridcell "Saturday, July 4, 2026" [disabled] [ref=f7e2469]:
+              - button "Saturday, July 4, 2026" [disabled] [ref=f7e2470]: "4"
+          - row "Sunday, July 5, 2026 Monday, July 6, 2026 Tuesday, July 7, 2026 Wednesday, July 8, 2026 Thursday, July 9, 2026 Friday, July 10, 2026 Saturday, July 11, 2026" [ref=f7e2471]:
+            - gridcell "Sunday, July 5, 2026" [disabled] [ref=f7e2472]:
+              - button "Sunday, July 5, 2026" [disabled] [ref=f7e2473]: "5"
+            - gridcell "Monday, July 6, 2026" [disabled] [ref=f7e2474]:
+              - button "Monday, July 6, 2026" [disabled] [ref=f7e2475]: "6"
+            - gridcell "Tuesday, July 7, 2026" [disabled] [ref=f7e2476]:
+              - button "Tuesday, July 7, 2026" [disabled] [ref=f7e2477]: "7"
+            - gridcell "Wednesday, July 8, 2026" [disabled] [ref=f7e2478]:
+              - button "Wednesday, July 8, 2026" [disabled] [ref=f7e2479]: "8"
+            - gridcell "Thursday, July 9, 2026" [disabled] [ref=f7e2480]:
+              - button "Thursday, July 9, 2026" [disabled] [ref=f7e2481]: "9"
+            - gridcell "Friday, July 10, 2026" [disabled] [ref=f7e2482]:
+              - button "Friday, July 10, 2026" [disabled] [ref=f7e2483]: "10"
+            - gridcell "Saturday, July 11, 2026" [disabled] [ref=f7e2484]:
+              - button "Saturday, July 11, 2026" [disabled] [ref=f7e2485]: "11"
+          - row "Sunday, July 12, 2026 Monday, July 13, 2026 Tuesday, July 14, 2026 Wednesday, July 15, 2026 Thursday, July 16, 2026 Friday, July 17, 2026 Saturday, July 18, 2026" [ref=f7e2486]:
+            - gridcell "Sunday, July 12, 2026" [disabled] [ref=f7e2487]:
+              - button "Sunday, July 12, 2026" [disabled] [ref=f7e2488]: "12"
+            - gridcell "Monday, July 13, 2026" [ref=f7e2489]:
+              - button "Monday, July 13, 2026" [ref=f7e2490]: "13"
+            - gridcell "Tuesday, July 14, 2026" [selected] [ref=f7e2491]:
+              - button "Tuesday, July 14, 2026" [active] [ref=f7e2492]: "14"
+            - gridcell "Wednesday, July 15, 2026" [ref=f7e2493]:
+              - button "Wednesday, July 15, 2026" [ref=f7e2494]: "15"
+            - gridcell "Thursday, July 16, 2026" [ref=f7e2495]:
+              - button "Thursday, July 16, 2026" [ref=f7e2496]: "16"
+            - gridcell "Friday, July 17, 2026" [ref=f7e2497]:
+              - button "Friday, July 17, 2026" [ref=f7e2498]: "17"
+            - gridcell "Saturday, July 18, 2026" [ref=f7e2499]:
+              - button "Saturday, July 18, 2026" [ref=f7e2500]: "18"
+          - row "Sunday, July 19, 2026 Monday, July 20, 2026 Tuesday, July 21, 2026 Wednesday, July 22, 2026 Thursday, July 23, 2026 Friday, July 24, 2026 Saturday, July 25, 2026" [ref=f7e2501]:
+            - gridcell "Sunday, July 19, 2026" [ref=f7e2502]:
+              - button "Sunday, July 19, 2026" [ref=f7e2503]: "19"
+            - gridcell "Monday, July 20, 2026" [ref=f7e2504]:
+              - button "Monday, July 20, 2026" [ref=f7e2505]: "20"
+            - gridcell "Tuesday, July 21, 2026" [ref=f7e2506]:
+              - button "Tuesday, July 21, 2026" [ref=f7e2507]: "21"
+            - gridcell "Wednesday, July 22, 2026" [ref=f7e2508]:
+              - button "Wednesday, July 22, 2026" [ref=f7e2509]: "22"
+            - gridcell "Thursday, July 23, 2026" [ref=f7e2510]:
+              - button "Thursday, July 23, 2026" [ref=f7e2511]: "23"
+            - gridcell "Friday, July 24, 2026" [ref=f7e2512]:
+              - button "Friday, July 24, 2026" [ref=f7e2513]: "24"
+            - gridcell "Saturday, July 25, 2026" [ref=f7e2514]:
+              - button "Saturday, July 25, 2026" [ref=f7e2515]: "25"
+          - row "Sunday, July 26, 2026 Monday, July 27, 2026 Tuesday, July 28, 2026 Wednesday, July 29, 2026 Thursday, July 30, 2026 Friday, July 31, 2026 Saturday, August 1, 2026" [ref=f7e2516]:
+            - gridcell "Sunday, July 26, 2026" [ref=f7e2517]:
+              - button "Sunday, July 26, 2026" [ref=f7e2518]: "26"
+            - gridcell "Monday, July 27, 2026" [ref=f7e2519]:
+              - button "Monday, July 27, 2026" [ref=f7e2520]: "27"
+            - gridcell "Tuesday, July 28, 2026" [ref=f7e2521]:
+              - button "Tuesday, July 28, 2026" [ref=f7e2522]: "28"
+            - gridcell "Wednesday, July 29, 2026" [ref=f7e2523]:
+              - button "Wednesday, July 29, 2026" [ref=f7e2524]: "29"
+            - gridcell "Thursday, July 30, 2026" [ref=f7e2525]:
+              - button "Thursday, July 30, 2026" [ref=f7e2526]: "30"
+            - gridcell "Friday, July 31, 2026" [ref=f7e2527]:
+              - button "Friday, July 31, 2026" [ref=f7e2528]: "31"
+            - gridcell "Saturday, August 1, 2026" [ref=f7e2529]:
+              - button "Saturday, August 1, 2026" [ref=f7e2530]: "1"
+      - heading "Event Date, July 2026" [level=2] [ref=f7e2532]

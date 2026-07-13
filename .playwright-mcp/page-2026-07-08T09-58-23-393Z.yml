@@ -1,0 +1,261 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e113]:
+      - generic [ref=e115]:
+        - button "Open navigation menu" [ref=e118] [cursor=pointer]:
+          - img [ref=e119]
+        - link "Shop n Joy Logo" [ref=e122] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=e123]
+        - button [ref=e125] [cursor=pointer]
+      - main [ref=e128]:
+        - generic [ref=e129]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=e556]:
+            - generic [ref=e557]:
+              - button "Back" [ref=e558]:
+                - img [ref=e559]
+              - button "Details" [ref=e561] [cursor=pointer]:
+                - img [ref=e562]
+                - text: Details
+              - button "Schedule" [ref=e564] [cursor=pointer]:
+                - img [ref=e565]
+                - text: Schedule
+              - button "NJoyBook" [ref=e567] [cursor=pointer]:
+                - img [ref=e568]
+                - text: NJoyBook
+              - button "Smart QR" [ref=e570] [cursor=pointer]:
+                - img [ref=e571]
+                - text: Smart QR
+              - button "Media" [ref=e573] [cursor=pointer]:
+                - img [ref=e574]
+                - text: Media
+              - button "Logs" [ref=e576] [cursor=pointer]:
+                - img [ref=e577]
+                - text: Logs
+              - button "Remarks" [ref=e579] [cursor=pointer]:
+                - img [ref=e580]
+                - text: Remarks
+            - generic [ref=e582]:
+              - heading "NJoyBook" [level=3] [ref=e584]
+              - generic [ref=e586]:
+                - tablist "NJoyBook Menu" [ref=e588]:
+                  - paragraph [ref=e589]: NJoyBook Menu
+                  - generic [ref=e590]:
+                    - button "Bookings" [ref=e591] [cursor=pointer]:
+                      - img [ref=e592]
+                      - text: Bookings
+                    - button "Guest History" [ref=e594] [cursor=pointer]:
+                      - img [ref=e595]
+                      - text: Guest History
+                    - button "Rules" [active] [ref=e597] [cursor=pointer]:
+                      - img [ref=e598]
+                      - text: Rules
+                    - button "Time Slots" [ref=e600] [cursor=pointer]:
+                      - img [ref=e601]
+                      - text: Time Slots
+                    - button "Blockouts" [ref=e603] [cursor=pointer]:
+                      - img [ref=e604]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=e606] [cursor=pointer]:
+                      - img [ref=e607]
+                      - text: Booking Page
+                - generic [ref=e632]:
+                  - generic [ref=e635]:
+                    - heading "Rules and Regulations" [level=3] [ref=e636]
+                    - button "Rules and Regulations help" [ref=e637]:
+                      - img [ref=e638]
+                  - generic [ref=e640]:
+                    - generic [ref=e641]:
+                      - generic [ref=e642]:
+                        - img [ref=e644]
+                        - generic [ref=e646]:
+                          - paragraph [ref=e647]: Enable booking
+                          - paragraph [ref=e648]: Turn on to accept bookings at this branch.
+                      - switch [checked] [ref=e649] [cursor=pointer]
+                    - generic [ref=e650]:
+                      - generic [ref=e651]:
+                        - img [ref=e652]
+                        - generic [ref=e654]:
+                          - heading "Service & Booking Mode" [level=4] [ref=e655]
+                          - button "Service & Booking Mode help" [ref=e656]:
+                            - img [ref=e657]
+                      - generic [ref=e659]:
+                        - generic [ref=e660]:
+                          - generic [ref=e661]: Service Type
+                          - combobox "Service Type" [ref=e662] [cursor=pointer]:
+                            - generic: General
+                            - img [ref=e664]
+                          - combobox [ref=e666]
+                        - generic [ref=e667]:
+                          - generic [ref=e668]:
+                            - generic [ref=e669]: Booking Mode
+                            - button "Booking Mode help" [ref=e670]:
+                              - img [ref=e671]
+                          - combobox "Booking Mode" [ref=e673] [cursor=pointer]:
+                            - generic: Branch
+                            - img [ref=e675]
+                          - combobox [ref=e677]
+                    - generic [ref=e678]:
+                      - generic [ref=e679]:
+                        - img [ref=e680]
+                        - generic [ref=e682]:
+                          - heading "Approval & Staff Controls" [level=4] [ref=e683]
+                          - button "Approval & Staff Controls help" [ref=e684]:
+                            - img [ref=e685]
+                      - generic [ref=e688]:
+                        - generic [ref=e689]:
+                          - img [ref=e691]
+                          - generic [ref=e693]:
+                            - paragraph [ref=e694]: Auto-confirm bookings
+                            - paragraph [ref=e695]: Confirm incoming bookings automatically without manual approval.
+                        - switch [checked] [ref=e696] [cursor=pointer]
+                    - generic [ref=e697]:
+                      - generic [ref=e698]:
+                        - img [ref=e699]
+                        - generic [ref=e701]:
+                          - heading "Capacity & Sessions" [level=4] [ref=e702]
+                          - button "Capacity & Sessions help" [ref=e703]:
+                            - img [ref=e704]
+                      - generic [ref=e706]:
+                        - generic [ref=e707]:
+                          - generic [ref=e708]: Minimum Party Size
+                          - spinbutton "Minimum Party Size" [ref=e709]: "1"
+                        - generic [ref=e710]:
+                          - generic [ref=e711]: Maximum Party Size
+                          - spinbutton "Maximum Party Size" [ref=e712]: "5"
+                        - generic [ref=e713]:
+                          - generic [ref=e714]: Session Length
+                          - combobox "Session Length" [ref=e715] [cursor=pointer]:
+                            - generic: 1 hour (recommended)
+                            - img [ref=e717]
+                          - combobox [ref=e719]
+                        - generic [ref=e720]:
+                          - generic [ref=e721]: New Slot Opens Every
+                          - combobox "New Slot Opens Every" [ref=e722] [cursor=pointer]:
+                            - generic: Back to back (recommended)
+                            - img [ref=e724]
+                          - combobox [ref=e726]
+                        - generic [ref=e727]:
+                          - generic [ref=e728]: Bookings Allowed Per Slot
+                          - spinbutton "Bookings Allowed Per Slot" [ref=e729]: "5"
+                        - generic [ref=e730]:
+                          - generic [ref=e731]: Extra Buffer (Overbooking)
+                          - spinbutton "Extra Buffer (Overbooking)" [ref=e732]: "1"
+                    - generic [ref=e733]:
+                      - generic [ref=e734]:
+                        - img [ref=e735]
+                        - generic [ref=e737]:
+                          - heading "Booking Window" [level=4] [ref=e738]
+                          - button "Booking Window help" [ref=e739]:
+                            - img [ref=e740]
+                      - generic [ref=e742]:
+                        - generic [ref=e743]:
+                          - generic [ref=e744]: How Far Ahead Customers Can Book
+                          - combobox "How Far Ahead Customers Can Book" [ref=e745] [cursor=pointer]:
+                            - generic: Up to 1 month ahead
+                            - img [ref=e747]
+                          - combobox [ref=e749]
+                        - generic [ref=e750]:
+                          - generic [ref=e751]: Minimum Notice Required
+                          - combobox "Minimum Notice Required" [ref=e752] [cursor=pointer]:
+                            - generic: At least 15 minutes ahead
+                            - img [ref=e754]
+                          - combobox [ref=e756]
+                        - generic [ref=e757]:
+                          - generic [ref=e758]: Mark As No-Show After
+                          - combobox "Mark As No-Show After" [ref=e759] [cursor=pointer]:
+                            - generic: 15 minutes after start (recommended)
+                            - img [ref=e761]
+                          - combobox [ref=e763]
+                    - generic [ref=e764]:
+                      - generic [ref=e765]:
+                        - img [ref=e766]
+                        - generic [ref=e768]:
+                          - heading "Customer Communication" [level=4] [ref=e769]
+                          - button "Customer Communication help" [ref=e770]:
+                            - img [ref=e771]
+                      - generic [ref=e773]:
+                        - generic [ref=e774]:
+                          - generic [ref=e775]: Customer Reminders
+                          - generic [ref=e776]:
+                            - generic [ref=e777]:
+                              - checkbox "1 day before" [ref=e778]
+                              - generic [ref=e779]: 1 day before
+                            - generic [ref=e780]:
+                              - checkbox "3 hours before" [checked] [ref=e781]
+                              - generic [ref=e782]: 3 hours before
+                            - generic [ref=e783]:
+                              - checkbox "2 hours before" [ref=e784]
+                              - generic [ref=e785]: 2 hours before
+                            - generic [ref=e786]:
+                              - checkbox "1 hour before" [ref=e787]
+                              - generic [ref=e788]: 1 hour before
+                            - generic [ref=e789]:
+                              - checkbox "30 minutes before" [ref=e790]
+                              - generic [ref=e791]: 30 minutes before
+                          - paragraph [ref=e792]: Select one or more reminder timings to notify customers before their booking.
+                        - generic [ref=e793]:
+                          - generic [ref=e794]: Confirmation Message
+                          - generic [ref=e797]:
+                            - generic [ref=e798]:
+                              - button "Bold" [ref=e799]:
+                                - img [ref=e800]
+                              - button "Italic" [ref=e802]:
+                                - img [ref=e803]
+                              - button "Bullet List" [ref=e806]:
+                                - img [ref=e807]
+                              - button "Ordered List" [ref=e809]:
+                                - img [ref=e810]
+                              - button "Link" [ref=e813]:
+                                - img [ref=e814]
+                              - button "Unlink" [disabled] [ref=e818]:
+                                - img [ref=e819]
+                            - paragraph [ref=e823]: Thank you for your NJoyBook request. Please arrive 10 minutes early.
+                        - generic [ref=e824]:
+                          - generic [ref=e825]: Booking Terms
+                          - generic [ref=e828]:
+                            - generic [ref=e829]:
+                              - button "Bold" [ref=e830]:
+                                - img [ref=e831]
+                              - button "Italic" [ref=e833]:
+                                - img [ref=e834]
+                              - button "Bullet List" [ref=e837]:
+                                - img [ref=e838]
+                              - button "Ordered List" [ref=e840]:
+                                - img [ref=e841]
+                              - button "Link" [ref=e844]:
+                                - img [ref=e845]
+                              - button "Unlink" [disabled] [ref=e849]:
+                                - img [ref=e850]
+                            - paragraph [ref=e854]: Add booking terms and conditions...
+                    - generic [ref=e855]:
+                      - generic [ref=e856]:
+                        - img [ref=e857]
+                        - generic [ref=e859]:
+                          - heading "Booking Photos" [level=4] [ref=e860]
+                          - button "Booking Photos help" [ref=e861]:
+                            - img [ref=e862]
+                      - generic [ref=e864]:
+                        - generic [ref=e865]:
+                          - text: Photos
+                          - button "Booking Photos help" [ref=e866]:
+                            - img [ref=e867]
+                        - button [ref=e872] [cursor=pointer]:
+                          - paragraph [ref=e873]:
+                            - img [ref=e874]
+                        - paragraph [ref=e876]: Add up to 5 booking photos.
+                  - generic [ref=e877]:
+                    - button "Set to Default" [ref=e878] [cursor=pointer]:
+                      - img [ref=e879]
+                      - text: Set to Default
+                    - button "Save Booking Settings" [ref=e881] [cursor=pointer]:
+                      - img [ref=e882]
+                      - text: Save Booking Settings
+    - button "Toggle floating actions" [ref=e99] [cursor=pointer]:
+      - img [ref=e100]
+  - region "Notifications (F8)":
+    - list

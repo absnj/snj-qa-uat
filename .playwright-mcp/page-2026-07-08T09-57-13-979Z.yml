@@ -1,0 +1,198 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e113]:
+      - generic [ref=e115]:
+        - button "Open navigation menu" [ref=e118] [cursor=pointer]:
+          - img [ref=e119]
+        - link "Shop n Joy Logo" [ref=e122] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=e123]
+        - button [ref=e125] [cursor=pointer]
+      - main [ref=e128]:
+        - generic [ref=e129]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - button "Back" [ref=e341]:
+                - img [ref=e342]
+              - button "Details" [ref=e344] [cursor=pointer]:
+                - img [ref=e345]
+                - text: Details
+              - button "Schedule" [ref=e347] [cursor=pointer]:
+                - img [ref=e348]
+                - text: Schedule
+              - button "NJoyBook" [ref=e350] [cursor=pointer]:
+                - img [ref=e351]
+                - text: NJoyBook
+              - button "Smart QR" [ref=e353] [cursor=pointer]:
+                - img [ref=e354]
+                - text: Smart QR
+              - button "Media" [ref=e356] [cursor=pointer]:
+                - img [ref=e357]
+                - text: Media
+              - button "Logs" [ref=e359] [cursor=pointer]:
+                - img [ref=e360]
+                - text: Logs
+              - button "Remarks" [ref=e362] [cursor=pointer]:
+                - img [ref=e363]
+                - text: Remarks
+            - generic [ref=e365]:
+              - generic [ref=e366]:
+                - heading "Details" [level=3] [ref=e367]
+                - button [ref=e368] [cursor=pointer]:
+                  - img [ref=e369]
+              - generic [ref=e371]:
+                - generic [ref=e372]:
+                  - paragraph [ref=e373]: Branch Specification
+                  - generic [ref=e374]:
+                    - generic [ref=e375]:
+                      - paragraph [ref=e376]: Status
+                      - paragraph [ref=e377]: Active
+                    - generic [ref=e378]:
+                      - paragraph [ref=e379]: Transaction Mode
+                      - paragraph [ref=e380]: Dynamic QR (Offline), Static QR (Online), Static QR (Offline), Dynamic QR (Online)
+                    - generic [ref=e381]:
+                      - paragraph [ref=e382]: Currency
+                      - paragraph [ref=e383]: SGD
+                    - generic [ref=e384]:
+                      - paragraph [ref=e385]: Merchant Success Team
+                      - generic [ref=e386]:
+                        - img [ref=e387]
+                        - generic [ref=e389]: No merchant success team assigned.
+                - generic [ref=e390]:
+                  - paragraph [ref=e391]: Branch Details
+                  - img "Hajime - Thomson Plaza logo" [ref=e394]
+                  - generic [ref=e395]:
+                    - generic [ref=e396]:
+                      - paragraph [ref=e397]: Branch Name
+                      - paragraph [ref=e398]: Hajime - Thomson Plaza
+                    - generic [ref=e399]:
+                      - generic [ref=e400]:
+                        - paragraph [ref=e401]: Email
+                        - paragraph [ref=e402]: hajime@gmail.com
+                      - generic [ref=e403]:
+                        - paragraph [ref=e404]: Mobile
+                        - paragraph [ref=e405]: "+6562615602"
+                    - generic [ref=e406]:
+                      - paragraph [ref=e407]: Full Description
+                      - paragraph [ref=e408]: Hajime is the Japanese word for "beginning" (初め) and the short form for “Hajimemashite”, which means “Nice to meet you”. It represents our philosophy of going back to food’s beginning and our warm welcome to all patrons.
+                    - generic [ref=e409]:
+                      - paragraph [ref=e410]: Keywords
+                      - generic [ref=e411]:
+                        - img [ref=e412]
+                        - generic [ref=e416]: No keywords recorded yet.
+              - generic [ref=e417]:
+                - generic [ref=e418]:
+                  - paragraph [ref=e419]: Branch Location
+                  - generic [ref=e420]:
+                    - generic [ref=e421]:
+                      - paragraph [ref=e422]: Address
+                      - paragraph [ref=e423]: "301 Upper Thomson Rd, #01-110 Thomson Plaza, Singapore 574408"
+                    - generic [ref=e424]:
+                      - paragraph [ref=e425]: Floor
+                      - paragraph [ref=e426]: "-"
+                    - generic [ref=e427]:
+                      - paragraph [ref=e428]: Unit No
+                      - paragraph [ref=e429]: "-"
+                    - generic [ref=e430]:
+                      - paragraph [ref=e431]: City
+                      - paragraph [ref=e432]: Singapore
+                    - generic [ref=e433]:
+                      - paragraph [ref=e434]: State
+                      - paragraph [ref=e435]: Singapore
+                    - generic [ref=e436]:
+                      - paragraph [ref=e437]: Postal Code
+                      - paragraph [ref=e438]: "574408"
+                    - generic [ref=e439]:
+                      - paragraph [ref=e440]: Country
+                      - paragraph [ref=e441]: Singapore
+                    - generic [ref=e442]:
+                      - paragraph [ref=e443]: Inside Mall
+                      - paragraph [ref=e444]: "Yes"
+                    - generic [ref=e445]:
+                      - paragraph [ref=e446]: Name of Mall
+                      - paragraph [ref=e447]: Thomson Plaza
+                - generic [ref=e448]:
+                  - generic [ref=e449]:
+                    - img [ref=e450]
+                    - paragraph [ref=e452]: Opening Hours
+                  - generic [ref=e453]:
+                    - generic [ref=e454]:
+                      - generic [ref=e455]:
+                        - img [ref=e456]
+                        - generic [ref=e458]: Monday
+                      - generic [ref=e461]:
+                        - img [ref=e462]
+                        - text: 11:30 - 21:30
+                    - generic [ref=e464]:
+                      - generic [ref=e465]:
+                        - img [ref=e466]
+                        - generic [ref=e468]: Tuesday
+                      - generic [ref=e471]:
+                        - img [ref=e472]
+                        - text: 11:30 - 21:30
+                    - generic [ref=e474]:
+                      - generic [ref=e475]:
+                        - img [ref=e476]
+                        - generic [ref=e478]: Wednesday
+                      - generic [ref=e481]:
+                        - img [ref=e482]
+                        - text: 11:30 - 21:30
+                    - generic [ref=e484]:
+                      - generic [ref=e485]:
+                        - img [ref=e486]
+                        - generic [ref=e488]: Thursday
+                      - generic [ref=e491]:
+                        - img [ref=e492]
+                        - text: 11:30 - 21:30
+                    - generic [ref=e494]:
+                      - generic [ref=e495]:
+                        - img [ref=e496]
+                        - generic [ref=e498]: Friday
+                      - generic [ref=e501]:
+                        - img [ref=e502]
+                        - text: 11:30 - 21:30
+                    - generic [ref=e504]:
+                      - generic [ref=e505]:
+                        - img [ref=e506]
+                        - generic [ref=e508]: Saturday
+                      - generic [ref=e511]:
+                        - img [ref=e512]
+                        - text: 11:30 - 21:30
+                    - generic [ref=e514]:
+                      - generic [ref=e515]:
+                        - img [ref=e516]
+                        - generic [ref=e519]: Sunday
+                      - generic [ref=e522]:
+                        - img [ref=e523]
+                        - text: 11:30 - 21:30
+                - generic [ref=e525]:
+                  - paragraph [ref=e526]: Identifiers & Metadata
+                  - generic [ref=e527]:
+                    - generic [ref=e528]:
+                      - paragraph [ref=e529]: Branch ID
+                      - paragraph [ref=e530]: branch_6HHoMh3C3N8w1xqPeK
+                    - generic [ref=e531]:
+                      - paragraph [ref=e532]: Merchant Store ID
+                      - paragraph [ref=e533]: merchant_store_JRW21se7J34IikWg49
+                    - generic [ref=e534]:
+                      - paragraph [ref=e535]: Slug
+                      - paragraph [ref=e536]: "-"
+                    - generic [ref=e537]:
+                      - paragraph [ref=e538]: Created At
+                      - paragraph [ref=e539]: 25 Nov 2025, 13:33
+                    - generic [ref=e540]:
+                      - paragraph [ref=e541]: Updated At
+                      - paragraph [ref=e542]: 17 Jun 2026, 21:51
+                - generic [ref=e543]:
+                  - paragraph [ref=e545]: Branch Photos
+                  - generic [ref=e547]:
+                    - img [ref=e548]
+                    - generic [ref=e553]: No photos available yet.
+    - button "Toggle floating actions" [ref=e99] [cursor=pointer]:
+      - img [ref=e100]
+  - region "Notifications (F8)":
+    - list

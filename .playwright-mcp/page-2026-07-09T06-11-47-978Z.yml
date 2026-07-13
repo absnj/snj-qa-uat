@@ -1,0 +1,81 @@
+- generic [ref=f9e1]:
+  - generic [ref=f9e7]:
+    - generic [ref=f9e8]:
+      - generic [ref=f9e10]:
+        - button "Open navigation menu" [ref=f9e13] [cursor=pointer]:
+          - img [ref=f9e14]
+        - link "Shop n Joy Logo" [ref=f9e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f9e18]
+        - button [ref=f9e20] [cursor=pointer]
+      - main [ref=f9e23]:
+        - generic [ref=f9e24]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f9e103]:
+            - generic [ref=f9e104]:
+              - button "Back" [ref=f9e105]:
+                - img [ref=f9e106]
+              - button "Details" [ref=f9e108] [cursor=pointer]:
+                - img [ref=f9e109]
+                - text: Details
+              - button "Schedule" [ref=f9e111] [cursor=pointer]:
+                - img [ref=f9e112]
+                - text: Schedule
+              - button "NJoyBook" [ref=f9e114] [cursor=pointer]:
+                - img [ref=f9e115]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f9e117] [cursor=pointer]:
+                - img [ref=f9e118]
+                - text: Smart QR
+              - button "Media" [ref=f9e120] [cursor=pointer]:
+                - img [ref=f9e121]
+                - text: Media
+              - button "Logs" [ref=f9e123] [cursor=pointer]:
+                - img [ref=f9e124]
+                - text: Logs
+              - button "Remarks" [ref=f9e126] [cursor=pointer]:
+                - img [ref=f9e127]
+                - text: Remarks
+            - generic [ref=f9e129]:
+              - heading "NJoyBook" [level=3] [ref=f9e131]
+              - generic [ref=f9e133]:
+                - tablist "NJoyBook Menu" [ref=f9e135]:
+                  - paragraph [ref=f9e136]: NJoyBook Menu
+                  - generic [ref=f9e137]:
+                    - button "Bookings" [ref=f9e138] [cursor=pointer]:
+                      - img [ref=f9e139]
+                      - text: Bookings
+                    - button "Guest History" [ref=f9e141] [cursor=pointer]:
+                      - img [ref=f9e142]
+                      - text: Guest History
+                    - button "Rules" [ref=f9e144] [cursor=pointer]:
+                      - img [ref=f9e145]
+                      - text: Rules
+                    - button "Time Slots" [ref=f9e147] [cursor=pointer]:
+                      - img [ref=f9e148]
+                      - text: Time Slots
+                    - button "Staff" [active] [ref=f9e150] [cursor=pointer]:
+                      - img [ref=f9e151]
+                      - text: Staff
+                    - button "Blockouts" [ref=f9e153] [cursor=pointer]:
+                      - img [ref=f9e154]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=f9e156] [cursor=pointer]:
+                      - img [ref=f9e157]
+                      - text: Booking Page
+                - generic [ref=f9e182]:
+                  - generic [ref=f9e183]:
+                    - generic [ref=f9e185]:
+                      - heading "Bookable Staff" [level=3] [ref=f9e186]
+                      - button "Staff help" [ref=f9e187]:
+                        - img [ref=f9e188]
+                    - button [ref=f9e190] [cursor=pointer]:
+                      - img [ref=f9e191]
+                  - generic [ref=f9e195]: No staff configured yet.
+    - button "Toggle floating actions" [ref=f9e96] [cursor=pointer]:
+      - img [ref=f9e97]
+  - region "Notifications (F8)":
+    - list

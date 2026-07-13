@@ -4,7 +4,7 @@ import { SupportBasePage } from './SupportBasePage';
 import { CreateTicketPage } from './CreateTicketPage';
 
 export class MyTicketsPage extends SupportBasePage { 
-  private readonly createButton = this.page.getByRole('button', { name: 'Create' });
+  private readonly createButton = this.page.getByRole('button', { name: 'Create', exact: true });
 
   constructor(page: Page) {
     super(page);

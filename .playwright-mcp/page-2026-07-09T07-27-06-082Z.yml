@@ -1,0 +1,111 @@
+- generic [ref=f44e1]:
+  - generic [ref=f44e7]:
+    - generic [ref=f44e8]:
+      - generic [ref=f44e10]:
+        - button "Open navigation menu" [ref=f44e13] [cursor=pointer]:
+          - img [ref=f44e14]
+        - link "Shop n Joy Logo" [ref=f44e17] [cursor=pointer]:
+          - /url: /
+          - img "Shop n Joy Logo" [ref=f44e18]
+        - button "Hi, Regina" [ref=f44e20] [cursor=pointer]:
+          - generic [ref=f44e22]: Hi, Regina
+      - main [ref=f44e24]:
+        - generic [ref=f44e25]:
+          - generic:
+            - generic:
+              - img
+              - generic: Pull to refresh
+          - generic [ref=f44e32]:
+            - generic [ref=f44e33]:
+              - button "Back" [ref=f44e34]:
+                - img [ref=f44e35]
+              - button "Details" [ref=f44e37] [cursor=pointer]:
+                - img [ref=f44e38]
+                - text: Details
+              - button "Schedule" [ref=f44e40] [cursor=pointer]:
+                - img [ref=f44e41]
+                - text: Schedule
+              - button "NJoyBook" [ref=f44e43] [cursor=pointer]:
+                - img [ref=f44e44]
+                - text: NJoyBook
+              - button "Smart QR" [ref=f44e46] [cursor=pointer]:
+                - img [ref=f44e47]
+                - text: Smart QR
+              - button "Media" [ref=f44e49] [cursor=pointer]:
+                - img [ref=f44e50]
+                - text: Media
+              - button "Logs" [ref=f44e52] [cursor=pointer]:
+                - img [ref=f44e53]
+                - text: Logs
+              - button "Remarks" [ref=f44e55] [cursor=pointer]:
+                - img [ref=f44e56]
+                - text: Remarks
+            - generic [ref=f44e58]:
+              - heading "NJoyBook" [level=3] [ref=f44e60]
+              - generic [ref=f44e62]:
+                - tablist "NJoyBook Menu" [ref=f44e64]:
+                  - paragraph [ref=f44e65]: NJoyBook Menu
+                  - generic [ref=f44e66]:
+                    - button "Bookings" [ref=f44e67] [cursor=pointer]:
+                      - img [ref=f44e68]
+                      - text: Bookings
+                    - button "Guest History" [ref=f44e70] [cursor=pointer]:
+                      - img [ref=f44e71]
+                      - text: Guest History
+                    - button "Rules" [ref=f44e73] [cursor=pointer]:
+                      - img [ref=f44e74]
+                      - text: Rules
+                    - button "Time Slots" [ref=f44e76] [cursor=pointer]:
+                      - img [ref=f44e77]
+                      - text: Time Slots
+                    - button "Staff" [active] [ref=f44e79] [cursor=pointer]:
+                      - img [ref=f44e80]
+                      - text: Staff
+                    - button "Blockouts" [ref=f44e82] [cursor=pointer]:
+                      - img [ref=f44e83]
+                      - text: Blockouts
+                    - button "Booking Page" [ref=f44e85] [cursor=pointer]:
+                      - img [ref=f44e86]
+                      - text: Booking Page
+                - generic [ref=f44e263]:
+                  - generic [ref=f44e264]:
+                    - generic [ref=f44e266]:
+                      - heading "Bookable Staff" [level=3] [ref=f44e267]
+                      - button "Staff help" [ref=f44e268]:
+                        - img [ref=f44e269]
+                    - button "Add staff" [ref=f44e271] [cursor=pointer]:
+                      - img [ref=f44e272]
+                      - generic [ref=f44e274]: Add staff
+                  - generic [ref=f44e276]:
+                    - generic [ref=f44e278]:
+                      - paragraph [ref=f44e280]: booking-tester-staff-A
+                      - generic [ref=f44e281]:
+                        - generic [ref=f44e282]: Active
+                        - button "Edit staff" [ref=f44e283] [cursor=pointer]:
+                          - img [ref=f44e284]
+                          - generic [ref=f44e286]: Edit staff
+                    - generic [ref=f44e288]:
+                      - paragraph [ref=f44e290]: booking-tester-staff-B
+                      - generic [ref=f44e291]:
+                        - generic [ref=f44e292]: Active
+                        - button "Edit staff" [ref=f44e293] [cursor=pointer]:
+                          - img [ref=f44e294]
+                          - generic [ref=f44e296]: Edit staff
+                    - generic [ref=f44e298]:
+                      - paragraph [ref=f44e300]: TestUser AutoTest
+                      - generic [ref=f44e301]:
+                        - generic [ref=f44e302]: Active
+                        - button "Edit staff" [ref=f44e303] [cursor=pointer]:
+                          - img [ref=f44e304]
+                          - generic [ref=f44e306]: Edit staff
+                    - generic [ref=f44e308]:
+                      - paragraph [ref=f44e310]: TestUser AutoTest
+                      - generic [ref=f44e311]:
+                        - generic [ref=f44e312]: Active
+                        - button "Edit staff" [ref=f44e313] [cursor=pointer]:
+                          - img [ref=f44e314]
+                          - generic [ref=f44e316]: Edit staff
+    - button "Toggle floating actions" [ref=f44e224] [cursor=pointer]:
+      - img [ref=f44e225]
+  - region "Notifications (F8)":
+    - list

@@ -1,0 +1,41 @@
+- generic [active] [ref=f16e1]:
+  - generic [ref=f16e3]:
+    - banner [ref=f16e4]:
+      - link "ShopNJoy" [ref=f16e8] [cursor=pointer]:
+        - /url: /
+        - img "ShopNJoy" [ref=f16e9]
+    - main [ref=f16e10]:
+      - alert [ref=f16e11]
+      - generic [ref=f16e12]:
+        - generic [ref=f16e16]:
+          - generic [ref=f16e17]: Make a booking
+          - heading "Book with us" [level=1] [ref=f16e18]
+        - generic [ref=f16e23]: Loading...
+    - contentinfo [ref=f16e24]:
+      - generic [ref=f16e25]:
+        - generic [ref=f16e26]:
+          - generic [ref=f16e27]:
+            - generic [ref=f16e28]:
+              - paragraph [ref=f16e29]: ShopNJoy Pte. Ltd.
+              - img "ShopNJoy" [ref=f16e30]
+            - generic [ref=f16e31]:
+              - link "LinkedIn" [ref=f16e32] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/theshopnjoy
+                - img [ref=f16e33]
+              - link "WhatsApp" [ref=f16e35] [cursor=pointer]:
+                - /url: https://wa.me/6588170291
+                - img [ref=f16e36]
+          - generic [ref=f16e38]:
+            - heading "Quick Links" [level=4] [ref=f16e39]
+            - list [ref=f16e40]:
+              - listitem [ref=f16e41]:
+                - link "Frequently Asked Questions" [ref=f16e42] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=f16e43]:
+                - link "Terms and Conditions" [ref=f16e44] [cursor=pointer]:
+                  - /url: /terms-and-conditions
+        - paragraph [ref=f16e47]: © 2026 ShopNJoy Pte. Ltd. All rights reserved.
+  - iframe [ref=f16e50]:
+    - generic [ref=f17e6]:
+      - text: protected by
+      - strong [ref=f17e7]: reCAPTCHA
