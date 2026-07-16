@@ -60,6 +60,18 @@ export default defineConfig({
       testMatch: '**/specs/**/*.spec.ts',
       grep: /@branch-staff/,
     },
+    {
+      name: 'sales-agent',
+      use: { storageState: 'tests/setup/.auth/sales_agent.json' },
+      testMatch: '**/specs/**/*.spec.ts',
+      grep: /@sales-agent/,
+    },
+    {
+      name: 'merchant-success-staff',
+      use: { storageState: 'tests/setup/.auth/merchant_success_staff.json' },
+      testMatch: '**/specs/**/*.spec.ts',
+      grep: /@merchant-success-staff/,
+    },
     // TODO: add a superuser project when superuser tests are ready.
   ],
 
