@@ -27,6 +27,16 @@ export const ROLES = {
     normalized: 'BRANCH_STAFF',
     tag: '@branch-staff',
   },
+  salesAgent: {
+    label: 'Sales Agent',
+    normalized: 'SALES_AGENT',
+    tag: '@sales-agent',
+  },
+  merchantSuccessStaff: {
+    label: 'Merchant Success Staff',
+    normalized: 'MERCHANT_SUCCESS_STAFF',
+    tag: '@merchant-success-staff',
+  },
 } satisfies Record<string, Role>;
 
 export const ALL_ROLES = [
@@ -35,6 +45,12 @@ export const ALL_ROLES = [
   ROLES.branchAdmin,
   ROLES.branchStaff,
 ];
+
+export const SALES_AGENT_ROLES = [ROLES.salesAgent];
+
+export const MERCHANT_SUCCESS_ROLES = [ROLES.merchantSuccessStaff];
+
+export const ALL_CRM_ROLES = [ROLES.salesAgent, ROLES.merchantSuccessStaff];
 
 export const USER_MANAGEMENT_ADMIN_ROLES = [
   ROLES.merchantAdmin,

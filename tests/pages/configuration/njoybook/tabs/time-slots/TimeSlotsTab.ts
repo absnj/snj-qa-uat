@@ -17,11 +17,25 @@ export class TimeSlotsTab extends ConfigBasePage {
     private readonly addButton: Locator;
     private readonly bulkEditButton: Locator;
 
+    // Bulk Edit modal (used by setSlotStatus).
+    private readonly bulkEditDialog: Locator;
+    private readonly bulkEditHeading: Locator;
+    private readonly slotVisibilitySwitch: Locator;
+    private readonly bulkApplyButton: Locator;
+    private readonly slotsUpdatedToast: Locator;
+
     constructor(page: Page) {
         super(page);
         this.heading = this.page.getByRole('heading', { name: 'Time Slots', level: 3 });
         this.addButton = this.page.getByRole('button', { name: 'Add time slot' });
         this.bulkEditButton = this.page.getByRole('button', { name: 'Bulk Edit' });
+
+        this.bulkEditDialog = this.page.locator('.modal-container');
+        this.bulkEditHeading = this.bulkEditDialog.getByRole('heading', { name: 'Bulk Edit Time Slots' });
+        // The modal's single switch is the "Set selected slots as active" visibility control.
+        this.slotVisibilitySwitch = this.bulkEditDialog.getByRole('switch');
+        this.bulkApplyButton = this.bulkEditDialog.getByRole('button', { name: 'Apply to selected' });
+        this.slotsUpdatedToast = this.page.getByText(/slot\(s\) were updated/).first();
     }
 
     override async waitForReady(): Promise<void> {
@@ -78,5 +92,31 @@ export class TimeSlotsTab extends ConfigBasePage {
         await dialog.getByRole('button', { name: 'Apply to selected' }).click();
 
         await expect(this.page.getByText(/slot\(s\) were updated/).first()).toBeVisible();
+    }
+
+    /**
+     * Activates or deactivates a single slot of the currently-selected weekday
+     * via the Bulk Edit modal's "Visibility" toggle ("Set selected slots as
+     * active"). A deactivated slot is hidden from the public booking calendar.
+     * Call selectWeekday() first to target a weekday other than the default
+     * (Monday); pass the slot's start time, e.g. "19:30".
+     */
+    async setSlotStatus(startTime: string, active: boolean): Promise<void> {
+        await this.bulkEditButton.click();
+        await expect(this.bulkEditHeading).toBeVisible();
+
+        // Select only the target slot, then drive the visibility toggle.
+        await this.slotCheckbox(startTime).check();
+        if ((await this.slotVisibilitySwitch.isChecked()) !== active) await this.slotVisibilitySwitch.click();
+
+        await this.bulkApplyButton.click();
+        await expect(this.slotsUpdatedToast).toBeVisible();
+    }
+
+    // Bulk Edit slot checkboxes are labelled by their full range, e.g.
+    // "19:30 – 20:30 …"; anchor on the start time so a lookup doesn't also match
+    // an adjacent slot. Scoped to the modal declared in the constructor.
+    private slotCheckbox(startTime: string): Locator {
+        return this.bulkEditDialog.getByRole('checkbox', { name: new RegExp(`^${startTime}\\b`) });
     }
 }

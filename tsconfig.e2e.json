@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework", "@wdio/appium-service", "expect-webdriverio"]
-  },
-  "include": ["smoke.e2e.ts", "wdio.conf.ts"]
-}

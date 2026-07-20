@@ -29,12 +29,21 @@ export type SubmitBookingData = {
  * NOTE: this lives on a different host from the admin app, so callers must
  * navigate with an absolute URL — the admin baseURL does not apply here.
  *
- * Flow (Staff booking mode): Date & time -> Specialist -> Your details ->
- * Review & confirm. The Specialist step auto-advances when only one specialist
- * is available for the chosen slot.
+ * The flow depends on the branch's Booking Mode:
+ * - Staff mode: Date & time -> Specialist -> Your details -> Review & confirm.
+ *   The Specialist step auto-advances when only one specialist is available
+ *   for the chosen slot. Slots advertise "N specialist(s)".
+ * - Branch mode: Date & time -> Your details -> Review & confirm (no
+ *   Specialist step). Slots advertise remaining capacity ("N left").
+ *
+ * More than one branch can be published at once, so the page does NOT default
+ * to a single branch — callers must always call selectBranch() explicitly.
  */
 export class PublicBookingPage extends BasePage {
     private readonly pageHeading: Locator;
+    // Common to both Staff and Branch mode, and present whether or not a
+    // branch has been selected yet — the mode-agnostic "page is ready" anchor.
+    private readonly chooseDateTimeHeading: Locator;
 
     // Step 1 — Date & time
     private readonly branchButton: Locator;
@@ -66,6 +75,7 @@ export class PublicBookingPage extends BasePage {
     constructor(page: Page) {
         super(page);
         this.pageHeading = this.page.getByRole('heading', { level: 1 });
+        this.chooseDateTimeHeading = this.page.getByRole('heading', { name: 'Choose date & time', level: 2 });
 
         // Step 1
         this.branchButton = this.page.getByRole('button', { name: 'Branch' });
@@ -97,26 +107,26 @@ export class PublicBookingPage extends BasePage {
     }
 
     override async waitForReady(): Promise<void> {
-        await expect(this.page.getByText('Book an appointment')).toBeVisible();
         await expect(this.pageHeading).toBeVisible();
+        await expect(this.chooseDateTimeHeading).toBeVisible();
     }
 
     /**
-     * Navigates to the public page and reloads until it is in the bookable
-     * ("Book an appointment") state. The public site is a separate host and
-     * caches branch config, so an admin change (e.g. re-enabling booking) can
-     * take a few seconds to propagate; polling absorbs that lag.
+     * Navigates to the public page and reloads until the (mode-agnostic)
+     * "Choose date & time" step is showing. The public site is a separate host
+     * and caches branch config, so an admin change (e.g. re-enabling booking)
+     * can take a few seconds to propagate; toPass() retries the goto +
+     * assertion with its own backoff until the overall timeout elapses.
+     *
+     * NOTE: this does NOT select a branch — more than one branch may be
+     * published, so callers must always follow up with selectBranch().
      */
-    async gotoReady(url: string, tries = 6): Promise<void> {
-        for (let i = 0; i < tries; i++) {
+    async gotoReady(url: string, timeout = 20_000): Promise<void> {
+        await expect(async () => {
             await this.page.goto(url);
-            if (await this.page.getByText('Book an appointment').isVisible().catch(() => false)) {
-                await expect(this.pageHeading).toBeVisible();
-                return;
-            }
-            await this.page.waitForTimeout(2500);
-        }
-        await this.waitForReady();
+            await expect(this.chooseDateTimeHeading).toBeVisible({ timeout: 3_000 });
+        }).toPass({ timeout });
+        await expect(this.pageHeading).toBeVisible();
     }
 
     // --- Branch ---
@@ -184,10 +194,35 @@ export class PublicBookingPage extends BasePage {
 
     async selectFirstAvailableSlot(): Promise<void> {
         // Robust against a specific time being consumed by earlier bookings.
+        // Matches either wording: Staff mode advertises specialist counts,
+        // Branch mode advertises remaining capacity ("N left").
         await this.page
-            .getByRole('button', { name: /\d{1,2}:\d{2}\s(AM|PM).*specialist/ })
+            .getByRole('button', { name: /\d{1,2}:\d{2}\s(AM|PM).*(specialist|left)/ })
             .first()
             .click();
+    }
+
+    // A slot button is labelled "<time> <n> specialist(s)", e.g. "7:30 PM 2
+    // specialists". Anchor on the leading time so a lookup for "7:30 PM" does not
+    // also match "17:30"-style neighbours (times render in 12-hour form here).
+    private slotButton(timeLabel: string): Locator {
+        return this.page.getByRole('button', { name: new RegExp(`^${timeLabel}\\b`) });
+    }
+
+    /**
+     * Asserts a slot advertises a given number of free specialists. The count is
+     * served by the live per-date availability fetch (not the cached branch
+     * config), so it reflects admin staff/slot changes without a propagation
+     * wait once the date's availability has loaded.
+     */
+    async expectSlotSpecialists(timeLabel: string, count: number): Promise<void> {
+        const label = count === 1 ? '1 specialist' : `${count} specialists`;
+        await expect(this.slotButton(timeLabel)).toContainText(label);
+    }
+
+    /** Asserts a slot is not offered at all for the currently-selected date. */
+    async expectSlotAbsent(timeLabel: string): Promise<void> {
+        await expect(this.slotButton(timeLabel)).toHaveCount(0);
     }
 
     async expectNoTablesAvailable(): Promise<void> {
@@ -211,6 +246,21 @@ export class PublicBookingPage extends BasePage {
 
     async selectStaffPreference(name: string): Promise<void> {
         await this.availableStaff.getByRole('option', { name }).click();
+    }
+
+    /**
+     * Chooses a specialist on the Specialist step: the named one, or the first
+     * available when unspecified. Selecting a slot advances here, and the flow
+     * needs an explicit pick whenever a slot offers more than one specialist.
+     * The `.first()` is a deliberate "any specialist" choice (we don't assert
+     * which), mirroring selectFirstAvailableSlot.
+     */
+    async selectSpecialist(name?: string): Promise<void> {
+        await expect(this.page.getByRole('heading', { name: 'Choose your specialist' })).toBeVisible();
+        const option = name
+            ? this.availableStaff.getByRole('option', { name })
+            : this.availableStaff.getByRole('option').first();
+        await option.click();
     }
 
     async expectStaffOptionVisible(name: string): Promise<void> {
@@ -262,15 +312,29 @@ export class PublicBookingPage extends BasePage {
         if (data.increaseGuestsBy) await this.increaseGuests(data.increaseGuestsBy);
         if (data.timeSlot) await this.selectTimeSlot(data.timeSlot);
         else await this.selectFirstAvailableSlot();
+
+        // Selecting a slot advances to the Specialist step. Pick a specialist so
+        // Continue enables regardless of how many the slot offers.
+        await this.selectSpecialist(data.staff);
         await this.continue();
 
-        // The Specialist step auto-advances with a single specialist; only act
-        // on it when it's the active step.
-        if (data.staff) {
-            await this.goToSpecialistStep();
-            await this.selectStaffPreference(data.staff);
-            await this.continue();
-        }
+        await expect(this.page.getByRole('heading', { name: 'Your details' })).toBeVisible();
+        await this.fillDetails(data.guest);
+        await this.continue();
+
+        await expect(this.page.getByRole('heading', { name: 'Review your booking' })).toBeVisible();
+        return this.confirm();
+    }
+
+    /**
+     * Like submitBooking, but for a Branch-mode branch: there is no
+     * Specialist step, so selecting a slot advances straight to Your details.
+     */
+    async submitBranchBooking(data: Omit<SubmitBookingData, 'staff'>): Promise<string> {
+        await this.setDate(data.date);
+        if (data.increaseGuestsBy) await this.increaseGuests(data.increaseGuestsBy);
+        if (data.timeSlot) await this.selectTimeSlot(data.timeSlot);
+        else await this.selectFirstAvailableSlot();
 
         await expect(this.page.getByRole('heading', { name: 'Your details' })).toBeVisible();
         await this.fillDetails(data.guest);

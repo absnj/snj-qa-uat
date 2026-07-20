@@ -17,6 +17,3 @@ logs/
 tests/setup/.auth
 
 *.ipa
-appium.log
-render-tree.json
-page-source.txt

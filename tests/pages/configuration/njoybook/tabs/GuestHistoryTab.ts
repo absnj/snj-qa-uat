@@ -1,7 +1,7 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
-import { BookingStatus } from './BookingsTab';
+import { BookingStatus } from './bookings/BookingsTab';
 
 export class GuestHistoryTab extends ConfigBasePage {
     private readonly heading: Locator;

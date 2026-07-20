@@ -16,10 +16,7 @@
       "@helpers/*": ["tests/helpers/*"],
       "@config/*": ["tests/config/*"]
     },
-    "types": ["node", "@wdio/globals/types", 
-              "@wdio/mocha-framework", 
-              "@wdio/appium-service", 
-              "expect-webdriverio"]
+    "types": ["node"]
   },
   "include": ["tests/**/*.ts"],
   "exclude": ["node_modules", "tests-old"]

@@ -43,7 +43,13 @@ export class LoginPage extends BasePage {
   // Flows
   // ---------------------------------------------------------------------------
 
-  async loginAs(username: string, password: string): Promise<HomePage> {
+  async loginAs<T extends BasePage = HomePage>(
+    username: string,
+    password: string,
+    opts: { createHomePage?: (page: Page) => T } = {},
+  ): Promise<T> {
+    const createHomePage = (opts.createHomePage ?? ((page: Page) => new HomePage(page))) as (page: Page) => T;
+
     await this.context.clearCookies();
     await this.page.goto(getBaseUrl());
     await this.waitForReady();
@@ -52,7 +58,7 @@ export class LoginPage extends BasePage {
     await this.fillPassword(password);
     await this.submit();
 
-    const home = new HomePage(this.page);
+    const home = createHomePage(this.page);
     await home.waitForReady();
     return home;
   }

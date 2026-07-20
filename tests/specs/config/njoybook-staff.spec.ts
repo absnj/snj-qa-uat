@@ -2,60 +2,37 @@ import { test, expect } from '@playwright/test';
 import { HomePage } from '@pages/home/HomePage';
 import { NJoyBookPage } from '@pages/configuration/njoybook/NjoyBookPage';
 import { RulesTab } from '@pages/configuration/njoybook/tabs/RulesTab';
-import { TimeSlotsTab, Weekday } from '@pages/configuration/njoybook/tabs/TimeSlotsTab';
-import { StaffTab } from '@pages/configuration/njoybook/tabs/StaffTab';
-import { BookingsTab } from '@pages/configuration/njoybook/tabs/BookingsTab';
-import { BlockoutsTab } from '@pages/configuration/njoybook/tabs/BlockoutsTab';
+import { TimeSlotsTab } from '@pages/configuration/njoybook/tabs/time-slots/TimeSlotsTab';
+import { StaffTab } from '@pages/configuration/njoybook/tabs/staff/StaffTab';
+import { BookingsTab } from '@pages/configuration/njoybook/tabs/bookings/BookingsTab';
+import { BlockoutsTab } from '@pages/configuration/njoybook/tabs/blockouts/BlockoutsTab';
 import { NJOYBOOK_FULL_ACCESS_ROLES, NJOYBOOK_LIMITED_ROLES } from '../helpers/roles';
 import { PublicBookingPage } from '@pages/booking/PublicBookingPage';
+import {
+  nextMondayISO,
+  nextWeekdayISO,
+  dayLabel,
+  uniqueGuest,
+  futureISO,
+  blockoutLabel,
+  ALL_WEEKDAYS,
+} from './njoybook.helpers';
 
 // The booking flow is exercised against the "Hajime - My Village" branch — it
-// is the branch that is actually published on the public booking site and is
-// configured in Staff booking mode with bookable staff assigned to its slots.
+// is a branch published on the public booking site, configured in Staff
+// booking mode with bookable staff assigned to its slots. The public site now
+// also publishes "Hajime - Thomson Plaza" (Branch mode, see
+// njoybook-general.spec.ts), so it no longer defaults to a single branch —
+// every public-page test here must call selectBranch(TEST_BRANCH_NAME).
 const TEST_BRANCH_NAME = 'Hajime - My Village';
 
 // The public booking site lives on a DIFFERENT host from the admin app, so this
 // is an absolute URL (the admin baseURL does not apply). It is a merchant-level
-// page that defaults to the only publicly-bookable branch (My Village).
+// page listing every published branch — selectBranch() is required.
 const PUBLIC_BOOKING_URL = 'https://staging.shopnjoy.com/booking/hajime-tonkatsu-and-ramen';
 
 const TEST_STAFF_A = 'booking-tester-staff-A';
 const TEST_STAFF_B = 'booking-tester-staff-B';
-
-/** Next Monday (never today) as an ISO date — the weekday whose slots the
- *  bookable fixture assigns staff to, so it always has public availability. */
-function nextMondayISO(): string {
-  const d = new Date();
-  const delta = ((8 - d.getDay()) % 7) || 7;
-  d.setDate(d.getDate() + delta);
-  return d.toISOString().slice(0, 10);
-}
-
-/** Formats an ISO date as the admin bookings day label, e.g. "13 Jul". */
-function dayLabel(isoDate: string): string {
-  const d = new Date(`${isoDate}T00:00:00`);
-  return `${d.getDate()} ${d.toLocaleString('en-US', { month: 'short' })}`;
-}
-
-/** A guest name unique per run so repeated runs don't collide in the (not yet
- *  auto-cleaned) bookings list. */
-function uniqueGuest(prefix: string): string {
-  return `${prefix} ${Date.now()}`;
-}
-
-/** An ISO date a given number of days in the future. */
-function futureISO(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
-/** Formats an ISO date as the blockout list label. The list renders dates in the
- *  browser's locale; the test browser is en-US, which reads "Sep 14, 2026". */
-function blockoutLabel(isoDate: string): string {
-  const d = new Date(`${isoDate}T00:00:00`);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
 
 /**
  * Restores a known-good NJoyBook baseline via the Rules tab's "Set to Default"
@@ -74,16 +51,6 @@ async function resetNJoyBookRules(njoyBookPage: NJoyBookPage): Promise<void> {
   await rules.save();
 }
 
-const ALL_WEEKDAYS: Weekday[] = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
-
 type NJoyBookFixtures = {
   njoyBookPage: NJoyBookPage;
   // Like njoyBookPage, but additionally re-assigns a staff member to the
@@ -99,6 +66,16 @@ type NJoyBookFixtures = {
   rulesTab: RulesTab;
   timeSlotsTab: TimeSlotsTab;
   staffTab: StaffTab;
+  // Staff tab on a branch whose TUESDAY slots have BOTH test staff assigned (so a
+  // slot shows two specialists). Teardown restores staff-B's bookable flag pass
+  // or fail. A dedicated weekday keeps its slot-template edits off Monday, which
+  // the booking tests use.
+  staffToggle: StaffTab;
+  // Time Slots on a branch whose WEDNESDAY slots have staff-A assigned, plus a
+  // `deactivated` list: any slot start time pushed to it is re-activated in
+  // teardown. Dedicated weekday, so deactivating a slot can't hide a Monday slot
+  // the booking tests rely on.
+  restorableTimeSlots: { tab: TimeSlotsTab; deactivated: string[] };
   bookingsTab: BookingsTab;
   // Bookings tab reached WITHOUT the Rules "Set to Default" reset. Admin booking
   // creation/management does not depend on Rules state, so these tests skip the
@@ -164,6 +141,40 @@ const njoyBookTest = test.extend<NJoyBookFixtures>({
     await use(staffTab);
   },
 
+  staffToggle: async ({ njoyBookPage }, use) => {
+    // Assign both test staff to the TUESDAY slots so a Tuesday slot advertises
+    // two specialists. staff-B is the toggle target (staff-A is the specialist
+    // the booking tests rely on), so restore B's bookable flag in teardown even
+    // if the test fails.
+    const timeSlots = await njoyBookPage.goToTimeSlots();
+    await timeSlots.selectWeekday('Tuesday');
+    await timeSlots.assignStaffToSlots(TEST_STAFF_A);
+    await timeSlots.assignStaffToSlots(TEST_STAFF_B);
+
+    const staffTab = await njoyBookPage.goToStaff();
+    await use(staffTab);
+
+    const modal = await staffTab.editStaff(TEST_STAFF_B);
+    await modal.setBookable(true);
+    await modal.save();
+  },
+
+  restorableTimeSlots: async ({ njoyBookPage }, use) => {
+    // Give WEDNESDAY public availability (staff-A on its slots) so deactivating
+    // one slot is observable against its neighbours.
+    const tab = await njoyBookPage.goToTimeSlots();
+    await tab.selectWeekday('Wednesday');
+    await tab.assignStaffToSlots(TEST_STAFF_A);
+
+    const deactivated: string[] = [];
+    await use({ tab, deactivated });
+
+    // Guaranteed cleanup (pass or fail): re-activate every slot the test hid.
+    for (const startTime of deactivated) {
+      await tab.setSlotStatus(startTime, true).catch(() => { /* already active */ });
+    }
+  },
+
   bookingsTab: async ({ njoyBookPage }, use) => {
     const bookingsTab = await njoyBookPage.goToBookings();
     await use(bookingsTab);
@@ -201,14 +212,30 @@ const njoyBookTest = test.extend<NJoyBookFixtures>({
 });
 
 test.describe('Configuration - NJoyBook', () => {
+  // NJoyBook reads back the shared branch config it mutates — run sequentially,
+  // one worker, declaration order. 'default' (not 'serial') so a failure does
+  // not skip the rest. The general-branch file runs on its own worker in parallel.
+  njoyBookTest.describe.configure({ mode: 'default' });
+
   // Full configuration access — merchant admin only. These exercise the advanced
   // tabs (Rules, Time Slots, Staff) that are hidden from every other role.
   for (const role of NJOYBOOK_FULL_ACCESS_ROLES) {
     njoyBookTest.describe(`${role.label} ${role.tag}`, () => {
       // --- Rules: Enable / Disable Booking ---
 
+      // TODO(isolation): the concurrency issue that originally blocked these is
+      // gone now that this describe runs sequentially (mode: 'default'), one
+      // worker, so a parallel reset can no longer flip booking back on
+      // mid-test. But a SECOND blocker surfaced when Thomson Plaza (Branch
+      // mode) was published alongside this branch: expectBookingUnavailable()
+      // asserts a SITE-WIDE "Online booking is not available at any branch
+      // right now." message. Disabling only Hajime - My Village no longer
+      // triggers that message, since Thomson Plaza stays bookable — the
+      // assertion needs a per-branch "unavailable" signal instead (e.g. no
+      // slots offered for that branch/date) before these can be un-fixme'd.
+      // Bodies kept intact.
       njoyBookTest.describe('Rules - Enable Booking', () => {
-        njoyBookTest(
+        njoyBookTest.fixme(
           'disabling booking blocks the public booking page',
           async ({ rulesTab, context }) => {
             await rulesTab.disableBooking();
@@ -222,7 +249,7 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        njoyBookTest(
+        njoyBookTest.fixme(
           're-enabling booking restores public availability',
           async ({ rulesTab, context }) => {
             await rulesTab.disableBooking();
@@ -235,6 +262,7 @@ test.describe('Configuration - NJoyBook', () => {
             const publicTab = await context.newPage();
             const publicPage = new PublicBookingPage(publicTab);
             await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
           },
         );
       });
@@ -243,14 +271,13 @@ test.describe('Configuration - NJoyBook', () => {
       // These submit a real public booking; the bookableNjoyBook fixture ensures
       // the branch has slot availability (staff assigned to Monday slots).
       //
-      // TODO(recaptcha): the whole flow works (availability, all 4 steps), but
-      // the public site guards the final "Confirm booking" with reCAPTCHA, which
-      // rejects the headless test context ("reCAPTCHA verification failed").
-      // Kept as fixme (bodies intact) until staging exposes a reCAPTCHA test-key
-      // / bypass so headless submission passes. Verified working manually.
+      // NOTE: these submit real bookings against next Monday's slots (each slot
+      // caps at 5 with no delete yet), so they slowly accumulate residue on
+      // shared UAT. reCAPTCHA no longer blocks headless "Confirm booking" as of
+      // 2026-07-13, so they run live again.
 
       njoyBookTest.describe('Rules - Auto-Confirm', () => {
-        njoyBookTest.fixme(
+        njoyBookTest(
           'a booking made while auto-confirm is on lands as Confirmed',
           async ({ bookableNjoyBook, context }) => {
             const rules = await bookableNjoyBook.goToRules();
@@ -263,6 +290,7 @@ test.describe('Configuration - NJoyBook', () => {
             const publicTab = await context.newPage();
             const publicPage = new PublicBookingPage(publicTab);
             await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
             await publicPage.submitBooking({
               date,
               guest: { name: guest, phone: '91234567', email: 'auto-confirm@example.com' },
@@ -276,7 +304,7 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        njoyBookTest.fixme(
+        njoyBookTest(
           'a booking made while auto-confirm is off lands as Pending',
           async ({ bookableNjoyBook, context }) => {
             const rules = await bookableNjoyBook.goToRules();
@@ -289,6 +317,7 @@ test.describe('Configuration - NJoyBook', () => {
             const publicTab = await context.newPage();
             const publicPage = new PublicBookingPage(publicTab);
             await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
             await publicPage.submitBooking({
               date,
               guest: { name: guest, phone: '91234568', email: 'pending@example.com' },
@@ -316,6 +345,7 @@ test.describe('Configuration - NJoyBook', () => {
             const publicTab = await context.newPage();
             const publicPage = new PublicBookingPage(publicTab);
             await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
 
             await publicPage.decreaseGuests(5); // attempt to go well below min
             await publicPage.expectDecreaseDisabled();
@@ -332,6 +362,7 @@ test.describe('Configuration - NJoyBook', () => {
             const publicTab = await context.newPage();
             const publicPage = new PublicBookingPage(publicTab);
             await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
 
             await publicPage.increaseGuests(10); // attempt to exceed max
             await publicPage.expectIncreaseDisabled();
@@ -368,14 +399,32 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        // TODO(env): deactivating a slot goes through the Time Slots "Bulk Edit"
-        // modal (Visibility → "Set selected slots as active"), not the read-only
-        // slot detail. Needs a TimeSlotsTab.setSlotStatus() built on that modal,
-        // plus a stable way to assert the slot is gone from the public page for a
-        // specific date. Deferred until the bulk-edit flow is automated.
-        njoyBookTest.fixme(
+        // Deactivating a slot goes through the Time Slots "Bulk Edit" modal's
+        // Visibility toggle (TimeSlotsTab.setSlotStatus). The restorableTimeSlots
+        // fixture stages staff-A on the Wednesday slots and re-activates any slot
+        // the test hides. Wednesday's 19:30 slot renders as "7:30 PM" publicly;
+        // deactivating it must drop that slot from the calendar while its
+        // neighbours remain.
+        njoyBookTest(
           'deactivating a slot removes it from the public booking page',
-          async () => {},
+          async ({ restorableTimeSlots, context }) => {
+            const { tab, deactivated } = restorableTimeSlots;
+            await tab.setSlotStatus('19:30', false);
+            deactivated.push('19:30');
+
+            const publicTab = await context.newPage();
+            const publicPage = new PublicBookingPage(publicTab);
+            await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
+            await publicPage.setDate(nextWeekdayISO(3)); // Wednesday
+            // A neighbouring slot proves the date's availability loaded before we
+            // assert the deactivated one is absent.
+            await publicPage.expectSlotSpecialists('8:30 PM', 1);
+            await publicPage.expectSlotAbsent('7:30 PM');
+
+            await tab.setSlotStatus('19:30', true);
+            deactivated.pop();
+          },
         );
       });
 
@@ -390,19 +439,48 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        // TODO(env): these require BOTH test staff to be assigned to the branch's
-        // time slots so that turning one non-bookable leaves the other as a
-        // reachable specialist on the public page. Currently only staff-A is
-        // reliably slot-assigned, so toggling it off removes availability
-        // entirely. Re-enable once staff-B is assigned to the slots.
+        // TODO(product): the staffToggle fixture assigns BOTH test staff to the
+        // Tuesday slots, so the slot correctly advertises two specialists (the
+        // first assertion passes). But turning staff-B *non-bookable* via the
+        // Staff edit modal does NOT drop the slot's public specialist count —
+        // verified 2026-07-13 it stayed at two, i.e. a slot-assigned staff still
+        // counts as available regardless of the "bookable" flag. So the "bookable"
+        // toggle is not the lever that removes a staff from the public page; the
+        // intended behaviour needs product clarification (candidates: the "Active"
+        // toggle, or de-assigning the staff from the slots via Bulk Edit). The
+        // scaffolding (bookableToggle, expectSlotSpecialists, two-staff fixture) is
+        // in place; un-fixme once the correct removal mechanism is confirmed.
         njoyBookTest.fixme(
-          'turning a staff member non-bookable removes them from the public booking page',
-          async () => {},
-        );
+          'turning a staff member non-bookable removes them from the public page, and re-enabling restores them',
+          async ({ staffToggle: staffTab, context }) => {
+            const date = nextWeekdayISO(2); // Tuesday
+            const slot = '8:30 PM';
 
-        njoyBookTest.fixme(
-          're-enabling bookable restores the staff member on the public page',
-          async () => {},
+            const publicTab = await context.newPage();
+            const publicPage = new PublicBookingPage(publicTab);
+            await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
+            await publicPage.setDate(date);
+            await publicPage.expectSlotSpecialists(slot, 2);
+
+            const off = await staffTab.editStaff(TEST_STAFF_B);
+            await off.setBookable(false);
+            await off.save();
+
+            await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
+            await publicPage.setDate(date);
+            await publicPage.expectSlotSpecialists(slot, 1);
+
+            const on = await staffTab.editStaff(TEST_STAFF_B);
+            await on.setBookable(true);
+            await on.save();
+
+            await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
+            await publicPage.setDate(date);
+            await publicPage.expectSlotSpecialists(slot, 2);
+          },
         );
       });
 
@@ -420,13 +498,11 @@ test.describe('Configuration - NJoyBook', () => {
       // list view without navigation.
 
       njoyBookTest.describe('Bookings - Admin Add Booking', () => {
-        // TODO(delete-booking): verified working end-to-end against a low-volume
-        // environment, but each fixed slot caps at 5 bookings and there is no way
-        // to delete bookings yet, so on shared UAT the slots fill up across runs
-        // and creation returns "Selected slot is not available". Un-fixme the
-        // booking-creating tests once the frontend delete button lands and a
-        // deleteBooking() teardown can free capacity.
-        njoyBookTest.fixme(
+        // Capacity is reset once per run in global setup ("Remove active"
+        // cancels every active booking on the branch), so each run starts under
+        // the per-slot cap and this booking-creating test no longer fixmes on
+        // "Selected slot is not available".
+        njoyBookTest(
           'admin-created booking appears in the list as Confirmed',
           async ({ bookingsOnly: bookingsTab }) => {
             const guest = uniqueGuest('Admin Add');
@@ -461,9 +537,14 @@ test.describe('Configuration - NJoyBook', () => {
       // Completed, with Cancel / No-show as terminal exits. Each test creates its
       // own booking so runs are independent.
       //
-      // TODO(delete-booking): these leave bookings behind — status transitions
-      // cannot be reverted and there is no delete action yet. Wire a
-      // deleteBooking() teardown once the frontend delete button ships.
+      // Capacity is reset once per run in global setup ("Remove active" cancels
+      // every active — Pending/Confirmed/Checked-in — booking on the branch), so
+      // these no longer fixme on slot capacity. CAVEAT: "Remove active" only
+      // touches active bookings; the terminal states these tests end in
+      // (Completed, No-show) are untouched and status transitions cannot be
+      // reverted. If Completed/No-show bookings still count toward a slot's
+      // 5-booking cap, they will accumulate slowly across runs (unverified — if
+      // only active bookings count toward the cap, there is no accumulation).
 
       njoyBookTest.describe('Bookings - Status Lifecycle', () => {
         // Creates a Confirmed booking (today) at the given slot; the row appears
@@ -486,9 +567,7 @@ test.describe('Configuration - NJoyBook', () => {
           return guest;
         }
 
-        // TODO(delete-booking): see the Add-Booking note — these create bookings
-        // and share the slot-capacity limitation until the delete button ships.
-        njoyBookTest.fixme(
+        njoyBookTest(
           'checking in then completing advances the status',
           async ({ bookingsOnly: bookingsTab }) => {
             const guest = await seedConfirmedBooking(bookingsTab, 'Lifecycle CheckIn', '16:30', '91234501');
@@ -509,7 +588,7 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        njoyBookTest.fixme(
+        njoyBookTest(
           'a confirmed booking can be cancelled',
           async ({ bookingsOnly: bookingsTab }) => {
             const guest = await seedConfirmedBooking(bookingsTab, 'Lifecycle Cancel', '18:30', '91234502');
@@ -522,7 +601,7 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        njoyBookTest.fixme(
+        njoyBookTest(
           'a confirmed booking can be marked no-show',
           async ({ bookingsOnly: bookingsTab }) => {
             const guest = await seedConfirmedBooking(bookingsTab, 'Lifecycle NoShow', '19:30', '91234503');
@@ -575,9 +654,8 @@ test.describe('Configuration - NJoyBook', () => {
       // --- Bookings: Filters ---
 
       njoyBookTest.describe('Bookings - Filters', () => {
-        // TODO(delete-booking): creates a booking, so shares the slot-capacity
-        // limitation until the delete button ships (see the Add-Booking note).
-        njoyBookTest.fixme(
+        // Capacity is reset once per run in global setup — see the Add-Booking note.
+        njoyBookTest(
           'the status filter narrows the list to matching bookings',
           async ({ bookingsOnly: bookingsTab }) => {
             const guest = uniqueGuest('Filter');
@@ -634,10 +712,10 @@ test.describe('Configuration - NJoyBook', () => {
       // persist. Guest names are made unique per run to avoid collisions.
 
       njoyBookTest.describe('End-to-End Booking', () => {
-        // TODO(recaptcha): blocked at the final "Confirm booking" by reCAPTCHA in
-        // headless runs (see the Auto-Confirm note). Flow + availability verified;
-        // un-fixme once a staging reCAPTCHA bypass exists.
-        njoyBookTest.fixme(
+        // Creates a real booking on next Monday's slots (see the Auto-Confirm
+        // accumulation note). reCAPTCHA no longer blocks headless submission as
+        // of 2026-07-13, so this runs live.
+        njoyBookTest(
           'customer can complete a booking and it appears in admin as Confirmed',
           async ({ bookableNjoyBook, context }) => {
             const date = nextMondayISO();
@@ -662,20 +740,41 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        // TODO(env): needs 2+ specialists available for a slot so the
-        // "No preference" auto-assign option appears. Blocked on staff-B being
-        // assigned to the branch's time slots.
+        // TODO(public-gap): staff-B is now slot-assignable, so a slot can show two
+        // specialists — but the public Specialist step still renders only the
+        // named-staff list and NO "No preference" entry, even with the admin rule
+        // "Allow any available staff" enabled (whose own helptext promises the
+        // "No preference" option). Verified 2026-07-13: the customer-facing option
+        // is not implemented, so this cannot be exercised end-to-end yet. Un-fixme
+        // once the public booking site renders the "No preference" choice.
         njoyBookTest.fixme(
           'customer can book with "No preference" staff selection',
           async () => {},
         );
 
-        // TODO(env): needs a date that is reliably fully-booked or blocked out to
-        // trigger the no-availability state on demand. Pairs with a Blockouts
-        // setup step (BlockoutsTab.addBlockout) once that is implemented.
-        njoyBookTest.fixme(
-          'booking is rejected when no slots are available for the selected date/party size',
-          async () => {},
+        // A blockout closes a specific date so the public page offers no times for
+        // it. The date is a future Monday inside the advance-booking window but
+        // clear of the nextMonday slots the booking tests use, and the blockouts
+        // fixture deletes it in teardown.
+        njoyBookTest(
+          'booking is rejected when no slots are available for the selected date',
+          async ({ blockouts, context }) => {
+            const { tab, created } = blockouts;
+            const date = nextWeekdayISO(1, 2); // Monday, ~2–3 weeks out
+            const label = blockoutLabel(date);
+
+            const modal = await tab.openAddBlockout();
+            await modal.fill({ startDate: date, endDate: date });
+            await modal.submit();
+            created.push(label);
+
+            const publicTab = await context.newPage();
+            const publicPage = new PublicBookingPage(publicTab);
+            await publicPage.gotoReady(PUBLIC_BOOKING_URL);
+            await publicPage.selectBranch(TEST_BRANCH_NAME);
+            await publicPage.setDate(date);
+            await publicPage.expectNoTablesAvailable();
+          },
         );
       });
     });

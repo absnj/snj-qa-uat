@@ -2,22 +2,14 @@
 import { chromium, type FullConfig } from '@playwright/test';
 import { loadTestEnv } from './env';
 import { LoginPage } from '../pages/auth/LoginPage';
+import { AdminHomePage } from '../pages/admin/AdminHomePage';
+import { HomePage } from '../pages/home/HomePage';
+import { ALL_ROLES, ALL_CRM_ROLES, getCredentials, type Role } from '../specs/helpers/roles';
 import fs from 'fs/promises';
 
 loadTestEnv();
 
-const ROLES = [
-  'MERCHANT_ADMIN',
-  'MERCHANT_STAFF',
-  'BRANCH_ADMIN',
-  'BRANCH_STAFF',
-];
-
-function requiredEnv(key: string): string {
-  const value = process.env[key];
-  if (!value) throw new Error(`Missing required env var: ${key}`);
-  return value;
-}
+const ROLES: Role[] = [...ALL_ROLES, ...ALL_CRM_ROLES];
 
 async function globalSetup(_config: FullConfig) {
   await fs.mkdir('tests/setup/.auth', { recursive: true });
@@ -31,26 +23,54 @@ async function globalSetup(_config: FullConfig) {
 });
   try {
     for (const role of ROLES) {
-      console.log(`Generating auth state for ${role}`);
+      console.log(`Generating auth state for ${role.normalized}`);
       const context = await browser.newContext();
       await context.tracing.start({ screenshots: true, snapshots: true });
       const page = await context.newPage();
       try {
-        const key = role.toUpperCase();
-        const username = requiredEnv(`UAT_${key}_USER`);
-        const password = requiredEnv(`UAT_${key}_PASSWORD`);
+        const { username, password } = getCredentials(role.normalized);
         const loginPage = new LoginPage(page, context);
-        await loginPage.loginAs(username, password);
+        const isCrmRole = ALL_CRM_ROLES.includes(role);
+        await loginPage.loginAs(username, password, isCrmRole
+          ? { createHomePage: (p) => new AdminHomePage(p) }
+          : {});
         await context.storageState({
-          path: `tests/setup/.auth/${role.toLowerCase()}.json`,
+          path: `tests/setup/.auth/${role.normalized.toLowerCase()}.json`,
         });
       } catch (error) {
-        throw new Error(`Global setup failed for ${role}: ${(error as Error).message}`);
+        throw new Error(`Global setup failed for ${role.normalized}: ${(error as Error).message}`);
       } finally {
         await context.tracing.stop({
-          path: `tests/setup/traces/${role.toLowerCase()}-setup.zip`,
+          path: `tests/setup/traces/${role.normalized.toLowerCase()}-setup.zip`,
         });
         await context.close();
+      }
+    }
+
+    // Between-runs capacity reset: clear residual active bookings on both
+    // NJoyBook test branches (staff-mode Hajime - My Village, Branch-mode
+    // Hajime - Thomson Plaza) so each run starts under the per-slot cap. Runs
+    // once here, never concurrently with tests. Non-fatal per branch: a
+    // failure must not block the whole suite.
+    const RESET_BRANCHES = ['Hajime - My Village', 'Hajime - Thomson Plaza'];
+    for (const branchName of RESET_BRANCHES) {
+      const ctx = await browser.newContext({
+        storageState: 'tests/setup/.auth/merchant_admin.json',
+        baseURL: process.env.UAT_URL, // HomePage.goto() uses a relative '/'
+      });
+      try {
+        const page = await ctx.newPage();
+        const home = new HomePage(page);
+        await home.goto();
+        const config = await home.goToConfiguration();
+        const branch = await config.openBranchConfig(branchName);
+        const njoyBook = await branch.goToNJoyBook();
+        const bookings = await njoyBook.goToBookings();
+        await bookings.removeAllActiveBookings();
+      } catch (err) {
+        console.warn(`NJoyBook capacity reset skipped for ${branchName}: ${(err as Error).message}`);
+      } finally {
+        await ctx.close();
       }
     }
   } finally {

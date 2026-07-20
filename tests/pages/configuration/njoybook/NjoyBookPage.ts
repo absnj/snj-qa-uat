@@ -1,12 +1,12 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
-import { BookingsTab } from './tabs/BookingsTab';
+import { BookingsTab } from './tabs/bookings/BookingsTab';
 import { GuestHistoryTab } from './tabs/GuestHistoryTab';
 import { RulesTab } from './tabs/RulesTab';
-import { TimeSlotsTab } from './tabs/TimeSlotsTab';
-import { StaffTab } from './tabs/StaffTab';
-import { BlockoutsTab } from './tabs/BlockoutsTab';
+import { TimeSlotsTab } from './tabs/time-slots/TimeSlotsTab';
+import { StaffTab } from './tabs/staff/StaffTab';
+import { BlockoutsTab } from './tabs/blockouts/BlockoutsTab';
 
 export type NJoyBookTab =
     | 'Bookings'

@@ -23,6 +23,10 @@ export class BookingsTab extends ConfigBasePage {
 
     private readonly addBookingButton: Locator;
 
+    private readonly removeActiveButton: Locator;
+    private readonly confirmModal: Locator;
+    private readonly confirmRemoveButton: Locator;
+
     constructor(page: Page) {
         super(page);
         this.heading = this.page.getByRole('heading', { name: 'Bookings', level: 3 });
@@ -32,6 +36,10 @@ export class BookingsTab extends ConfigBasePage {
         this.nextWeekButton = this.page.getByRole('button', { name: 'Next week' });
         this.staffDropdown = this.page.getByRole('combobox', { name: 'Staff' });
         this.emptyState = this.page.getByText(/No bookings on/);
+
+        this.removeActiveButton = this.page.getByRole('button', { name: 'Remove active' });
+        this.confirmModal = this.page.locator('.modal-container');
+        this.confirmRemoveButton = this.confirmModal.getByRole('button', { name: 'Remove all active bookings' });
     }
 
     override async waitForReady(): Promise<void> {
@@ -125,7 +133,26 @@ export class BookingsTab extends ConfigBasePage {
         await expect(this.bookingRow(guest)).toContainText(status);
     }
 
+    /** Asserts the booking's status is one of the given options — useful when
+     *  a flow (e.g. auto-confirm) can legitimately land in either state. */
+    async expectBookingStatusOneOf(guest: string, statuses: BookingStatus[]): Promise<void> {
+        await expect(this.bookingRow(guest)).toContainText(new RegExp(statuses.join('|')));
+    }
+
     async expectBookingAbsent(guest: string): Promise<void> {
         await expect(this.bookingRow(guest)).toHaveCount(0);
+    }
+
+    /**
+     * Cancels every active booking on the branch (all dates) via "Remove active" →
+     * "Remove all active bookings". Irreversible. This is a between-runs capacity
+     * reset — call it once, outside parallel test execution, NOT as a per-test
+     * teardown. Best-effort: no-op when there is nothing to remove.
+     */
+    async removeAllActiveBookings(): Promise<void> {
+        if (!(await this.removeActiveButton.count())) return; // nothing active
+        await this.removeActiveButton.click();
+        await this.confirmRemoveButton.click();
+        await expect(this.confirmModal).not.toBeVisible();
     }
 }
