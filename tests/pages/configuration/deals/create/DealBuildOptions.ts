@@ -1,7 +1,7 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
-import { GeneralDetailsStep } from './manual/GeneralDetailsStep';
+import { DealDetailsStep } from './manual/DealDetailsStep';
 
 export class DealBuildOptions extends ConfigBasePage {
     private readonly pageTitle: Locator; 
@@ -12,8 +12,8 @@ export class DealBuildOptions extends ConfigBasePage {
     constructor(page: Page) {
         super(page);
         this.pageTitle = this.page.getByText('How do you want to build this');
-        this.createManual = page.getByRole('button', { name: 'Manual Walk through each step' });
-        this.njoyBuild = page.getByRole('button', { name: 'NJoyBuild Credit NJoyBuild' });
+        this.createManual = page.getByRole('button', { name: 'Manual' });
+        this.njoyBuild = page.getByRole('button', { name: /NJoyBuild/ });
     }
 
     override async waitForReady(): Promise<void> {
@@ -21,12 +21,12 @@ export class DealBuildOptions extends ConfigBasePage {
         await expect(this.pageTitle).toBeVisible();
     }
 
-    async buildManual(): Promise<GeneralDetailsStep> {
+    async buildManual(): Promise<DealDetailsStep> {
         await expect(this.createManual).toBeEnabled();
         await this.createManual.click();
-        const generalDetailsStep = new GeneralDetailsStep(this.page);
-        await generalDetailsStep.waitForReady();
-        return generalDetailsStep;
+        const dealDetailsStep = new DealDetailsStep(this.page);
+        await dealDetailsStep.waitForReady();
+        return dealDetailsStep;
     }
 
     async nJoyBuild(): Promise<void> {

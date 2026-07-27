@@ -32,6 +32,11 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    /* Below ~1536px wide, the branch-config "Remarks" sidebar leaves the main
+     * content column narrow enough that action button labels (e.g. "Add
+     * booking", "Change status") collapse to icon-only and lose their
+     * accessible name, breaking getByRole name-based locators. */
+    viewport: { width: 1536, height: 900 },
   },
 
   /* Configure projects for major browsers */

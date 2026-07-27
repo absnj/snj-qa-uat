@@ -97,8 +97,31 @@ export class AddBookingModal extends ConfigBasePage {
     }
 
     async setStartTime(time: string): Promise<void> {
+        // Re-selecting an already-selected time reopens the combobox and (on a
+        // Staff-mode branch) re-fetches/clears the dependent Staff selection,
+        // which can silently block submission. Skip the round-trip when the
+        // combobox already shows this time — callers that pre-select via
+        // selectFirstAvailableStartTime() then pass the same value to fill()
+        // rely on this being a no-op.
+        if ((await this.startTimeCombobox.textContent())?.trim() === time) return;
         await this.startTimeCombobox.click();
         await this.page.getByRole('option', { name: time, exact: true }).click();
+    }
+
+    /**
+     * Opens the Start time combobox and picks whichever option is first, rather
+     * than a caller-supplied literal. Which times are actually bookable depends
+     * on branch config (weekday slot template, existing bookings against the
+     * per-slot cap) that this page object has no way to introspect ahead of
+     * time, so tests that don't care which slot they land on should use this
+     * instead of guessing a specific time. Returns the picked option's label.
+     */
+    async selectFirstAvailableStartTime(): Promise<string> {
+        await this.startTimeCombobox.click();
+        const firstOption = this.page.getByRole('option').first();
+        const label = (await firstOption.textContent())?.trim() ?? '';
+        await firstOption.click();
+        return label;
     }
 
     async setPartySize(size: number): Promise<void> {

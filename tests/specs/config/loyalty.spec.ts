@@ -4,18 +4,10 @@ import { LoyaltyPage } from '@pages/configuration/loyalty/LoyaltyPage';
 import { LoyaltyBranchSelection } from '@pages/configuration/loyalty/create/LoyaltyBranchSelection';
 import {
   DEFAULT_PROGRAM_CONFIGURATION,
-  ProgramConfigurationStep,
-} from '@pages/configuration/loyalty/create/manual/ProgramConfigurationStep';
-import {
-  LoyaltyGeneralDetailsStep,
+  LoyaltyDetailsStep,
   type LoyaltyGeneralDetailsData,
-} from '@pages/configuration/loyalty/create/manual/LoyaltyGeneralDetailsStep';
-import {
-  RewardsConfigurationStep,
   type RewardData,
-} from '@pages/configuration/loyalty/create/manual/RewardsConfigurationStep';
-import { LoyaltyTncStep } from '@pages/configuration/loyalty/create/manual/LoyaltyTncStep';
-import { LoyaltyPreviewStep } from '@pages/configuration/loyalty/create/manual/LoyaltyPreviewStep';
+} from '@pages/configuration/loyalty/create/manual/LoyaltyDetailsStep';
 import {
   LOYALTY_CREATOR_ROLES,
   LOYALTY_READ_ONLY_ROLES,
@@ -25,21 +17,17 @@ type LoyaltyFixtures = {
   loyaltyData: LoyaltyGeneralDetailsData;
   rewardData: RewardData;
   loyaltyPage: LoyaltyPage;
-  branchSelection: LoyaltyBranchSelection;
-  programConfigurationStep: ProgramConfigurationStep;
-  generalDetailsStep: LoyaltyGeneralDetailsStep;
-  rewardsConfigurationStep: RewardsConfigurationStep;
-  tncStep: LoyaltyTncStep;
-  previewStep: LoyaltyPreviewStep;
+  openDetailsStep: LoyaltyDetailsStep;
+  detailsStep: LoyaltyDetailsStep;
 };
 
 const formTest = test.extend<LoyaltyFixtures>({
   loyaltyData: async ({}, use) => {
-    await use(LoyaltyGeneralDetailsStep.validData());
+    await use(LoyaltyDetailsStep.validGeneralDetails());
   },
 
   rewardData: async ({}, use) => {
-    await use(RewardsConfigurationStep.validData());
+    await use(LoyaltyDetailsStep.validReward());
   },
 
   loyaltyPage: async ({ page }, use) => {
@@ -51,179 +39,150 @@ const formTest = test.extend<LoyaltyFixtures>({
     await use(loyaltyPage);
   },
 
-  branchSelection: async ({ page }, use) => {
+  openDetailsStep: async ({ page }, use) => {
     const branchSelection = new LoyaltyBranchSelection(page);
-    await branchSelection.goto(); 
-    await use(branchSelection);
-  },
-
-  programConfigurationStep: async ({ branchSelection }, use) => {
+    await branchSelection.goto();
     const buildOptions = await branchSelection.next();
-    const programConfigurationStep = await buildOptions.buildManual();
-    await use(programConfigurationStep);
+    const detailsStep = await buildOptions.buildManual();
+    await use(detailsStep);
   },
 
-  generalDetailsStep: async ({ programConfigurationStep }, use) => {
-    await programConfigurationStep.fill(DEFAULT_PROGRAM_CONFIGURATION);
-    const generalDetailsStep = await programConfigurationStep.next();
-    await use(generalDetailsStep);
-  },
+  detailsStep: async ({ openDetailsStep, loyaltyData, rewardData }, use) => {
+    await openDetailsStep.fillProgramConfiguration(DEFAULT_PROGRAM_CONFIGURATION);
+    await openDetailsStep.fillGeneralDetails(loyaltyData);
+    await openDetailsStep.fillCurrentReward(rewardData);
+    await openDetailsStep.fillTerms({ terms: 'Valid automated loyalty terms and conditions.' });
 
-  rewardsConfigurationStep: async ({ loyaltyData, generalDetailsStep }, use) => {
-    await generalDetailsStep.fill(loyaltyData);
-    const rewardsConfigurationStep = await generalDetailsStep.next();
-    await use(rewardsConfigurationStep);
-  },
-
-  tncStep: async ({ rewardData, rewardsConfigurationStep }, use) => {
-    await rewardsConfigurationStep.fillCurrentReward(rewardData);
-    const tncStep = await rewardsConfigurationStep.next();
-    await use(tncStep);
-  },
-
-  previewStep: async ({ tncStep }, use) => {
-    await tncStep.fill({ terms: 'Valid automated loyalty terms and conditions.' });
-    const previewStep = await tncStep.next();
-    await use(previewStep);
+    await use(openDetailsStep);
   },
 });
 
 test.describe('Configuration - Loyalty Programs', () => {
   for (const role of LOYALTY_CREATOR_ROLES) {
     formTest.describe(`${role.label} ${role.tag}`, () => {
-      formTest('creates a visit-based program with one reward', async ({ previewStep }) => {
-        await previewStep.submitAndExpectSuccess();
+      formTest('creates a visit-based program with one reward', async ({ detailsStep }) => {
+        const designStep = await detailsStep.next();
+        await designStep.submitAndExpectSuccess();
       });
 
       formTest(
         'creates a transaction-based program with one reward',
-        async ({ loyaltyData, rewardData, programConfigurationStep }) => {
-          await programConfigurationStep.selectProgramType('Transaction-Based (Spending');
-          await programConfigurationStep.selectDisplayType(DEFAULT_PROGRAM_CONFIGURATION.displayType);
-          await programConfigurationStep.fillAmountPerStamp('10');
+        async ({ loyaltyData, rewardData, openDetailsStep }) => {
+          await openDetailsStep.selectProgramType('Transaction-Based (Spending');
+          await openDetailsStep.fillAmountPerStamp('10');
+          await openDetailsStep.fillGeneralDetails(loyaltyData);
+          await openDetailsStep.fillCurrentReward(rewardData);
+          await openDetailsStep.fillTerms({ terms: 'Valid automated loyalty terms and conditions.' });
 
-          const generalDetailsStep = await programConfigurationStep.next();
-          await generalDetailsStep.fill(loyaltyData);
-
-          const rewardsConfigurationStep = await generalDetailsStep.next();
-          await rewardsConfigurationStep.fillCurrentReward(rewardData);
-
-          const tncStep = await rewardsConfigurationStep.next();
-          await tncStep.fill({ terms: 'Valid automated loyalty terms and conditions.' });
-
-          const previewStep = await tncStep.next();
-          await previewStep.submitAndExpectSuccess();
+          const designStep = await openDetailsStep.next();
+          await designStep.submitAndExpectSuccess();
         },
       );
 
       formTest(
         'creates a visit-based program with five rewards',
-        async ({ rewardData, rewardsConfigurationStep }) => {
-          await rewardsConfigurationStep.fillRewards(rewardData, 5);
+        async ({ rewardData, detailsStep }) => {
+          await detailsStep.fillRewards(rewardData, 5);
 
-          const tncStep = await rewardsConfigurationStep.next();
-          await tncStep.fill({ terms: 'Valid automated loyalty terms and conditions.' });
-
-          const previewStep = await tncStep.next();
-          await previewStep.submitAndExpectSuccess();
+          const designStep = await detailsStep.next();
+          await designStep.submitAndExpectSuccess();
         },
       );
 
       formTest(
         'disables Add Reward at the five reward maximum',
-        async ({ rewardsConfigurationStep }) => {
-          await rewardsConfigurationStep.addRewardsUntilMaximum();
-          await rewardsConfigurationStep.expectAddRewardDisabled();
+        async ({ detailsStep }) => {
+          await detailsStep.addRewardsUntilMaximum();
+          await detailsStep.expectAddRewardDisabled();
         },
       );
 
       formTest(
         'rejects an empty visits-per-stamp value',
-        async ({ programConfigurationStep }) => {
-          await programConfigurationStep.fill({
+        async ({ openDetailsStep }) => {
+          await openDetailsStep.fillProgramConfiguration({
             ...DEFAULT_PROGRAM_CONFIGURATION,
             visitsPerStamp: '0',
           });
-          await programConfigurationStep.expectVisitsPerStampValidationError();
+          await openDetailsStep.expectVisitsPerStampValidationError();
         },
       );
 
       formTest(
         'rejects an empty transaction amount-per-stamp value',
-        async ({ programConfigurationStep }) => {
-          await programConfigurationStep.selectProgramType('Transaction-Based (Spending');
-          await programConfigurationStep.selectDisplayType(DEFAULT_PROGRAM_CONFIGURATION.displayType);
-          await programConfigurationStep.fillAmountPerStamp('0');
-          await programConfigurationStep.expectAmountPerStampValidationError();
+        async ({ openDetailsStep }) => {
+          await openDetailsStep.selectProgramType('Transaction-Based (Spending');
+          await openDetailsStep.fillAmountPerStamp('0');
+          await openDetailsStep.expectAmountPerStampValidationError();
         },
       );
 
-      formTest('rejects an empty program title', async ({ loyaltyData, generalDetailsStep }) => {
-        await generalDetailsStep.fill({ ...loyaltyData, title: '' });
-        await generalDetailsStep.nextExpectingValidationError();
-        await generalDetailsStep.expectTitleValidationError();
+      formTest('rejects an empty program title', async ({ loyaltyData, detailsStep }) => {
+        await detailsStep.fillProgramTitle('');
+        await detailsStep.nextExpectingValidationError();
+        await detailsStep.expectTitleValidationError();
       });
 
       formTest(
         'rejects a program title over 50 characters',
-        async ({ loyaltyData, generalDetailsStep }) => {
-          await generalDetailsStep.fill({ ...loyaltyData, title: 'a'.repeat(51) });
-          await generalDetailsStep.nextExpectingValidationError();
-          await generalDetailsStep.expectTitleValidationError();
+        async ({ detailsStep }) => {
+          await detailsStep.fillProgramTitle('a'.repeat(51));
+          await detailsStep.nextExpectingValidationError();
+          await detailsStep.expectTitleValidationError();
         },
       );
 
       formTest(
         'rejects an empty program description',
-        async ({ loyaltyData, generalDetailsStep }) => {
-          await generalDetailsStep.fill({ ...loyaltyData, description: '' });
-          await generalDetailsStep.nextExpectingValidationError();
-          await generalDetailsStep.expectDescriptionValidationError();
+        async ({ detailsStep }) => {
+          await detailsStep.fillDescription('');
+          await detailsStep.nextExpectingValidationError();
+          await detailsStep.expectDescriptionValidationError();
         },
       );
 
       formTest(
         'rejects a program description over 100 characters',
-        async ({ loyaltyData, generalDetailsStep }) => {
-          await generalDetailsStep.fill({ ...loyaltyData, description: 'a'.repeat(101) });
-          await generalDetailsStep.nextExpectingValidationError();
-          await generalDetailsStep.expectDescriptionValidationError();
+        async ({ detailsStep }) => {
+          await detailsStep.fillDescription('a'.repeat(101));
+          await detailsStep.nextExpectingValidationError();
+          await detailsStep.expectDescriptionValidationError();
         },
       );
 
       formTest(
         'rejects an empty reward milestone',
-        async ({ rewardData, rewardsConfigurationStep }) => {
-          await rewardsConfigurationStep.fillCurrentRewardExcept(rewardData, 'milestone');
-          await rewardsConfigurationStep.nextExpectingValidationError();
-          await rewardsConfigurationStep.expectRewardMilestoneValidationError();
+        async ({ rewardData, detailsStep }) => {
+          await detailsStep.fillCurrentRewardExcept(rewardData, 'milestone');
+          await detailsStep.nextExpectingValidationError();
+          await detailsStep.expectRewardMilestoneValidationError();
         },
       );
 
       formTest(
         'rejects an empty reward name',
-        async ({ rewardData, rewardsConfigurationStep }) => {
-          await rewardsConfigurationStep.fillCurrentRewardExcept(rewardData, 'name');
-          await rewardsConfigurationStep.nextExpectingValidationError();
-          await rewardsConfigurationStep.expectRewardNameValidationError();
+        async ({ rewardData, detailsStep }) => {
+          await detailsStep.fillCurrentRewardExcept(rewardData, 'name');
+          await detailsStep.nextExpectingValidationError();
+          await detailsStep.expectRewardNameValidationError();
         },
       );
 
       formTest(
         'rejects an empty reward valid-until date',
-        async ({ rewardData, rewardsConfigurationStep }) => {
-          await rewardsConfigurationStep.fillCurrentRewardExcept(rewardData, 'validUntil');
-          await rewardsConfigurationStep.nextExpectingValidationError();
-          await rewardsConfigurationStep.expectRewardValidUntilValidationError();
+        async ({ rewardData, detailsStep }) => {
+          await detailsStep.fillCurrentRewardExcept(rewardData, 'validUntil');
+          await detailsStep.nextExpectingValidationError();
+          await detailsStep.expectRewardValidUntilValidationError();
         },
       );
 
       formTest(
-        'rejects an empty reward quantity',
-        async ({ rewardData, rewardsConfigurationStep }) => {
-          await rewardsConfigurationStep.fillCurrentRewardExcept(rewardData, 'quantity');
-          await rewardsConfigurationStep.nextExpectingValidationError();
-          await rewardsConfigurationStep.expectRewardQuantityValidationError();
+        'accepts an empty reward quantity',
+        async ({ rewardData, detailsStep }) => {
+          await detailsStep.fillCurrentRewardExcept(rewardData, 'quantity');
+          const designStep = await detailsStep.next();
+          await designStep.submitAndExpectSuccess();
         },
       );
     });

@@ -1,7 +1,7 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
-import { ProgramConfigurationStep } from './manual/ProgramConfigurationStep';
+import { LoyaltyDetailsStep } from './manual/LoyaltyDetailsStep';
 
 export class LoyaltyBuildOptions extends ConfigBasePage {
     private readonly pageTitle: Locator;
@@ -10,7 +10,7 @@ export class LoyaltyBuildOptions extends ConfigBasePage {
     constructor(page: Page) {
         super(page);
         this.pageTitle = this.page.getByText('How do you want to build this');
-        this.createManual = this.page.getByRole('button', { name: 'Manual Walk through each step' });
+        this.createManual = this.page.getByRole('button', { name: 'Manual' });
     }
 
     override async waitForReady(): Promise<void> {
@@ -18,11 +18,11 @@ export class LoyaltyBuildOptions extends ConfigBasePage {
         await expect(this.pageTitle).toBeVisible();
     }
 
-    async buildManual(): Promise<ProgramConfigurationStep> {
+    async buildManual(): Promise<LoyaltyDetailsStep> {
         await expect(this.createManual).toBeEnabled();
         await this.createManual.click();
-        const programConfigurationStep = new ProgramConfigurationStep(this.page);
-        await programConfigurationStep.waitForReady();
-        return programConfigurationStep;
+        const loyaltyDetailsStep = new LoyaltyDetailsStep(this.page);
+        await loyaltyDetailsStep.waitForReady();
+        return loyaltyDetailsStep;
     }
 }

@@ -271,13 +271,18 @@ test.describe('Configuration - NJoyBook', () => {
       // These submit a real public booking; the bookableNjoyBook fixture ensures
       // the branch has slot availability (staff assigned to Monday slots).
       //
-      // NOTE: these submit real bookings against next Monday's slots (each slot
-      // caps at 5 with no delete yet), so they slowly accumulate residue on
-      // shared UAT. reCAPTCHA no longer blocks headless "Confirm booking" as of
-      // 2026-07-13, so they run live again.
+      // TODO(recaptcha-regression): verified live on 2026-07-27 — both tests
+      // reach "Review your booking" with correct data (branch, date, party
+      // size, specialist, name/phone/email) and fail only on "Confirm booking"
+      // with "reCAPTCHA verification failed. Please try again.". This is the
+      // same repo-wide regression documented in njoybook-general.spec.ts's
+      // identical Auto-Confirm/End-to-End tests — the earlier claim below that
+      // reCAPTCHA stopped blocking headless submission as of 2026-07-13 has
+      // regressed. Un-fixme once reCAPTCHA reliably passes for headless
+      // "Confirm booking" again.
 
       njoyBookTest.describe('Rules - Auto-Confirm', () => {
-        njoyBookTest(
+        njoyBookTest.fixme(
           'a booking made while auto-confirm is on lands as Confirmed',
           async ({ bookableNjoyBook, context }) => {
             const rules = await bookableNjoyBook.goToRules();
@@ -304,7 +309,7 @@ test.describe('Configuration - NJoyBook', () => {
           },
         );
 
-        njoyBookTest(
+        njoyBookTest.fixme(
           'a booking made while auto-confirm is off lands as Pending',
           async ({ bookableNjoyBook, context }) => {
             const rules = await bookableNjoyBook.goToRules();
@@ -508,8 +513,9 @@ test.describe('Configuration - NJoyBook', () => {
             const guest = uniqueGuest('Admin Add');
 
             const modal = await bookingsTab.openAddBooking();
+            const startTime = await modal.selectFirstAvailableStartTime();
             await modal.createBooking({
-              startTime: '15:30',
+              startTime,
               partySize: 2,
               name: guest,
               email: 'admin-add@example.com',
@@ -630,8 +636,9 @@ test.describe('Configuration - NJoyBook', () => {
             const guest = uniqueGuest('Edit');
 
             const modal = await bookingsTab.openAddBooking();
+            const startTime = await modal.selectFirstAvailableStartTime();
             await modal.createBooking({
-              startTime: '20:30',
+              startTime,
               partySize: 2,
               name: guest,
               email: 'edit@example.com',
@@ -661,8 +668,9 @@ test.describe('Configuration - NJoyBook', () => {
             const guest = uniqueGuest('Filter');
 
             const modal = await bookingsTab.openAddBooking();
+            const startTime = await modal.selectFirstAvailableStartTime();
             await modal.createBooking({
-              startTime: '12:30',
+              startTime,
               partySize: 2,
               name: guest,
               email: 'filter@example.com',
@@ -712,10 +720,11 @@ test.describe('Configuration - NJoyBook', () => {
       // persist. Guest names are made unique per run to avoid collisions.
 
       njoyBookTest.describe('End-to-End Booking', () => {
-        // Creates a real booking on next Monday's slots (see the Auto-Confirm
-        // accumulation note). reCAPTCHA no longer blocks headless submission as
-        // of 2026-07-13, so this runs live.
-        njoyBookTest(
+        // TODO(recaptcha-regression): same regression as the Auto-Confirm
+        // tests above — verified live on 2026-07-27, fails only at "Confirm
+        // booking" with "reCAPTCHA verification failed. Please try again."
+        // Un-fixme together.
+        njoyBookTest.fixme(
           'customer can complete a booking and it appears in admin as Confirmed',
           async ({ bookableNjoyBook, context }) => {
             const date = nextMondayISO();

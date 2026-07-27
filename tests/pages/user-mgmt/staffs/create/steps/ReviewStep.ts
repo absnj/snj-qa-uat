@@ -11,7 +11,7 @@ export class ReviewStep extends UserManagementBasePage {
         super(page);
         this.reviewHeading = this.page.getByText('Review', { exact : true });
         this.submitButton = this.page.getByRole('button', { name: 'Create Staff' });
-        this.successAlert = this.page.getByText('Staff created successfully', { exact: true});
+        this.successAlert = this.page.getByText('Staff created successfully.', { exact: true});
     }
 
     

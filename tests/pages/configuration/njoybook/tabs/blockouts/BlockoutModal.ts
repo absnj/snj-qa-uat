@@ -89,6 +89,18 @@ export class BlockoutModal extends ConfigBasePage {
         await expect(this.modal).not.toBeVisible();
     }
 
+    /** Asserts the override inputs hold the given values — used after re-opening
+     *  a saved blockout in Edit mode to confirm "Open with overrides" data
+     *  actually persisted, not just what the Add form was filled with. */
+    async expectOverrides(data: { overrideMaxBookings?: number; overrideDiscountPercent?: number }): Promise<void> {
+        if (data.overrideMaxBookings !== undefined) {
+            await expect(this.overrideMaxInput).toHaveValue(String(data.overrideMaxBookings));
+        }
+        if (data.overrideDiscountPercent !== undefined) {
+            await expect(this.overrideDiscountInput).toHaveValue(String(data.overrideDiscountPercent));
+        }
+    }
+
     /** Deletes the blockout being edited (no confirmation step). */
     async delete(): Promise<void> {
         await this.deleteButton.click();

@@ -82,7 +82,9 @@ export class PublicBookingPage extends BasePage {
         this.dateInput = this.page.getByRole('textbox', { name: 'Date' });
         this.decreaseGuestsButton = this.page.getByRole('button', { name: 'Decrease guests' });
         this.increaseGuestsButton = this.page.getByRole('button', { name: 'Increase guests' });
-        this.noAppointmentsAvailable = this.page.getByRole('heading', { name: 'No appointments available', level: 3 });
+        // Branch-mode slots show "No tables available"; Staff-mode slots show
+        // "No appointments available" — this page object serves both branch modes.
+        this.noAppointmentsAvailable = this.page.getByRole('heading', { name: /No (tables|appointments) available/, level: 3 });
         this.continueButton = this.page.getByRole('button', { name: 'Continue' });
 
         // Progress nav — only the Specialist step needs direct interaction
@@ -225,8 +227,25 @@ export class PublicBookingPage extends BasePage {
         await expect(this.slotButton(timeLabel)).toHaveCount(0);
     }
 
+    /** Asserts a slot is offered, regardless of its specialist/capacity wording. */
+    async expectSlotOffered(timeLabel: string): Promise<void> {
+        await expect(this.slotButton(timeLabel)).toBeVisible();
+    }
+
     async expectNoTablesAvailable(): Promise<void> {
         await expect(this.noAppointmentsAvailable).toBeVisible();
+    }
+
+    /**
+     * Branch-mode slots advertise remaining table capacity ("N left") rather
+     * than a specialist count. Asserts at least one such slot is offered for
+     * the currently-selected date/branch, without depending on a specific
+     * time or count (which vary with branch config and prior bookings).
+     */
+    async expectRemainingCapacitySlotOffered(): Promise<void> {
+        await expect(
+            this.page.getByRole('button', { name: /\d{1,2}:\d{2}\s(AM|PM).*\d+\sleft/ }).first(),
+        ).toBeVisible();
     }
 
     // --- Booking disabled ---
@@ -241,7 +260,7 @@ export class PublicBookingPage extends BasePage {
 
     async goToSpecialistStep(): Promise<void> {
         await this.specialistStep.click();
-        await expect(this.page.getByRole('heading', { name: 'Choose your specialist' })).toBeVisible();
+        await expect(this.page.getByRole('heading', { name: 'Choose your specialist' }).first()).toBeVisible();
     }
 
     async selectStaffPreference(name: string): Promise<void> {
@@ -256,7 +275,7 @@ export class PublicBookingPage extends BasePage {
      * which), mirroring selectFirstAvailableSlot.
      */
     async selectSpecialist(name?: string): Promise<void> {
-        await expect(this.page.getByRole('heading', { name: 'Choose your specialist' })).toBeVisible();
+        await expect(this.page.getByRole('heading', { name: 'Choose your specialist' }).first()).toBeVisible();
         const option = name
             ? this.availableStaff.getByRole('option', { name })
             : this.availableStaff.getByRole('option').first();

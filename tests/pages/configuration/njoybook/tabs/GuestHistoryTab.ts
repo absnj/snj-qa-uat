@@ -1,22 +1,37 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
-import { BookingStatus } from './bookings/BookingsTab';
 
+export type GuestType = 'Shoppers' | 'Anonymous guests';
+
+/**
+ * NJoyBook → Guest History tab. Lists past bookers, split into two toggled
+ * views — registered "Shoppers" and "Anonymous guests" — with a name/contact
+ * search and pagination. (Unlike Bookings/Guest-lists elsewhere, this tab has no
+ * week or staff filters.)
+ */
 export class GuestHistoryTab extends ConfigBasePage {
     private readonly heading: Locator;
-    private readonly filtersButton: Locator;
-    private readonly prevWeekButton: Locator;
-    private readonly nextWeekButton: Locator;
-    private readonly staffDropdown: Locator;
+
+    // "Guest history type" toggle. Scoped by its own tablist name because the
+    // page also renders the "NJoyBook Menu" tablist.
+    private readonly typeTabs: Locator;
+    private readonly shoppersToggle: Locator;
+    private readonly anonymousGuestsToggle: Locator;
+
+    private readonly searchBox: Locator;
+    private readonly pagination: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.heading = this.page.getByRole('heading', { name: 'Bookings', level: 3 });
-        this.filtersButton = this.page.getByRole('button', { name: 'Filters' });
-        this.prevWeekButton = this.page.getByRole('button', { name: 'Previous week' });
-        this.nextWeekButton = this.page.getByRole('button', { name: 'Next week' });
-        this.staffDropdown = this.page.getByRole('combobox', { name: 'Staff' });
+        this.heading = this.page.getByRole('heading', { name: 'Guest History', level: 3 });
+
+        this.typeTabs = this.page.getByRole('tablist', { name: 'Guest history type' });
+        this.shoppersToggle = this.typeTabs.getByRole('button', { name: 'Shoppers' });
+        this.anonymousGuestsToggle = this.typeTabs.getByRole('button', { name: 'Anonymous guests' });
+
+        this.searchBox = this.page.getByRole('searchbox', { name: 'Search' });
+        this.pagination = this.page.getByRole('navigation', { name: 'Pagination' });
     }
 
     override async waitForReady(): Promise<void> {
@@ -24,33 +39,38 @@ export class GuestHistoryTab extends ConfigBasePage {
         await expect(this.heading).toBeVisible();
     }
 
-    async openFilters(): Promise<void> {
-        await this.filtersButton.click();
-        await expect(this.prevWeekButton).toBeVisible();
+    async viewShoppers(): Promise<void> {
+        await this.shoppersToggle.click();
+        await expect(this.shoppersToggle).toHaveAttribute('aria-pressed', 'true');
     }
 
-    async goToNextWeek(): Promise<void> {
-        await this.nextWeekButton.click();
+    async viewAnonymousGuests(): Promise<void> {
+        await this.anonymousGuestsToggle.click();
+        await expect(this.anonymousGuestsToggle).toHaveAttribute('aria-pressed', 'true');
     }
 
-    async goToPreviousWeek(): Promise<void> {
-        await this.prevWeekButton.click();
+    async search(term: string): Promise<void> {
+        await this.searchBox.fill(term);
     }
 
-    async selectDate(label: string): Promise<void> {
-        await this.page.getByRole('button', { name: new RegExp(label) }).click();
+    // Each guest is a row button whose accessible text carries the name plus a
+    // "<email> · N booking(s)" summary line, so look up by the booker name.
+    private guestRow(name: string): Locator {
+        return this.page.getByRole('button').filter({ hasText: name });
     }
 
-    async filterByStaff(staffName: string): Promise<void> {
-        await this.staffDropdown.click();
-        await this.page.getByRole('option', { name: staffName }).click();
+    async expectGuestVisible(name: string): Promise<void> {
+        await expect(this.guestRow(name).first()).toBeVisible();
     }
 
-    async filterByStatus(status: BookingStatus): Promise<void> {
-        await this.page.getByRole('button', { name: new RegExp(`^${status}`) }).click();
+    async expectGuestAbsent(name: string): Promise<void> {
+        await expect(this.guestRow(name)).toHaveCount(0);
     }
 
-    async expectEmptyState(dateLabel: string): Promise<void> {
-        await expect(this.page.getByText(`No bookings on ${dateLabel}`)).toBeVisible();
+    /** Asserts the two guest-type views and the search control are present. */
+    async expectControlsVisible(): Promise<void> {
+        await expect(this.shoppersToggle).toBeVisible();
+        await expect(this.anonymousGuestsToggle).toBeVisible();
+        await expect(this.searchBox).toBeVisible();
     }
 }

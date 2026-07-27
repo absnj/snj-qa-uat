@@ -52,6 +52,16 @@ export class UpdateStatusModal extends ConfigBasePage {
         await expect(this.modal.getByRole('button', { name: actionName })).toBeVisible();
     }
 
+    /** Asserts none of the status-transition actions are offered — the
+     *  "Change status" trigger itself stays visible even on a terminal
+     *  booking (Cancelled/No show/Completed), but the modal it opens offers
+     *  no further transitions since the lifecycle is forward-only. */
+    async expectNoActionsAvailable(): Promise<void> {
+        for (const action of ['Check in guest', 'Mark completed', 'Cancel booking', 'Mark no-show']) {
+            await expect(this.modal.getByRole('button', { name: action })).toHaveCount(0);
+        }
+    }
+
     async close(): Promise<void> {
         await this.closeButton.click();
         await expect(this.modal).not.toBeVisible();

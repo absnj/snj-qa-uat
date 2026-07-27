@@ -73,6 +73,17 @@ export class BookingDetail extends ConfigBasePage {
         }
     }
 
+    /** Asserts the given term labels (e.g. 'Source', 'Created', 'Updated') are
+     *  rendered on the Details subtab, without asserting their values — those
+     *  are server-populated and not something a test can predict. */
+    async expectFieldLabelsVisible(labels: string[]): Promise<void> {
+        for (const label of labels) {
+            await expect(
+                this.page.getByRole('term').filter({ hasText: new RegExp(`^${label}$`) }),
+            ).toBeVisible();
+        }
+    }
+
     // --- Logs subtab ---
 
     async openLogs(): Promise<void> {
@@ -103,5 +114,14 @@ export class BookingDetail extends ConfigBasePage {
 
     async goBack(): Promise<void> {
         await this.backButton.click();
+    }
+
+    /** Asserts a terminal-status booking (Cancelled/No show/Completed) is
+     *  locked: the "Change status" trigger still opens, but the modal
+     *  offers no further transitions — the lifecycle is forward-only. */
+    async expectStatusChangeUnavailable(): Promise<void> {
+        const modal = await this.openStatusModal();
+        await modal.expectNoActionsAvailable();
+        await modal.close();
     }
 }

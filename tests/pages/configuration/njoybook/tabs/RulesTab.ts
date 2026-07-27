@@ -13,7 +13,7 @@ export type SessionLength =
     | '30 minutes'
     | '45 minutes'
     | '1 hour (recommended)'
-    | '1.5 hours'
+    | '1 hour 30 minutes'
     | '2 hours';
 
 export type SlotCadence = 'Back to back (recommended)' | '15 minutes' | '30 minutes' | '1 hour';
@@ -335,5 +335,55 @@ export class RulesTab extends ConfigBasePage {
 
     async expectRuleValidationError(): Promise<void> {
         await expect(this.page.getByRole('alert', { name: /Unable to save booking settings/ })).toBeVisible();
+    }
+
+    // --- Persisted-value assertions ---
+    // Used by tests that save a setting, reload the page, and re-open the Rules
+    // tab (a fresh RulesTab instance) to confirm the value survived the round
+    // trip rather than only reflecting unsaved form state.
+
+    async expectSessionLength(value: SessionLength): Promise<void> {
+        await expect(this.sessionLengthDropdown).toContainText(value);
+    }
+
+    async expectSlotCadence(value: SlotCadence): Promise<void> {
+        await expect(this.slotCadenceDropdown).toContainText(value);
+    }
+
+    async expectBookingsPerSlot(value: number): Promise<void> {
+        await expect(this.bookingsPerSlotInput).toHaveValue(String(value));
+    }
+
+    async expectOverbookingBuffer(value: number): Promise<void> {
+        await expect(this.overbookingBufferInput).toHaveValue(String(value));
+    }
+
+    async expectAdvanceBookingWindow(value: AdvanceBookingWindow): Promise<void> {
+        await expect(this.advanceBookingWindowDropdown).toContainText(value);
+    }
+
+    async expectMinimumNotice(value: MinimumNotice): Promise<void> {
+        await expect(this.minimumNoticeDropdown).toContainText(value);
+    }
+
+    async expectNoShowWindow(value: NoShowWindow): Promise<void> {
+        await expect(this.noShowWindowDropdown).toContainText(value);
+    }
+
+    async expectReminderTimingChecked(timing: ReminderTiming, checked: boolean): Promise<void> {
+        const checkbox = this.page.getByRole('checkbox', { name: timing });
+        if (checked) {
+            await expect(checkbox).toBeChecked();
+        } else {
+            await expect(checkbox).not.toBeChecked();
+        }
+    }
+
+    async expectConfirmationMessage(text: string): Promise<void> {
+        await expect(this.confirmationMessageEditor).toContainText(text);
+    }
+
+    async expectBookingTerms(text: string): Promise<void> {
+        await expect(this.bookingTermsEditor).toContainText(text);
     }
 }

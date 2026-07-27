@@ -15,7 +15,7 @@ export type BookingStatus =
 
 export class BookingsTab extends ConfigBasePage {
     private readonly heading: Locator;
-    private readonly filtersButton: Locator;
+    private readonly filtersRegion: Locator;
     private readonly prevWeekButton: Locator;
     private readonly nextWeekButton: Locator;
     private readonly staffDropdown: Locator;
@@ -31,7 +31,7 @@ export class BookingsTab extends ConfigBasePage {
         super(page);
         this.heading = this.page.getByRole('heading', { name: 'Bookings', level: 3 });
         this.addBookingButton = this.page.getByRole('button', { name: 'Add booking' });
-        this.filtersButton = this.page.getByRole('button', { name: 'Filters' });
+        this.filtersRegion = this.page.getByRole('region', { name: 'Search and filters' });
         this.prevWeekButton = this.page.getByRole('button', { name: 'Previous week' });
         this.nextWeekButton = this.page.getByRole('button', { name: 'Next week' });
         this.staffDropdown = this.page.getByRole('combobox', { name: 'Staff' });
@@ -47,8 +47,11 @@ export class BookingsTab extends ConfigBasePage {
         await expect(this.heading).toBeVisible();
     }
 
+    // The Date/Status filters are always rendered under "Search and filters" —
+    // there is no longer a toggle to expand them. This just asserts they're
+    // present, kept as a step so existing call sites read the same.
     async openFilters(): Promise<void> {
-        await this.filtersButton.click();
+        await expect(this.filtersRegion).toBeVisible();
         await expect(this.prevWeekButton).toBeVisible();
     }
 

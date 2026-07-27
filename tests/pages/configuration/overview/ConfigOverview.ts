@@ -51,7 +51,9 @@ export class ConfigOverview extends ConfigBasePage {
     async openBranchConfig(branchName: string): Promise<BranchConfigPage> {
         if (await this.branchesTab.count()) {
             await this.branchesTab.click();
-            await this.page.getByRole('heading', { name: branchName, level: 4 }).click();
+            const branchCard = this.page.getByRole('heading', { name: branchName, level: 4 });
+            await expect(branchCard).toBeVisible();
+            await branchCard.click();
         }
         const branchConfig = new BranchConfigPage(this.page);
         await branchConfig.waitForReady();

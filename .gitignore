@@ -6,6 +6,12 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
+# Playwright MCP snapshots
+.playwright-mcp/
+
+# macOS
+.DS_Store
+
 # Logs
 logs/
 *.log

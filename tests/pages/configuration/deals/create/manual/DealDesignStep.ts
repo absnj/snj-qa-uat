@@ -3,14 +3,14 @@ import { expect } from '@playwright/test';
 import { ConfigBasePage } from '@pages/configuration/ConfigBasePage';
 import { DealsPage } from '../../DealsPage';
 
-export class PreviewStep extends ConfigBasePage {
+export class DealDesignStep extends ConfigBasePage {
     private readonly pageTitle: Locator;
     private readonly createDealButton: Locator;
     private readonly successAlert: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.pageTitle = this.page.locator('form').getByText('Preview', { exact: true });
+        this.pageTitle = this.page.getByRole('heading', { name: 'Design Details' });
         this.createDealButton = this.page.getByRole('button', { name: 'Create Deal' });
         this.successAlert = this.page.getByText('Deal created successfully', { exact: true });
     }
@@ -18,6 +18,10 @@ export class PreviewStep extends ConfigBasePage {
     override async waitForReady(): Promise<void> {
         await super.waitForReady();
         await expect(this.pageTitle).toBeVisible();
+    }
+
+    async selectTemplate(templateName: string): Promise<void> {
+        await this.page.getByRole('button', { name: templateName }).click();
     }
 
     async submit(): Promise<DealsPage> {
@@ -32,9 +36,5 @@ export class PreviewStep extends ConfigBasePage {
 
     async expectDealCreatedSuccess(): Promise<void> {
         await expect(this.successAlert).toBeVisible();
-    }
-
-    async verifyDealCreatedSuccess(): Promise<void> {
-        await this.expectDealCreatedSuccess();
     }
 }

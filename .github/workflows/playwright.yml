@@ -1,9 +1,37 @@
 name: Playwright Tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Playwright project to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - merchant-admin
+          - merchant-staff
+          - branch-admin
+          - branch-staff
+          - sales-agent
+          - merchant-success-staff
+      module:
+        description: 'Test module to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - login
+          - deals
+          - loyalty
+          - njoybook-general
+          - njoybook-staff
+          - support
+          - user-mgmt
+concurrency:
+  group: playwright-uat
+  cancel-in-progress: false
 jobs:
   test:
     timeout-minutes: 60
@@ -17,8 +45,47 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Write .env
+      run: |
+        cat <<EOF > .env
+        UAT_URL=${{ secrets.UAT_URL }}
+        UAT_SUPERUSER_USER=${{ secrets.UAT_SUPERUSER_USER }}
+        UAT_SUPERUSER_PASSWORD=${{ secrets.UAT_SUPERUSER_PASSWORD }}
+        UAT_MERCHANT_ADMIN_USER=${{ secrets.UAT_MERCHANT_ADMIN_USER }}
+        UAT_MERCHANT_ADMIN_PASSWORD=${{ secrets.UAT_MERCHANT_ADMIN_PASSWORD }}
+        UAT_MERCHANT_STAFF_USER=${{ secrets.UAT_MERCHANT_STAFF_USER }}
+        UAT_MERCHANT_STAFF_PASSWORD=${{ secrets.UAT_MERCHANT_STAFF_PASSWORD }}
+        UAT_BRANCH_ADMIN_USER=${{ secrets.UAT_BRANCH_ADMIN_USER }}
+        UAT_BRANCH_ADMIN_PASSWORD=${{ secrets.UAT_BRANCH_ADMIN_PASSWORD }}
+        UAT_BRANCH_STAFF_USER=${{ secrets.UAT_BRANCH_STAFF_USER }}
+        UAT_BRANCH_STAFF_PASSWORD=${{ secrets.UAT_BRANCH_STAFF_PASSWORD }}
+        UAT_SALES_AGENT_USER=${{ secrets.UAT_SALES_AGENT_USER }}
+        UAT_SALES_AGENT_PASSWORD=${{ secrets.UAT_SALES_AGENT_PASSWORD }}
+        UAT_MERCHANT_SUCCESS_STAFF_USER=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_USER }}
+        UAT_MERCHANT_SUCCESS_STAFF_PASSWORD=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_PASSWORD }}
+        EOF
+    - name: Run Playwright tests (${{ inputs.project }} / ${{ inputs.module }})
+      run: |
+        case "${{ inputs.module }}" in
+          all) SPEC="" ;;
+          login) SPEC="tests/specs/login.spec.ts" ;;
+          deals) SPEC="tests/specs/config/deals.spec.ts" ;;
+          loyalty) SPEC="tests/specs/config/loyalty.spec.ts" ;;
+          njoybook-general) SPEC="tests/specs/config/njoybook-general.spec.ts" ;;
+          njoybook-staff) SPEC="tests/specs/config/njoybook-staff.spec.ts" ;;
+          support) SPEC="tests/specs/support/support.spec.ts" ;;
+          user-mgmt) SPEC="tests/specs/user-mgmt/create-user.spec.ts" ;;
+          *) echo "Unknown module: ${{ inputs.module }}"; exit 1 ;;
+        esac
+
+        if [ "${{ inputs.project }}" = "all" ]; then
+          npx playwright test $SPEC
+        else
+          npx playwright test $SPEC --project=${{ inputs.project }}
+        fi
+    - name: Remove .env
+      if: always()
+      run: rm -f .env
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
