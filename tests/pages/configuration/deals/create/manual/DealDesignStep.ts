@@ -10,7 +10,7 @@ export class DealDesignStep extends ConfigBasePage {
 
     constructor(page: Page) {
         super(page);
-        this.pageTitle = this.page.getByRole('heading', { name: 'Design Details' });
+        this.pageTitle = this.page.getByRole('heading', { name: 'Design Tools' });
         this.createDealButton = this.page.getByRole('button', { name: 'Create Deal' });
         this.successAlert = this.page.getByText('Deal created successfully', { exact: true });
     }

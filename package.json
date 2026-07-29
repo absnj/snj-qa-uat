@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
-    "test:report": "npx playwright show-report"
+    "test:report": "npx playwright show-report",
+    "report:serve": "bash scripts/serve-report.sh"
   },
   "keywords": [],
   "author": "",
