@@ -10,7 +10,7 @@ export class LoyaltyDesignStep extends ConfigBasePage {
 
     constructor(page: Page) {
         super(page);
-        this.pageTitle = this.page.getByRole('heading', { name: 'Design Details' });
+        this.pageTitle = this.page.getByRole('heading', { name: 'Design tools' });
         this.createButton = this.page.getByRole('button', { name: 'Create', exact: true });
         this.successAlert = this.page.getByText('Loyalty program created successfully', { exact: true });
     }
