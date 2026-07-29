@@ -4,6 +4,8 @@ Playwright end-to-end tests for the ShopNJoy admin dashboard, run against a **sh
 
 For contribution rules (locator policy, fixture/teardown conventions, role tags, forbidden patterns), see `CLAUDE.md` / `AGENTS.md` at the repo root — those files are the enforced style guide and are kept in sync with each other. This README is the onboarding/reference doc: what exists today, how to run it, and where the known gaps are.
 
+Extending the framework itself (a new page object, fixture, or API client)? See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for how the existing pieces are built and why. Reacting to an app change, or picking this suite up cold? See [`docs/MAINTAINERS.md`](docs/MAINTAINERS.md) for playbooks (new role, new spec module, new API endpoint, UI selector changed) and a troubleshooting guide for shared-UAT quirks.
+
 ## Quick Start
 
 ```bash
