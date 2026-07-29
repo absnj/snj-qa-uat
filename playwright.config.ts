@@ -78,6 +78,15 @@ export default defineConfig({
       grep: /@merchant-success-staff/,
     },
     // TODO: add a superuser project when superuser tests are ready.
+
+    // Pure API integration tests — no browser, no UI storageState. Auth is a
+    // bearer token fetched per-test via AuthApi.signIn, not cookies, and the
+    // backend host can differ from the admin dashboard's baseURL above.
+    {
+      name: 'api',
+      testMatch: '**/specs/api/**/*.spec.ts',
+      use: { baseURL: process.env.UAT_API_URL },
+    },
   ],
 
   /* Run your local dev server before starting the tests */

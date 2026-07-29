@@ -10,6 +10,7 @@
     "ignoreDeprecations": "6.0",
     "paths": {
       "@core/*": ["tests/core/*"],
+      "@api/*": ["tests/api/*"],
       "@pages/*": ["tests/pages/*"],
       "@components/*": ["tests/components/*"],
       "@fixtures/*": ["tests/fixtures/*"],

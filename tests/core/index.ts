@@ -1,7 +1,7 @@
 // core/index.ts
 export { BasePage } from './BasePage';
+export { ApiClient, ApiError } from './ApiClient';
 // export { BaseComponent } from './BaseComponent';
-// export { ApiClient } from './ApiClient';
 // export { BrowserManager } from './BrowserManager';
 
 
