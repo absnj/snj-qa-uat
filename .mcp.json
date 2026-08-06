@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--browser=chromium",
+        "--headless",
+        "--isolated",
+        "--viewport-size=1536,900",
+        "--storage-state=tests/setup/.auth/merchant_admin.json"
+      ]
+    }
+  }
+}

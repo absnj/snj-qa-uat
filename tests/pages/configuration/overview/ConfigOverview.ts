@@ -8,25 +8,44 @@ import { BranchConfigPage } from '../branch/BranchConfigPage';
 export class ConfigOverview extends ConfigBasePage {
     private readonly overviewHeader: Locator;
     private readonly branchesTab: Locator;
+    private readonly campaignTab: Locator;
+    private readonly dealsSubTab: Locator;
+    private readonly loyaltySubTab: Locator;
 
     constructor(page: Page) {
         super(page);
         this.overviewHeader = this.page.getByRole('heading', { name: 'Details' });
         this.branchesTab = this.page.getByRole('button', { name: 'Branches' });
+        this.campaignTab = this.page.getByRole('button', { name: 'Campaign' });
+        this.dealsSubTab = this.page.getByRole('button', { name: 'Deals', exact: true });
+        this.loyaltySubTab = this.page.getByRole('button', { name: 'Loyalty Programs', exact: true });
     }
 
+    /**
+     * Deals and Loyalty Programs are no longer top-level configuration pages;
+     * both live behind the merchant "Campaign" tab, which opens on the Deals
+     * sub-tab by default.
+     */
     async goToDeals(): Promise<DealsPage> {
-        await this.dealsTab.click();
+        await this.openCampaign();
+        await this.dealsSubTab.click();
         const dealsPage = new DealsPage(this.page);
         await dealsPage.waitForReady();
         return dealsPage;
     }
 
     async goToLoyaltyPrograms(): Promise<LoyaltyPage> {
-        await this.loyaltyTab.click();
+        await this.openCampaign();
+        await this.loyaltySubTab.click();
         const loyaltyPage = new LoyaltyPage(this.page);
         await loyaltyPage.waitForReady();
         return loyaltyPage;
+    }
+
+    private async openCampaign(): Promise<void> {
+        await expect(this.campaignTab).toBeEnabled();
+        await this.campaignTab.click();
+        await expect(this.dealsSubTab).toBeVisible();
     }
 
     async waitForReady(): Promise<void> {
