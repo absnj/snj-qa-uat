@@ -2,8 +2,8 @@
 import { ApiClient } from '@core/index';
 
 export type AuthTokens = {
-  token: string;
-  refreshToken?: string;
+  access_token: string;
+  refresh_token: string;
 };
 
 export type DecodedTokenPayload = {
@@ -13,11 +13,10 @@ export type DecodedTokenPayload = {
 };
 
 /**
- * NOTE: no Auth endpoint has a captured example response anywhere in
- * schema.json, unlike User/Account (which confirm the { status, message,
- * data } envelope this client relies on via ApiClient.unwrap). The exact key
- * holding the JWT inside sign-in's `data` (`token` vs `access_token`, etc.)
- * needs confirming with one live call before these assertions are trusted.
+ * schema.json captures no example response for any Auth endpoint, so the
+ * shape below was confirmed against live UAT on 2026-08-06: sign-in and
+ * refresh-token both return the standard { status, message, data } envelope
+ * with `data` = { access_token, refresh_token, user }.
  */
 export class AuthApi extends ApiClient {
   async signIn(email: string, password: string): Promise<AuthTokens> {

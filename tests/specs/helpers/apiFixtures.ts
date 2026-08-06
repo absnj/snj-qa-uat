@@ -28,8 +28,8 @@ export const apiTest = base.extend<ApiFixtures>({
 /** Signs in as the given role via the credentials already used by the UI suite. */
 export async function tokenFor(authApi: AuthApi, role: Role): Promise<string> {
   const { username, password } = getCredentials(role.normalized);
-  const { token } = await authApi.signIn(username, password);
-  return token;
+  const { access_token } = await authApi.signIn(username, password);
+  return access_token;
 }
 
 export { expect } from '@playwright/test';
