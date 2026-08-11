@@ -153,6 +153,7 @@ export class AddBookingModal extends ConfigBasePage {
     /** Fills the form and submits; resolves once the modal has closed. */
     async createBooking(data: AddBookingData): Promise<void> {
         await this.fill(data);
+        await this.page.waitForTimeout(1000);
         await this.createButton.click();
         await expect(this.modal).not.toBeVisible();
     }

@@ -27,3 +27,6 @@ tests/setup/.auth
 tests/setup/traces/
 
 *.ipa
+
+# Triage run artifact — structured results, may contain UAT data
+results.json
