@@ -86,8 +86,13 @@ jobs:
         EOF
 
     # continue-on-error: a red suite is the input to triage, not the end of the
-    # job. --retries=1 so the agent can tell a hard break from a flake, and the
-    # json reporter gives it structured failures instead of scraped stdout.
+    # job. The json reporter gives the agent structured failures instead of
+    # scraped stdout.
+    #
+    # Retries are off to keep the run short. That removes the failed-then-passed
+    # signal the agent used to separate flakes from hard breaks, so it must now
+    # reproduce a suspected flake itself (re-running the affected spec) rather
+    # than reading it off the results.
     - name: Run Playwright tests
       id: tests
       continue-on-error: true
@@ -107,9 +112,9 @@ jobs:
         esac
 
         if [ "$PROJECT" = "all" ]; then
-          npx playwright test $SPEC --retries=1 --reporter=html,json
+          npx playwright test $SPEC --reporter=html,json
         else
-          npx playwright test $SPEC --project="$PROJECT" --retries=1 --reporter=html,json
+          npx playwright test $SPEC --project="$PROJECT" --reporter=html,json
         fi
 
     # Not on pull_request: the agent must never triage its own PR.
