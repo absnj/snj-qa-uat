@@ -1,37 +1,39 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { ConfigBasePage } from '../ConfigBasePage';
-import { BranchSelection } from './create/BranchSelection';
+import { CampaignBasePage } from '../campaign/CampaignBasePage';
+import { DealBuilder } from './create/DealBuilder';
 
-export class DealsPage extends ConfigBasePage {
-    private readonly dealHeader: Locator;
-    private readonly createDealButton: Locator;
+export class DealsPage extends CampaignBasePage {
+    private readonly dealTitleColumn: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.dealHeader = this.page.getByRole('heading', { name: 'Deal Approval' });
-        this.createDealButton = this.page.getByRole('button', { name: 'Create' });
+        this.dealTitleColumn = this.page.getByRole('columnheader', { name: 'Deal Title' });
     }
 
     override async waitForReady(): Promise<void> {
         await super.waitForReady();
-        await expect(this.dealHeader).toBeVisible();
+        await expect(this.dealTitleColumn).toBeVisible();
     }
 
-    async openCreateDealForm(): Promise<BranchSelection> {
-        await expect(this.createDealButton).toBeEnabled();
-        await this.createDealButton.click();
-        const branchSelection = new BranchSelection(this.page);
-        await branchSelection.waitForReady();
-        return branchSelection;
+    /**
+     * "Create" opens the NJoyBuild builder for whichever campaign sub-tab is
+     * active, so this must only be called once the deal list is showing.
+     */
+    async openCreateDealForm(): Promise<DealBuilder> {
+        await expect(this.createButton).toBeEnabled();
+        await this.createButton.click();
+        const builder = new DealBuilder(this.page);
+        await builder.waitForReady();
+        return builder;
     }
 
     async expectCreateDealAvailable(): Promise<void> {
-        await expect(this.createDealButton).toBeVisible();
+        await expect(this.createButton).toBeVisible();
     }
 
     async expectCreateDealUnavailable(): Promise<void> {
-        await expect(this.createDealButton).not.toBeVisible();
+        await expect(this.createButton).not.toBeVisible();
     }
 
 }

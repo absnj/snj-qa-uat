@@ -29,14 +29,30 @@ on:
           - njoybook-staff
           - support
           - user-mgmt
+  # Verifies changes to test code — including the PRs the triage agent opens.
+  # Scoped to merchant-admin so a PR costs minutes, not an hour, on shared UAT.
+  pull_request:
+    paths:
+      - 'tests/**'
+      - 'playwright.config.ts'
+      - 'package.json'
+
 concurrency:
   group: playwright-uat
   cancel-in-progress: false
+
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     environment: uat
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      # inputs.* are empty on pull_request — fall back to a fast, safe scope.
+      PROJECT: ${{ inputs.project || 'merchant-admin' }}
+      MODULE: ${{ inputs.module || 'all' }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -50,6 +66,9 @@ jobs:
       run: |
         cat <<EOF > .env
         UAT_URL=${{ secrets.UAT_URL }}
+        UAT_API_URL=${{ secrets.UAT_API_URL }}
+        UAT_API_MERCHANT_STORE_ID=${{ secrets.UAT_API_MERCHANT_STORE_ID }}
+        UAT_API_BRANCH_ID=${{ secrets.UAT_API_BRANCH_ID }}
         UAT_SUPERUSER_USER=${{ secrets.UAT_SUPERUSER_USER }}
         UAT_SUPERUSER_PASSWORD=${{ secrets.UAT_SUPERUSER_PASSWORD }}
         UAT_MERCHANT_ADMIN_USER=${{ secrets.UAT_MERCHANT_ADMIN_USER }}
@@ -65,9 +84,17 @@ jobs:
         UAT_MERCHANT_SUCCESS_STAFF_USER=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_USER }}
         UAT_MERCHANT_SUCCESS_STAFF_PASSWORD=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_PASSWORD }}
         EOF
-    - name: Run Playwright tests (${{ inputs.project }} / ${{ inputs.module }})
+
+    # continue-on-error: a red suite is the input to triage, not the end of the
+    # job. --retries=1 so the agent can tell a hard break from a flake, and the
+    # json reporter gives it structured failures instead of scraped stdout.
+    - name: Run Playwright tests
+      id: tests
+      continue-on-error: true
+      env:
+        PLAYWRIGHT_JSON_OUTPUT_NAME: results.json
       run: |
-        case "${{ inputs.module }}" in
+        case "$MODULE" in
           all) SPEC="" ;;
           login) SPEC="tests/specs/login.spec.ts" ;;
           deals) SPEC="tests/specs/config/deals.spec.ts" ;;
@@ -76,20 +103,45 @@ jobs:
           njoybook-staff) SPEC="tests/specs/config/njoybook-staff.spec.ts" ;;
           support) SPEC="tests/specs/support/support.spec.ts" ;;
           user-mgmt) SPEC="tests/specs/user-mgmt/create-user.spec.ts" ;;
-          *) echo "Unknown module: ${{ inputs.module }}"; exit 1 ;;
+          *) echo "Unknown module: $MODULE"; exit 1 ;;
         esac
 
-        if [ "${{ inputs.project }}" = "all" ]; then
-          npx playwright test $SPEC
+        if [ "$PROJECT" = "all" ]; then
+          npx playwright test $SPEC --retries=1 --reporter=html,json
         else
-          npx playwright test $SPEC --project=${{ inputs.project }}
+          npx playwright test $SPEC --project="$PROJECT" --retries=1 --reporter=html,json
         fi
+
+    # Not on pull_request: the agent must never triage its own PR.
+    - name: Triage failures
+      if: steps.tests.outcome == 'failure' && github.event_name == 'workflow_dispatch'
+      uses: openai/codex-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+        model: gpt-5.6-sol
+        effort: high
+        prompt-file: .claude/commands/triage-failures.md
+        # .codex/config.toml supplies the Playwright MCP server.
+        codex-home: .codex
+        # drop-sudo (the default) still permits file edits, `npx playwright
+        # test`, git, and gh. read-only would block the fixes entirely.
+        safety-strategy: drop-sudo
+
     - name: Remove .env
       if: always()
       run: rm -f .env
+
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
+    # The suite's own verdict gates the workflow, so a red run the agent could
+    # not fully fix still shows red.
+    - name: Reflect suite result
+      if: steps.tests.outcome == 'failure'
+      run: exit 1

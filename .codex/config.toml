@@ -1,0 +1,25 @@
+# Codex config for the CI triage agent (see .github/workflows/playwright.yml).
+# Supplied to the action via `codex-home: .codex`.
+#
+# MUST stay in sync with .mcp.json, which configures the same server for Claude
+# Code during local development. The flags below are load-bearing:
+# --viewport-size matches playwright.config.ts (below 1536px, action button
+# labels collapse to icon-only and lose their accessible name), and
+# --storage-state points at the auth state global.setup.ts produces, so the
+# agent's browser is already signed in as merchant-admin.
+#
+# There is no GitHub MCP server: the agent runs inside this repo and uses the
+# `gh` CLI (preinstalled on GitHub runners) with the workflow's GITHUB_TOKEN to
+# push its branch and open the PR.
+
+[mcp_servers.playwright]
+command = "npx"
+args = [
+  "-y",
+  "@playwright/mcp@latest",
+  "--browser=chromium",
+  "--headless",
+  "--isolated",
+  "--viewport-size=1536,900",
+  "--storage-state=tests/setup/.auth/merchant_admin.json",
+]

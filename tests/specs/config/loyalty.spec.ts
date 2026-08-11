@@ -1,33 +1,36 @@
 import { test } from '@playwright/test';
 import { HomePage } from '@pages/home/HomePage';
 import { LoyaltyPage } from '@pages/configuration/loyalty/LoyaltyPage';
-import { LoyaltyBranchSelection } from '@pages/configuration/loyalty/create/LoyaltyBranchSelection';
+import { LoyaltyBuilder } from '@pages/configuration/loyalty/create/LoyaltyBuilder';
 import {
   DEFAULT_PROGRAM_CONFIGURATION,
-  LoyaltyDetailsStep,
+  LoyaltyStudio,
+  MAXIMUM_REWARDS,
   type LoyaltyGeneralDetailsData,
   type RewardData,
-} from '@pages/configuration/loyalty/create/manual/LoyaltyDetailsStep';
+} from '@pages/configuration/loyalty/create/manual/LoyaltyStudio';
 import {
   LOYALTY_CREATOR_ROLES,
   LOYALTY_READ_ONLY_ROLES,
 } from '../helpers/roles';
 
+const VALID_TERMS = 'Valid automated loyalty terms and conditions.';
+
 type LoyaltyFixtures = {
   loyaltyData: LoyaltyGeneralDetailsData;
   rewardData: RewardData;
   loyaltyPage: LoyaltyPage;
-  openDetailsStep: LoyaltyDetailsStep;
-  detailsStep: LoyaltyDetailsStep;
+  openStudio: LoyaltyStudio;
+  studio: LoyaltyStudio;
 };
 
 const formTest = test.extend<LoyaltyFixtures>({
   loyaltyData: async ({}, use) => {
-    await use(LoyaltyDetailsStep.validGeneralDetails());
+    await use(LoyaltyStudio.validGeneralDetails());
   },
 
   rewardData: async ({}, use) => {
-    await use(LoyaltyDetailsStep.validReward());
+    await use(LoyaltyStudio.validReward());
   },
 
   loyaltyPage: async ({ page }, use) => {
@@ -39,150 +42,162 @@ const formTest = test.extend<LoyaltyFixtures>({
     await use(loyaltyPage);
   },
 
-  openDetailsStep: async ({ page }, use) => {
-    const branchSelection = new LoyaltyBranchSelection(page);
-    await branchSelection.goto();
-    const buildOptions = await branchSelection.next();
-    const detailsStep = await buildOptions.buildManual();
-    await use(detailsStep);
+  openStudio: async ({ page }, use) => {
+    const builder = new LoyaltyBuilder(page);
+    await builder.goto();
+    const studio = await builder.buildManual();
+    await use(studio);
   },
 
-  detailsStep: async ({ openDetailsStep, loyaltyData, rewardData }, use) => {
-    await openDetailsStep.fillProgramConfiguration(DEFAULT_PROGRAM_CONFIGURATION);
-    await openDetailsStep.fillGeneralDetails(loyaltyData);
-    await openDetailsStep.fillCurrentReward(rewardData);
-    await openDetailsStep.fillTerms({ terms: 'Valid automated loyalty terms and conditions.' });
+  studio: async ({ openStudio, loyaltyData, rewardData }, use) => {
+    await openStudio.fillProgramConfiguration(DEFAULT_PROGRAM_CONFIGURATION);
+    await openStudio.fillGeneralDetails(loyaltyData);
+    await openStudio.fillTerms({ terms: VALID_TERMS });
+    await openStudio.openRewardsSection();
+    await openStudio.fillReward(1, rewardData);
 
-    await use(openDetailsStep);
+    await use(openStudio);
   },
 });
 
 test.describe('Configuration - Loyalty Programs', () => {
   for (const role of LOYALTY_CREATOR_ROLES) {
     formTest.describe(`${role.label} ${role.tag}`, () => {
-      formTest('creates a visit-based program with one reward', async ({ detailsStep }) => {
-        const designStep = await detailsStep.next();
-        await designStep.submitAndExpectSuccess();
+      formTest('creates a visit-based program with one reward', async ({ studio }) => {
+        await studio.submitAndExpectSuccess();
       });
 
       formTest(
-        'creates a transaction-based program with one reward',
-        async ({ loyaltyData, rewardData, openDetailsStep }) => {
-          await openDetailsStep.selectProgramType('Transaction-Based (Spending');
-          await openDetailsStep.fillAmountPerStamp('10');
-          await openDetailsStep.fillGeneralDetails(loyaltyData);
-          await openDetailsStep.fillCurrentReward(rewardData);
-          await openDetailsStep.fillTerms({ terms: 'Valid automated loyalty terms and conditions.' });
+        'creates a spend-based program with one reward',
+        async ({ loyaltyData, rewardData, openStudio }) => {
+          await openStudio.fillProgramConfiguration({ earnType: 'Spend', perStamp: '10' });
+          await openStudio.fillGeneralDetails(loyaltyData);
+          await openStudio.fillTerms({ terms: VALID_TERMS });
+          await openStudio.openRewardsSection();
+          await openStudio.fillReward(1, rewardData);
 
-          const designStep = await openDetailsStep.next();
-          await designStep.submitAndExpectSuccess();
+          await openStudio.submitAndExpectSuccess();
         },
       );
 
       formTest(
         'creates a visit-based program with five rewards',
-        async ({ rewardData, detailsStep }) => {
-          await detailsStep.fillRewards(rewardData, 5);
+        async ({ rewardData, studio }) => {
+          await studio.fillRewards(rewardData, MAXIMUM_REWARDS);
 
-          const designStep = await detailsStep.next();
-          await designStep.submitAndExpectSuccess();
+          await studio.submitAndExpectSuccess();
         },
       );
 
       formTest(
-        'disables Add Reward at the five reward maximum',
-        async ({ detailsStep }) => {
-          await detailsStep.addRewardsUntilMaximum();
-          await detailsStep.expectAddRewardDisabled();
+        'disables Add reward at the five reward maximum',
+        async ({ studio }) => {
+          await studio.addRewardsUntilMaximum();
+          await studio.expectRewardCount(MAXIMUM_REWARDS);
+          await studio.expectAddRewardDisabled();
         },
       );
 
       formTest(
-        'rejects an empty visits-per-stamp value',
-        async ({ openDetailsStep }) => {
-          await openDetailsStep.fillProgramConfiguration({
-            ...DEFAULT_PROGRAM_CONFIGURATION,
-            visitsPerStamp: '0',
-          });
-          await openDetailsStep.expectVisitsPerStampValidationError();
+        'rejects a zero visits-per-stamp value',
+        async ({ studio }) => {
+          await studio.openDetailsSection();
+          await studio.fillPerStamp('0');
+          await studio.submitExpectingValidationError();
+          await studio.expectPerStampValidationError();
         },
       );
 
       formTest(
-        'rejects an empty transaction amount-per-stamp value',
-        async ({ openDetailsStep }) => {
-          await openDetailsStep.selectProgramType('Transaction-Based (Spending');
-          await openDetailsStep.fillAmountPerStamp('0');
-          await openDetailsStep.expectAmountPerStampValidationError();
+        'rejects a zero spend-per-stamp value',
+        async ({ studio }) => {
+          await studio.openDetailsSection();
+          await studio.selectEarnType('Spend');
+          await studio.fillPerStamp('0');
+          await studio.submitExpectingValidationError();
+          await studio.expectPerStampValidationError();
         },
       );
 
-      formTest('rejects an empty program title', async ({ loyaltyData, detailsStep }) => {
-        await detailsStep.fillProgramTitle('');
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectTitleValidationError();
+      formTest('rejects an empty program title', async ({ studio }) => {
+        await studio.openDetailsSection();
+        await studio.fillProgramTitle('');
+        await studio.submitExpectingValidationError();
+        await studio.expectTitleValidationError();
       });
 
       formTest(
         'rejects a program title over 50 characters',
-        async ({ detailsStep }) => {
-          await detailsStep.fillProgramTitle('a'.repeat(51));
-          await detailsStep.nextExpectingValidationError();
-          await detailsStep.expectTitleValidationError();
+        async ({ studio }) => {
+          await studio.openDetailsSection();
+          await studio.fillProgramTitle('a'.repeat(51));
+          await studio.submitExpectingValidationError();
+          await studio.expectTitleValidationError();
         },
       );
 
       formTest(
         'rejects an empty program description',
-        async ({ detailsStep }) => {
-          await detailsStep.fillDescription('');
-          await detailsStep.nextExpectingValidationError();
-          await detailsStep.expectDescriptionValidationError();
+        async ({ studio }) => {
+          await studio.openDetailsSection();
+          await studio.fillDescription('');
+          await studio.submitExpectingValidationError();
+          await studio.expectDescriptionValidationError();
         },
       );
 
       formTest(
         'rejects a program description over 100 characters',
-        async ({ detailsStep }) => {
-          await detailsStep.fillDescription('a'.repeat(101));
-          await detailsStep.nextExpectingValidationError();
-          await detailsStep.expectDescriptionValidationError();
+        async ({ studio }) => {
+          await studio.openDetailsSection();
+          await studio.fillDescription('a'.repeat(101));
+          await studio.submitExpectingValidationError();
+          await studio.expectDescriptionValidationError();
         },
       );
 
       formTest(
-        'rejects an empty reward milestone',
-        async ({ rewardData, detailsStep }) => {
-          await detailsStep.fillCurrentRewardExcept(rewardData, 'milestone');
-          await detailsStep.nextExpectingValidationError();
-          await detailsStep.expectRewardMilestoneValidationError();
+        'rejects empty terms and conditions',
+        async ({ studio }) => {
+          await studio.openDetailsSection();
+          await studio.clearTermsAndConditions();
+          await studio.submitExpectingValidationError();
+          await studio.expectTermsRequiredError();
         },
       );
 
       formTest(
         'rejects an empty reward name',
-        async ({ rewardData, detailsStep }) => {
-          await detailsStep.fillCurrentRewardExcept(rewardData, 'name');
-          await detailsStep.nextExpectingValidationError();
-          await detailsStep.expectRewardNameValidationError();
+        async ({ rewardData, studio }) => {
+          await studio.fillRewardExcept(1, rewardData, 'name');
+          await studio.submitExpectingValidationError();
+          await studio.expectRewardNameValidationError(1);
+        },
+      );
+
+      formTest(
+        'rejects an empty reward description',
+        async ({ rewardData, studio }) => {
+          await studio.fillRewardExcept(1, rewardData, 'description');
+          await studio.submitExpectingValidationError();
+          await studio.expectRewardDescriptionValidationError(1);
         },
       );
 
       formTest(
         'rejects an empty reward valid-until date',
-        async ({ rewardData, detailsStep }) => {
-          await detailsStep.fillCurrentRewardExcept(rewardData, 'validUntil');
-          await detailsStep.nextExpectingValidationError();
-          await detailsStep.expectRewardValidUntilValidationError();
+        async ({ rewardData, studio }) => {
+          await studio.fillRewardExcept(1, rewardData, 'validUntil');
+          await studio.submitExpectingValidationError();
+          await studio.expectRewardValidUntilValidationError(1);
         },
       );
 
       formTest(
         'accepts an empty reward quantity',
-        async ({ rewardData, detailsStep }) => {
-          await detailsStep.fillCurrentRewardExcept(rewardData, 'quantity');
-          const designStep = await detailsStep.next();
-          await designStep.submitAndExpectSuccess();
+        async ({ rewardData, studio }) => {
+          await studio.fillRewardExcept(1, rewardData, 'quantity');
+          await studio.submitAndExpectSuccess();
         },
       );
     });

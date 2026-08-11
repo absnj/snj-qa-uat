@@ -1,36 +1,38 @@
 import type { Page, Locator } from '@playwright/test';
-import { ConfigBasePage } from '../ConfigBasePage';
 import { expect } from '@playwright/test';
-import { LoyaltyBranchSelection } from './create/LoyaltyBranchSelection';
+import { CampaignBasePage } from '../campaign/CampaignBasePage';
+import { LoyaltyBuilder } from './create/LoyaltyBuilder';
 
-export class LoyaltyPage extends ConfigBasePage {
-    private readonly loyaltyHeader: Locator;
-    private readonly createLoyaltyButton: Locator;
+export class LoyaltyPage extends CampaignBasePage {
+    private readonly programTitleColumn: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.loyaltyHeader = this.page.getByRole('heading', { name: 'Loyalty Programs' });
-        this.createLoyaltyButton = this.page.getByRole('button', { name: 'Create' });
+        this.programTitleColumn = this.page.getByRole('columnheader', { name: 'Program Title' });
     }
 
     override async waitForReady(): Promise<void> {
         await super.waitForReady();
-        await expect(this.loyaltyHeader).toBeVisible();
+        await expect(this.programTitleColumn).toBeVisible();
     }
 
-    async openCreateLoyaltyForm(): Promise<LoyaltyBranchSelection> {
-        await expect(this.createLoyaltyButton).toBeEnabled();
-        await this.createLoyaltyButton.click();
-        const branchSelection = new LoyaltyBranchSelection(this.page);
-        await branchSelection.waitForReady();
-        return branchSelection;
+    /**
+     * "Create" opens the NJoyBuild builder for whichever campaign sub-tab is
+     * active, so this must only be called once the program list is showing.
+     */
+    async openCreateLoyaltyForm(): Promise<LoyaltyBuilder> {
+        await expect(this.createButton).toBeEnabled();
+        await this.createButton.click();
+        const builder = new LoyaltyBuilder(this.page);
+        await builder.waitForReady();
+        return builder;
     }
 
     async expectCreateLoyaltyAvailable(): Promise<void> {
-        await expect(this.createLoyaltyButton).toBeVisible();
+        await expect(this.createButton).toBeVisible();
     }
 
     async expectCreateLoyaltyUnavailable(): Promise<void> {
-        await expect(this.createLoyaltyButton).not.toBeVisible();
+        await expect(this.createButton).not.toBeVisible();
     }
 }

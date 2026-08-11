@@ -1,8 +1,8 @@
 import { test, type Page } from '@playwright/test';
 import { HomePage } from '@pages/home/HomePage';
 import { DealsPage } from '@pages/configuration/deals/DealsPage';
-import { BranchSelection } from '@pages/configuration/deals/create/BranchSelection';
-import { DealDetailsStep, type DealDetailsData } from '@pages/configuration/deals/create/manual/DealDetailsStep';
+import { DealBuilder } from '@pages/configuration/deals/create/DealBuilder';
+import { DealStudio, type DealDetailsData } from '@pages/configuration/deals/create/manual/DealStudio';
 import { generateDealTitle } from '../../testDataGenerators';
 import {
   DEAL_CREATOR_ROLES,
@@ -11,7 +11,7 @@ import {
 
 type DealFormFixtures = {
   dealData: DealDetailsData;
-  detailsStep: DealDetailsStep;
+  studio: DealStudio;
 };
 
 const formTest = test.extend<DealFormFixtures>({
@@ -19,12 +19,11 @@ const formTest = test.extend<DealFormFixtures>({
     await use(validDeal());
   },
 
-  detailsStep: async ({ page }, use) => {
-    const branchSelection = new BranchSelection(page);
-    await branchSelection.goto();
-    const buildOptions = await branchSelection.next();
-    const detailsStep = await buildOptions.buildManual();
-    await use(detailsStep);
+  studio: async ({ page }, use) => {
+    const builder = new DealBuilder(page);
+    await builder.goto();
+    const studio = await builder.buildManual();
+    await use(studio);
   },
 });
 
@@ -70,72 +69,67 @@ test.describe('Configuration - Deals', () => {
 
       test('creates a deal successfully', async ({ page }) => {
         const dealsPage = await navigateToDeals(page);
-        const branchSelection = await dealsPage.openCreateDealForm();
+        const builder = await dealsPage.openCreateDealForm();
+        const studio = await builder.buildManual();
 
-        const dealData = validDeal();
-
-        const buildOptions = await branchSelection.next();
-        const detailsStep = await buildOptions.buildManual();
-        await detailsStep.fill(dealData);
-
-        const designStep = await detailsStep.next();
-        await designStep.submitAndExpectSuccess();
+        await studio.fill(validDeal());
+        await studio.submitAndExpectSuccess();
       });
     });
   }
 
   for (const role of DEAL_CREATOR_ROLES) {
     formTest.describe(`${role.label} validation ${role.tag}`, () => {
-      formTest('rejects an empty deal title', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, title: '' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectTitleValidationError();
+      formTest('rejects an empty deal title', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, title: '' });
+        await studio.submitExpectingValidationError();
+        await studio.expectTitleValidationError();
       });
 
-      formTest('rejects a deal title over 50 characters', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, title: 'a'.repeat(51) });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectTitleValidationError();
+      formTest('rejects a deal title over 50 characters', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, title: 'a'.repeat(51) });
+        await studio.submitExpectingValidationError();
+        await studio.expectTitleValidationError();
       });
 
-      formTest('rejects an empty description', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, desc: '' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectDescriptionValidationError();
+      formTest('rejects an empty description', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, desc: '' });
+        await studio.submitExpectingValidationError();
+        await studio.expectDescriptionValidationError();
       });
 
-      formTest('rejects a description over 100 characters', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, desc: 'a'.repeat(101) });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectDescriptionValidationError();
+      formTest('rejects a description over 100 characters', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, desc: 'a'.repeat(101) });
+        await studio.submitExpectingValidationError();
+        await studio.expectDescriptionValidationError();
       });
 
-      formTest('rejects an empty start date', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, startDate: '' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectStartDateValidationError();
+      formTest('rejects an empty start date', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, startDate: '' });
+        await studio.submitExpectingValidationError();
+        await studio.expectStartDateValidationError();
       });
 
-      formTest('rejects an empty end date', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, endDate: '' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectEndDateValidationError();
+      formTest('rejects an empty end date', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, endDate: '' });
+        await studio.submitExpectingValidationError();
+        await studio.expectEndDateValidationError();
       });
 
-      formTest('rejects an end date before the start date', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill(
+      formTest('rejects an end date before the start date', async ({ dealData, studio }) => {
+        await studio.fill(
           {
             ...dealData,
             startDate: futureDate(30),
             endDate: futureDate(7),
           },
         );
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectEndDateBeforeStartError();
+        await studio.submitExpectingValidationError();
+        await studio.expectEndDateValidationError();
       });
 
-      formTest('rejects an end time before the start time', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill(
+      formTest('rejects an end time before the start time', async ({ dealData, studio }) => {
+        await studio.fill(
           {
             ...dealData,
             startDate: dealData.startDate,
@@ -146,51 +140,51 @@ test.describe('Configuration - Deals', () => {
             endMin: '00',
           },
         );
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectEndTimeBeforeStartError();
+        await studio.submitExpectingValidationError();
+        await studio.expectEndDateValidationError();
       });
 
-      formTest('rejects a zero deal value', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, dealValue: '0' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectDealValueValidationError();
+      formTest('rejects a zero deal value', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, dealValue: '0' });
+        await studio.submitExpectingValidationError();
+        await studio.expectDealValueValidationError();
       });
 
-      formTest('rejects an empty deal value', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, dealValue: '' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectDealValueValidationError();
+      formTest('rejects an empty deal value', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, dealValue: '' });
+        await studio.submitExpectingValidationError();
+        await studio.expectDealValueValidationError();
       });
 
-      formTest('rejects a negative deal value', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, dealValue: '-1' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectDealValueValidationError();
+      formTest('rejects a negative deal value', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, dealValue: '-1' });
+        await studio.submitExpectingValidationError();
+        await studio.expectDealValueValidationError();
       });
 
-      formTest('rejects a zero quantity', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, currentQuantity: '0' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectQuantityValidationError();
+      formTest('rejects a zero quantity', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, currentQuantity: '0' });
+        await studio.submitExpectingValidationError();
+        await studio.expectQuantityValidationError();
       });
 
-      formTest('rejects a negative quantity', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, currentQuantity: '-1' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectQuantityValidationError();
+      formTest('rejects a negative quantity', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, currentQuantity: '-1' });
+        await studio.submitExpectingValidationError();
+        await studio.expectQuantityValidationError();
       });
 
-      formTest('rejects empty terms and conditions', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, terms: undefined });
-        await detailsStep.clearTermsAndConditions();
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectTermsRequiredError();
+      formTest('rejects empty terms and conditions', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, terms: undefined });
+        await studio.clearTermsAndConditions();
+        await studio.submitExpectingValidationError();
+        await studio.expectTermsRequiredError();
       });
 
-      formTest('rejects a deal value percentage over 100', async ({ dealData, detailsStep }) => {
-        await detailsStep.fill({ ...dealData, dealValue: '101' });
-        await detailsStep.nextExpectingValidationError();
-        await detailsStep.expectPercentageDealValueValidationError();
+      formTest('rejects a deal value percentage over 100', async ({ dealData, studio }) => {
+        await studio.fill({ ...dealData, dealValue: '101' });
+        await studio.submitExpectingValidationError();
+        await studio.expectDealValueValidationError();
       });
     });
   }
