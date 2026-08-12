@@ -18,8 +18,11 @@ navigation or auth failure).
 Group failures that share a root cause. One page-object selector usually breaks
 many specs across several role projects — that is one fix, not twenty.
 
-Note which failures passed on the retry (`--retries=1` is on). A test that
-failed then passed is a flake, not a break.
+Retries are off (`retries: 0`), so `results.json` gives you no failed-then-passed
+signal to separate a flake from a hard break. You must produce that signal
+yourself: re-run a suspected flake's spec, scoped to the one affected role
+project, and see whether it reproduces. Do not classify anything as a flake on
+the shape of the error alone.
 
 ## 2. Classify before you touch anything
 
@@ -33,7 +36,7 @@ for a user. → Fix the test.
 test is correct and is doing its job. → Do NOT touch the test. Record it.
 
 **C — Flake or infrastructure.** Auth/global-setup failure, UAT downtime, a race
-the retry passed on. → Do NOT touch the test. Record it.
+that does not reproduce on a scoped re-run. → Do NOT touch the test. Record it.
 
 Your evidence is the live application. Use the Playwright MCP browser: navigate
 to the failing screen on UAT and take an accessibility snapshot.
@@ -80,12 +83,18 @@ npx playwright test tests/specs/config/deals.spec.ts --project=merchant-admin
 Iterate until they pass or you have exhausted a reasonable number of attempts.
 If a fix will not converge, revert that file and reclassify the failure as B.
 
+A fix you could not verify is not a fix. If verification cannot run at all, say
+so explicitly in the PR body rather than presenting the change as confirmed.
+
 Never re-run the full suite to verify — it takes an hour and hammers shared UAT.
 
 ## 5. Open the PR
 
 Branch `test-fix/<run-id>` off the current commit. Commit only files under
 `tests/`. Push and open the PR with the `gh` CLI.
+
+Always pass `--base main`. The run may have been dispatched from a non-default
+branch, and `gh` would otherwise target that branch instead of `main`.
 
 Never commit: `.env`, `tests/setup/.auth/`, `tests/setup/traces/`,
 `playwright-report/`, `test-results/`, `results.json`. Never weaken

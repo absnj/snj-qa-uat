@@ -12,6 +12,38 @@
 # `gh` CLI (preinstalled on GitHub runners) with the workflow's GITHUB_TOKEN to
 # push its branch and open the PR.
 
+# Sandbox policy. `safety-strategy` in the workflow only drops the Codex
+# process's sudo; it grants the sandbox nothing. With neither this profile nor a
+# `sandbox` input, codex-action falls back to the legacy `workspace-write`
+# sandbox, whose two defaults silently killed step 5 of the prompt: `.git` is
+# read-only (no commit possible) and there is no network (`api.github.com`
+# unreachable, so no push and no `gh pr create`). The agent triaged correctly
+# and then threw the fix away every run.
+#
+# Do NOT add `sandbox_mode` anywhere in this file: Codex treats any legacy
+# sandbox setting as opting out of permission profiles, which would restore the
+# broken behaviour.
+default_permissions = "triage"
+
+[permissions.triage]
+description = "CI triage agent: edit tests, verify against UAT, open a PR"
+# Extend rather than start from scratch so the baseline protections carry
+# forward — notably that .codex/ stays read-only.
+extends = ":workspace"
+
+# Narrow re-grant of the one safeguard that blocks the PR. `tests/` is already
+# writable under :workspace; this only adds the commit itself.
+[permissions.triage.filesystem.":workspace_roots"]
+".git" = "write"
+
+# No domain allowlist. github.com and api.github.com would be easy to pin, but
+# the agent also has to reach UAT to verify a fix, and that host comes from the
+# UAT_URL secret — it cannot be committed to a list in this file. An allowlist
+# missing the UAT host would fail step 4 exactly the way the missing network
+# grant failed step 5.
+[permissions.triage.network]
+enabled = true
+
 [mcp_servers.playwright]
 command = "npx"
 args = [

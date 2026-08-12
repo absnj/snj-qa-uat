@@ -22,10 +22,9 @@ export type DealDetailsData = {
 };
 
 /**
- * The manual deal builder is a single "deal editor and design studio" page:
- * Details, Designs, Brand and Finish are sections of one form, and "Create
- * Deal" validates and submits the whole thing. There is no longer a separate
- * details step, design step, or "Next" button.
+ * The manual deal builder is a single "Deal editor" page. Its fields are
+ * grouped under Content, Schedule & Offer, and Terms tool tabs, and "Create
+ * Deal" validates and submits the whole form.
  *
  * Fields carry no id, aria-label or test id, so they are located through the
  * one stable contract the markup does offer: each field sits in a `.form-group`
@@ -34,7 +33,11 @@ export type DealDetailsData = {
  */
 export class DealStudio extends ConfigBasePage {
     private readonly studio: Locator;
+    private readonly tools: Locator;
     private readonly fieldGroups: Locator;
+    private readonly contentTab: Locator;
+    private readonly scheduleOfferTab: Locator;
+    private readonly termsTab: Locator;
 
     private readonly dealTitleInput: Locator;
     private readonly descriptionInput: Locator;
@@ -65,27 +68,28 @@ export class DealStudio extends ConfigBasePage {
 
     constructor(page: Page) {
         super(page);
-        this.studio = this.page.getByRole('region', { name: 'Deal editor and design studio' });
+        this.studio = this.page.getByRole('region', { name: 'Deal editor' });
+        this.tools = this.studio.getByRole('complementary');
         this.fieldGroups = this.studio.locator('.form-group');
+        this.contentTab = this.tools.getByRole('button', { name: 'Content', exact: true });
+        this.scheduleOfferTab = this.tools.getByRole('button', { name: 'Schedule & Offer', exact: true });
+        this.termsTab = this.tools.getByRole('button', { name: 'Terms', exact: true });
 
         this.dealTitleInput = this.field('Deal title').getByRole('textbox');
         this.descriptionInput = this.field('Description').getByRole('textbox');
         this.fullDescriptionEditor = this.field('Full description').locator('.tiptap');
-        this.keywordsInput = this.studio.getByRole('textbox', { name: /Type keywords/ });
-        this.keywordLimitMessage = this.studio.getByText('Maximum 7 keywords allowed');
+        this.keywordsInput = this.tools.getByRole('textbox', { name: /Type keywords/ });
+        this.keywordLimitMessage = this.tools.getByText('Maximum 7 keywords allowed');
 
-        this.allBranchesCheckbox = this.studio.getByRole('checkbox', { name: 'All branches' });
+        this.allBranchesCheckbox = this.tools.getByRole('checkbox', { name: 'All branches' });
 
-        this.noExpiryToggle = this.studio.getByRole('switch', { name: 'Make deal indefinite' });
-        // Start/end date and time share a placeholder-derived accessible name and
-        // have no per-field label association. The form renders start before end
-        // in both pairs, which is the visible ordering users rely on too.
-        this.startDateInput = this.studio.getByRole('textbox', { name: 'YYYY-MM-DD' }).first();
-        this.endDateInput = this.studio.getByRole('textbox', { name: 'YYYY-MM-DD' }).nth(1);
-        this.startTimeInput = this.studio.getByRole('textbox', { name: 'Select time' }).first();
-        this.endTimeInput = this.studio.getByRole('textbox', { name: 'Select time' }).nth(1);
+        this.noExpiryToggle = this.tools.getByRole('switch', { name: 'Make deal indefinite' });
+        this.startDateInput = this.field('Start date').getByRole('textbox');
+        this.endDateInput = this.field('End date').getByRole('textbox');
+        this.startTimeInput = this.field('Start time').getByRole('textbox');
+        this.endTimeInput = this.field('End time').getByRole('textbox');
 
-        this.dealValueTypeSelect = this.field('Deal value').getByRole('combobox').first();
+        this.dealValueTypeSelect = this.field('Deal value').getByRole('combobox');
         this.dealValueInput = this.field('Deal value').getByRole('spinbutton');
         this.currencySelect = this.field('Currency').getByRole('combobox');
         this.minimumSpendInput = this.field('Minimum spend').getByRole('spinbutton');
@@ -97,7 +101,7 @@ export class DealStudio extends ConfigBasePage {
         this.currentQuantityInput = this.field('Current quantity').getByRole('spinbutton');
 
         this.termsEditor = this.field('Terms content').locator('.tiptap');
-        this.resetTermsButton = this.studio.getByRole('button', { name: 'Reset to auto-generated' });
+        this.resetTermsButton = this.tools.getByRole('button', { name: 'Reset to auto-generated' });
 
         this.validationAlert = this.page.getByRole('alert', { name: 'Please fix the following fields' });
         this.createDealButton = this.page.getByRole('button', { name: 'Create Deal' });
@@ -116,15 +120,18 @@ export class DealStudio extends ConfigBasePage {
     override async waitForReady(): Promise<void> {
         await super.waitForReady();
         await expect(this.studio).toBeVisible();
+        await this.contentTab.click();
         await expect(this.dealTitleInput).toBeVisible();
     }
 
     async fill(data: DealDetailsData): Promise<void> {
+        await this.contentTab.click();
         await this.fillDealTitle(data.title);
         await this.fillDescription(data.desc);
         await this.fillFullDescription(data.fullDesc);
         await this.addKeywords(data.keywords);
 
+        await this.scheduleOfferTab.click();
         await this.fillStartDate(data.startDate);
         await this.fillEndDate(data.endDate);
         await this.fillStartTime(data.startHour, data.startMin);
@@ -277,16 +284,19 @@ export class DealStudio extends ConfigBasePage {
     }
 
     async clearTermsAndConditions(): Promise<void> {
+        await this.termsTab.click();
         await this.termsEditor.click();
         await this.page.keyboard.press('ControlOrMeta+A');
         await this.page.keyboard.press('Backspace');
     }
 
     async resetTermsAndConditions(): Promise<void> {
+        await this.termsTab.click();
         await this.resetTermsButton.click();
     }
 
     private async fillTermsAndConditions(value: string): Promise<void> {
+        await this.termsTab.click();
         await this.termsEditor.fill(value);
     }
 }
