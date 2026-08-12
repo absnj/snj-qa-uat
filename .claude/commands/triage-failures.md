@@ -74,17 +74,11 @@ do not "improve" tests that passed.
 
 ## 4. Verify
 
-Re-run only the affected specs and role projects. Chromium cannot nest its own
-sandbox inside the one you are running in, so every re-run — here and the flake
-reproductions in step 1 — needs `PW_DISABLE_CHROMIUM_SANDBOX=1`:
+Re-run only the affected specs and role projects, e.g.:
 
 ```
-PW_DISABLE_CHROMIUM_SANDBOX=1 npx playwright test tests/specs/config/deals.spec.ts --project=merchant-admin
+npx playwright test tests/specs/config/deals.spec.ts --project=merchant-admin
 ```
-
-Without it Chromium dies before the first test runs. If you see that, it is your
-own environment, not a failure of the test or the app — do not reclassify a
-failure on the strength of a run that never started.
 
 Iterate until they pass or you have exhausted a reasonable number of attempts.
 If a fix will not converge, revert that file and reclassify the failure as B.
@@ -98,6 +92,9 @@ Never re-run the full suite to verify — it takes an hour and hammers shared UA
 
 Branch `test-fix/<run-id>` off the current commit. Commit only files under
 `tests/`. Push and open the PR with the `gh` CLI.
+
+Always pass `--base main`. The run may have been dispatched from a non-default
+branch, and `gh` would otherwise target that branch instead of `main`.
 
 Never commit: `.env`, `tests/setup/.auth/`, `tests/setup/traces/`,
 `playwright-report/`, `test-results/`, `results.json`. Never weaken
