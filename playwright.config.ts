@@ -37,6 +37,13 @@ export default defineConfig({
      * booking", "Change status") collapse to icon-only and lose their
      * accessible name, breaking getByRole name-based locators. */
     viewport: { width: 1536, height: 900 },
+    /* The CI triage agent runs its verification re-runs inside Codex's
+     * bubblewrap sandbox, where Chromium cannot nest its own sandbox and dies
+     * before the first test executes. Opt out only for those runs — the suite
+     * itself, and every local run, keeps the sandbox. */
+    launchOptions: {
+      chromiumSandbox: process.env.PW_DISABLE_CHROMIUM_SANDBOX !== '1',
+    },
   },
 
   /* Configure projects for major browsers */

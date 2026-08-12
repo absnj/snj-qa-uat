@@ -146,11 +146,25 @@ jobs:
         model: gpt-5.6-sol
         effort: high
         prompt-file: .claude/commands/triage-failures.md
-        # .codex/config.toml supplies the Playwright MCP server.
+        # .codex/config.toml supplies the Playwright MCP server and the `triage`
+        # permission profile.
         codex-home: .codex
-        # drop-sudo (the default) still permits file edits, `npx playwright
-        # test`, git, and gh. read-only would block the fixes entirely.
+        # Two independent knobs, easily confused:
+        #
+        # safety-strategy governs the privileges of the Codex *process*.
+        # drop-sudo revokes the runner user's sudo before Codex starts and is
+        # what keeps OPENAI_API_KEY out of reach; it grants the sandbox nothing.
+        #
+        # permission-profile governs the *sandbox* — filesystem and network.
+        # Omitting it falls back to the legacy workspace-write sandbox, which
+        # leaves .git read-only and blocks all network, so the agent could edit
+        # tests but never commit, push, or open a PR. See .codex/config.toml.
         safety-strategy: drop-sudo
+        permission-profile: triage
+        # Permission profiles are beta and require Codex CLI >= 0.138.0.
+        # Unpinned, a rollback to an older CLI silently reverts to the legacy
+        # sandbox and the agent goes quiet again.
+        codex-version: 0.138.0
 
     - name: Remove .env
       if: always()
