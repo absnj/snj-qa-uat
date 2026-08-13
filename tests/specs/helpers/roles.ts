@@ -99,7 +99,7 @@ export const NJOYBOOK_LIMITED_ROLES = [
 export async function gotoUat(page: Page): Promise<void> {
   await page.goto(process.env.UAT_URL!);
 }
-// specs/Auth/helpers/roles.ts
+/** The only place `.env` role credentials are read. */
 export function getCredentials(normalized: string) {
   const key = normalized.toUpperCase();
   return {

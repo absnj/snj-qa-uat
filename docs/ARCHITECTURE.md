@@ -158,6 +158,8 @@ This is necessary only because these tests read back branch-level config they th
 
 This is a second, mostly-independent testing surface: no browser, no `storageState`, HTTP calls straight to the backend.
 
+> **The specs using this layer are all currently skipped** (`describe.skip`, `SKIP(api-rate-limit)`) — UAT throttles `POST /v2/auth/sign-in` and every API test signs in first. The layer described below is real and works; only the specs are parked. See [README's Known Gaps](../README.md#known-gaps-and-in-progress-work). The likeliest unblock — a worker-scoped fixture that signs in once per role and shares the token — lands in `apiFixtures.ts`, described at the end of this section.
+
 ### `ApiClient` (`tests/core/ApiClient.ts`)
 
 Abstract base every concrete API client extends. It:

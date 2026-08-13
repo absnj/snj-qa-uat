@@ -37,7 +37,7 @@ Note the existing `superuser` credential in `.env.example` has **not** done step
    ```
    and add the module name to the `module` choice-input's `options` list. The workflow does **not** auto-discover spec files — a spec that exists but has no `case` entry can only be run by triggering the workflow with `module: all` (or from a developer machine directly), not by name.
 4. If the new module has shared setup/teardown (navigating to a config screen, resetting shared state), model it as a `test.extend` fixture in the spec file — see `ARCHITECTURE.md`'s [Fixture patterns](./ARCHITECTURE.md#fixture-patterns) for the two established shapes.
-5. Add a section to `README.md`'s "Test Coverage" inventory summarizing what the new spec covers, mirroring the existing per-file sections.
+5. Run `npm run docs:coverage` to regenerate [`COVERAGE.md`](./COVERAGE.md), and commit the result — it is generated from `playwright test --list`, so a new spec is invisible in the docs until you do. If the new spec is a whole feature area, also add a one-line row to `README.md`'s orientation table (that table carries no counts, so it needs touching only when a *file* is added, not when a case is).
 
 ## Playbook: a new API endpoint needs coverage
 
@@ -62,6 +62,7 @@ These look like regressions but are properties of the shared, stateful UAT envir
 - **"Set to Default" on the Rules tab didn't fully reset a NJoyBook test.** It only resets the Rules tab — it does not reset Time Slots, per-staff toggles, or delete created bookings. A fixture relying on it alone is not fully isolated for those other surfaces.
 - **A public-booking-confirmation test fails at "Confirm booking" with a reCAPTCHA error.** Known, tracked regression (repo-wide as of the last verification) — affects every `Rules - Auto-Confirm` and `End-to-End Booking` test in both NJoyBook spec files, all currently `test.fixme`'d with the same `TODO(recaptcha-regression)` comment. Don't debug this as a new issue; check whether it's already the tracked one first.
 - **Two NJoyBook branches behave differently on purpose.** "Hajime - Thomson Plaza" is Branch mode (capacity-based, no staff); "Hajime - My Village" is Staff mode (specialist-based). Don't assume a fix or a test pattern transfers between the two without checking which mode it targets.
+- **An API test fails with a 429, and a different one fails next run.** UAT rate-limits `POST /v2/auth/sign-in` per window, and every API test signs in first. This is why all three `tests/specs/api/` specs are `describe.skip`'d. Individual tests pass in isolation and `--workers=1` doesn't help (the limit is requests-per-window, not concurrency). Don't add a sleep — cut sign-in volume with a shared per-role token instead.
 - **Traces, screenshots, and the HTML report can contain sensitive UAT data.** Don't paste report contents or trace files into issues, Slack, or logs. They're gitignored for the same reason — don't weaken that.
 
 ## Known-empty / placeholder files — not broken, just unbuilt
@@ -70,3 +71,5 @@ These look like regressions but are properties of the shared, stateful UAT envir
 - The `superuser` Playwright project — credentials exist in `.env.example`, but no project or tests exist yet (`playwright.config.ts` has an explicit `TODO`).
 - `HomePage.ts`'s `goToTrack`/`goToFinance`/`goToMessage` — commented out pending those modules being built; the commented code is the template to uncomment once the destination page object exists.
 - Two `test.skip`s in `create-user.spec.ts` (duplicate-email validation, no-role-selected validation) — blocked on either a reusable form-reopen flow or a UI decision, not forgotten.
+- All three `tests/specs/api/` specs — written and reviewable, `describe.skip`'d on a UAT sign-in rate limit (see Troubleshooting above). Don't mistake them for stubs.
+- The `merchant-success-staff` project — role, credentials, storage state and project all exist, but no spec tags `@merchant-success-staff`, so it runs zero tests. Needs a decision on which CRM screens that role owns.

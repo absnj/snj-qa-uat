@@ -15,6 +15,7 @@ on:
           - branch-staff
           - sales-agent
           - merchant-success-staff
+          - api
       module:
         description: 'Test module to run'
         required: true
@@ -29,6 +30,9 @@ on:
           - njoybook-staff
           - support
           - user-mgmt
+          - crm-contacts
+          - crm-capture-lead
+          - api
   # Verifies changes to test code — including the PRs the triage agent opens.
   # Scoped to merchant-admin so a PR costs minutes, not an hour, on shared UAT.
   pull_request:
@@ -49,6 +53,11 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # The triage prompt's fallback path: when every failure is a suspected
+      # regression or a flake there is no PR to open, so the agent files an
+      # issue instead. Without this the report is silently lost — the token
+      # answers "Resource not accessible by integration".
+      issues: write
     env:
       # inputs.* are empty on pull_request — fall back to a fast, safe scope.
       PROJECT: ${{ inputs.project || 'merchant-admin' }}
@@ -108,6 +117,12 @@ jobs:
           njoybook-staff) SPEC="tests/specs/config/njoybook-staff.spec.ts" ;;
           support) SPEC="tests/specs/support/support.spec.ts" ;;
           user-mgmt) SPEC="tests/specs/user-mgmt/create-user.spec.ts" ;;
+          crm-contacts) SPEC="tests/specs/track/crm-contacts.spec.ts" ;;
+          crm-capture-lead) SPEC="tests/specs/track/crm-capture-lead.spec.ts" ;;
+          # Path prefix, not a single file — the three api specs share the `api`
+          # project. Every one is currently describe.skip'd, so this reports
+          # zero tests until they are unskipped.
+          api) SPEC="tests/specs/api" ;;
           *) echo "Unknown module: $MODULE"; exit 1 ;;
         esac
 

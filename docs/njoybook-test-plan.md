@@ -1,5 +1,10 @@
 # NJoyBook Test Plan — Configuration ▸ Branch ▸ NJoyBook
 
+> **Backlog, not current state.** This is the originally scoped coverage, written before the
+> specs existed. Much of it is now implemented; some of it was found to be unrunnable. For what
+> actually runs today, see [README's Test Coverage](../README.md#test-coverage) — use this list
+> only to pick the next scenario to write.
+
 The module has 6 tabs: **Bookings, Guest History, Rules, Time Slots, Blockouts, Booking Page**.
 Tags are in the form `nJoyBook:<test name>`.
 
@@ -76,5 +81,8 @@ Tags are in the form `nJoyBook:<test name>`.
   per CLAUDE.md they need a fixture that restores state via "Set to Default" or
   captured-and-restored settings, or must use unique data. Flag blockouts-* and
   rules-save-* as state-mutating.
-- Crawl was done on **Hajime – Thomson Plaza**. Memory notes the njoybook test
-  env is the **My Village** branch; confirm which branch to target before scaffolding.
+- Crawl was done on **Hajime – Thomson Plaza**. This is now settled: both branches
+  are targeted, by two different specs. `njoybook-general.spec.ts` covers Thomson
+  Plaza (Branch mode, capacity-based) and `njoybook-staff.spec.ts` covers My Village
+  (Staff mode, specialist-based). Pick the spec matching the booking mode your
+  scenario needs — behaviour does not transfer between the two.

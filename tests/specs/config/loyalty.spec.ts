@@ -83,6 +83,15 @@ test.describe('Configuration - Loyalty Programs', () => {
       formTest(
         'creates a visit-based program with five rewards',
         async ({ rewardData, studio }) => {
+          // Filling five rewards is ~5x the field interactions of any other
+          // case in this file and does not fit the default 75s budget under CI
+          // load (8 workers on a 2-core runner). Run 31613689424 timed out on
+          // this test in three projects at three different steps — reward #5's
+          // Quantity field, and the submit assertion twice — which is the
+          // signature of an exhausted clock, not a broken selector. Scoped
+          // reruns pass because they carry less parallel contention.
+          formTest.setTimeout(150_000);
+
           await studio.fillRewards(rewardData, MAXIMUM_REWARDS);
 
           await studio.submitAndExpectSuccess();
