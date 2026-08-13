@@ -63,10 +63,10 @@ test.describe('Track - CRM Contacts', () => {
 
         test('shows the CRM contact overview metrics', async ({ page }) => {
           const overview = await goToCrm(page);
-          await overview.expectMetricVisible('Avg. close/win time');
-          await overview.expectMetricVisible('Close won contacts');
-          await overview.expectMetricVisible('Overdue contacts');
-          await overview.expectMetricVisible('High/Urgent pipeline');
+          await overview.expectMetricVisible('Merchant Acquisition Status');
+          await overview.expectMetricVisible('Merchant Acquisition Gauge');
+          await overview.expectMetricVisible('Merchant Acquisition Velocity');
+          await overview.expectMetricVisible('Source of Signed Merchant Lead');
         });
 
         test('shows every pipeline status column in kanban view', async ({ page }) => {

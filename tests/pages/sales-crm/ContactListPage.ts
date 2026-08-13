@@ -36,20 +36,20 @@ export type ContactView = 'List' | 'Kanban' | 'Map';
 export type Involvement = 'Sales' | 'Merchant Success' | 'Both';
 
 /**
- * Which of the three contact lists this instance is pointed at. They are the
- * same "Contact Management" component at different scopes, so one class serves
- * all three; only the route and a couple of filters differ.
+ * Which contact scope this instance is pointed at. My Contacts has its own
+ * route; assigned and unassigned contacts share All Contacts and differ by the
+ * Assignment filter.
  */
 export type ContactScope = 'my' | 'assigned' | 'unassigned';
 
 const SCOPE_PATHS: Record<ContactScope, string> = {
   my: '/track/crm/contact/my-contacts',
-  assigned: '/track/crm/contact/assigned-contacts',
-  unassigned: '/track/crm/contact/unassigned-contacts',
+  assigned: '/track/crm/contact/all-contacts',
+  unassigned: '/track/crm/contact/all-contacts',
 };
 
 /**
- * Track → Merchant Relationship → My / Assigned / Unassigned Contacts.
+ * Track → Merchant Relationship → My / All Contacts.
  *
  * Every scope supports `?view=list|kanban|map`; kanban is the default. Only
  * contacts the signed-in agent owns can actually be opened — see
@@ -76,17 +76,19 @@ export class ContactListPage extends SalesCrmBasePage {
   private readonly typeFilter: Locator;
   private readonly lastContactedFilter: Locator;
   private readonly involvementFilter: Locator;
+  private readonly assignmentFilter: Locator;
   private readonly salesOwnerFilter: Locator;
   private readonly merchantSuccessOwnerFilter: Locator;
 
-  /** List view: each `<tr>` carries `role=button` and opens the contact. */
+  /** List-view data rows, retained for count assertions. */
   private readonly rows: Locator;
-  /** The rows (list) and cards (kanban) that open a contact. */
-  private readonly contactTargets: Locator;
+  private readonly contactRows: Locator;
   /** Map view: one marker button per plotted contact. */
   private readonly mapMarkers: Locator;
   private readonly table: Locator;
   private readonly mapRegion: Locator;
+  private readonly rowActionsDialog: Locator;
+  private readonly infoActionButton: Locator;
 
   private readonly backToStatusesButton: Locator;
   private readonly paginationSummary: Locator;
@@ -114,14 +116,17 @@ export class ContactListPage extends SalesCrmBasePage {
     this.typeFilter = this.selectTrigger('Filter by Type');
     this.lastContactedFilter = this.formGroup('Filter by Last Contacted').getByRole('combobox');
     this.involvementFilter = this.formGroup('Filter by Involvement').getByRole('combobox');
+    this.assignmentFilter = this.selectTrigger('Filter by Assignment');
     this.salesOwnerFilter = this.selectTrigger('Filter by Sales');
     this.merchantSuccessOwnerFilter = this.selectTrigger('Filter by Merchant Success');
 
-    this.rows = this.page.locator('table tbody tr');
-    this.contactTargets = this.page.getByRole('button');
-    this.mapMarkers = this.page.getByRole('button', { name: /^View .+ on map$/ });
     this.table = this.page.getByRole('table');
+    this.rows = this.page.locator('table tbody tr');
+    this.contactRows = this.table.getByRole('row');
+    this.mapMarkers = this.page.getByRole('button', { name: /^View .+ on map$/ });
     this.mapRegion = this.page.getByRole('region', { name: 'Map' });
+    this.rowActionsDialog = this.page.getByRole('dialog');
+    this.infoActionButton = this.rowActionsDialog.getByRole('button', { name: 'Info', exact: true });
 
     this.backToStatusesButton = this.page.getByRole('button', { name: 'Back to statuses' });
     this.paginationSummary = this.page
@@ -135,6 +140,8 @@ export class ContactListPage extends SalesCrmBasePage {
   async goto(view: ContactView = 'Kanban'): Promise<void> {
     await this.page.goto(`${SCOPE_PATHS[this.scope]}?view=${view.toLowerCase()}`);
     await this.waitForReady();
+    if (this.scope === 'assigned') await this.chooseSelectOption(this.assignmentFilter, 'Assigned');
+    if (this.scope === 'unassigned') await this.chooseSelectOption(this.assignmentFilter, 'Unassigned');
   }
 
   override async waitForReady(): Promise<void> {
@@ -147,12 +154,12 @@ export class ContactListPage extends SalesCrmBasePage {
   // ---------------------------------------------------------------------------
 
   /**
-   * A contact's row (list view) or card (kanban view). Both expose
-   * `role=button` with the merchant name in their text, so one factory serves
-   * either view.
+   * A contact's table row, identified by its exact merchant-name cell.
    */
   private contact(merchantName: string): Locator {
-    return this.contactTargets.filter({ hasText: merchantName });
+    return this.contactRows.filter({
+      has: this.page.getByRole('cell', { name: merchantName, exact: true }),
+    });
   }
 
   /** Kanban columns are `<article aria-label="<status>">`. */
@@ -266,16 +273,11 @@ export class ContactListPage extends SalesCrmBasePage {
   }
 
   /**
-   * Clicking a contact the agent does not own is refused: an Access Denied
-   * toast appears and the list stays put.
-   *
-   * There is deliberately no `openContact()` counterpart yet — nothing in the
-   * read-only suite owns a contact to open, and the detail page has no page
-   * object. Add both together when an owned-contact scenario lands.
+   * Contacts the agent does not own expose a disabled Info action, so the
+   * detail page cannot be opened and the list stays put.
    */
   async openContactExpectingAccessDenied(merchantName: string): Promise<void> {
-    await this.contact(merchantName).click();
-    await expect(this.accessDeniedAlert).toBeVisible();
+    await this.expectInfoActionDisabled(merchantName);
     await expect(this.heading).toBeVisible();
   }
 
@@ -344,7 +346,8 @@ export class ContactListPage extends SalesCrmBasePage {
   }
 
   async expectInfoActionDisabled(merchantName: string): Promise<void> {
-    await expect(this.contact(merchantName).getByRole('button', { name: 'Info' })).toBeDisabled();
+    await this.contact(merchantName).getByRole('button', { name: 'Open row actions' }).click();
+    await expect(this.infoActionButton).toBeDisabled();
   }
 
   async expectRowCount(count: number): Promise<void> {

@@ -1,6 +1,7 @@
 // pages/Home/HomePage.ts
 import { Page, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
+import { FaqPage } from '../support/FaqPage';
 import { MyTicketsPage } from '../support/MyTicketsPage';
 import { MyDetailsPage } from '../user-mgmt/my-details/MyDetailsPage';
 import { ConfigOverview } from '../configuration/overview/ConfigOverview'
@@ -64,9 +65,9 @@ export class HomePage extends BasePage {
 
   async goToSupport(): Promise<MyTicketsPage> {
     await this.supportCard.click();
-    const support = new MyTicketsPage(this.page);
-    await support.waitForReady();
-    return support;
+    const faq = new FaqPage(this.page);
+    await faq.waitForReady();
+    return faq.goToMyTickets();
   }
 
   // async goToMessage(): Promise<MessagePage> {
