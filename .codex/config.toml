@@ -25,6 +25,20 @@
 # broken behaviour.
 default_permissions = "triage"
 
+# Every MCP tool call raises an approval elicitation, separately from the sandbox
+# and the permission profile above. `codex exec` runs unattended with
+# `approval: never`, so the default reviewer (`user`) has nobody to ask and
+# auto-resolves each elicitation with `decision: Cancel`. That surfaces as
+# `user cancelled MCP tool call` — a misleading string, since there is no user —
+# and it killed step 2 of the prompt: the agent could never open a UAT screen,
+# so it had no live accessibility snapshot to classify drift against.
+#
+# `auto_review` resolves elicitations without a human. It is not a sandbox
+# escape: the profile above still bounds the filesystem and network.
+# Valid values are `user`, `auto_review`, `guardian_subagent` (verified against
+# Codex CLI 0.138.0, the version the workflow pins).
+approvals_reviewer = "auto_review"
+
 [permissions.triage]
 description = "CI triage agent: edit tests, verify against UAT, open a PR"
 # Extend rather than start from scratch so the baseline protections carry
@@ -44,11 +58,21 @@ extends = ":workspace"
 [permissions.triage.network]
 enabled = true
 
+# Pinned, not `@latest`. The MCP server bundles its own playwright-core and
+# launches the browser build that version expects, while CI installs browsers for
+# the `playwright` version in package.json. `@latest` currently resolves to
+# playwright-core 1.63, which looks for chromium-1237 / chrome-for-testing —
+# a build `npx playwright install` never puts down for 1.60. Every browser_* call
+# then fails with "Browser \"chrome-for-testing\" is not installed".
+#
+# 0.0.74 is the last release on playwright-core 1.60, matching package.json.
+# Bump this and `playwright` in the same PR: package.json's caret means a future
+# 1.61 resolution breaks the pairing again, silently and only inside triage.
 [mcp_servers.playwright]
 command = "npx"
 args = [
   "-y",
-  "@playwright/mcp@latest",
+  "@playwright/mcp@0.0.74",
   "--browser=chromium",
   "--headless",
   "--isolated",

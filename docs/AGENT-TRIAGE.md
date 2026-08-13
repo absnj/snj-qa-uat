@@ -49,6 +49,11 @@ creates two places for the same configuration to drift. Two guards:
   enforces this. If the CI copy loses `--viewport-size=1536,900` or the
   `--storage-state` path, triage keeps running and silently produces bad
   locators. Change both in the same PR.
+- **`@playwright/mcp` is pinned, and pinned to `playwright` in `package.json`.**
+  The MCP server launches the browser build its own bundled playwright-core
+  expects; CI installs browsers for the version in `package.json`. `@latest`
+  drifts ahead and every browser call fails with `Browser "chrome-for-testing"
+  is not installed`. `0.0.74` pairs with `1.60`. Bump the two together.
 
 The prompt lives under `.claude/commands/` so you can also run
 `/triage-failures` locally in Claude Code against a failed run's artifacts to
