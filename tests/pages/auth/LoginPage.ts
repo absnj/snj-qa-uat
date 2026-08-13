@@ -16,7 +16,23 @@ export class LoginPage extends BasePage {
     super(page);
   }
 
+  /**
+   * No `super.waitForReady()`: the ShopNJoy image it waits to disappear is
+   * permanent branding here, not a preloader.
+   *
+   * The form paints before Nuxt hydrates, and `Sign In` is a real
+   * `type="submit"` in a `<form method="post">` — clicking too early does a
+   * native POST to /login, discarding the credentials and issuing no
+   * `/auth/sign-in` at all. `__vue_app__` appears once Vue has mounted and the
+   * submit handler can `preventDefault()`. An implementation detail, but the
+   * two states are visually identical so there is nothing else to wait on.
+   */
   override async waitForReady(): Promise<void> {
+    await this.page.waitForFunction(
+      () => Boolean((document.getElementById('__nuxt') as { __vue_app__?: unknown } | null)?.__vue_app__),
+      null,
+      { timeout: 30_000 },
+    );
     await expect(this.emailField).toBeVisible();
   }
 
@@ -34,9 +50,26 @@ export class LoginPage extends BasePage {
     await this.passwordField.fill(password);
   }
 
+  /**
+   * Requires the request to actually fire, so a swallowed click (see
+   * `waitForReady()`) fails by name instead of timing out later on a dashboard
+   * that can never load. Any status counts — 401 still means it submitted.
+   */
   private async submit(): Promise<void> {
     await expect(this.signInButton).toBeEnabled();
+
+    const signInRequest = this.page
+      .waitForResponse((response) => response.url().includes('/auth/sign-in'), { timeout: 15_000 })
+      .catch(() => null);
+
     await this.signInButton.click();
+
+    if (!(await signInRequest)) {
+      throw new Error(
+        'Sign In produced no /auth/sign-in request within 15s — the form was submitted ' +
+          'natively, meaning the app was not hydrated when the button was clicked.',
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------
