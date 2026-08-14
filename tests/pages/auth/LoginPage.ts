@@ -22,13 +22,25 @@ export class LoginPage extends BasePage {
    * The form paints before Nuxt hydrates, and `Sign In` is a real
    * `type="submit"` in a `<form method="post">` — clicking too early does a
    * native POST to /login, discarding the credentials and issuing no
-   * `/auth/sign-in` at all. `__vue_app__` appears once Vue has mounted and the
-   * submit handler can `preventDefault()`. An implementation detail, but the
-   * two states are visually identical so there is nothing else to wait on.
+   * `/auth/sign-in` at all. An implementation detail, but the two states are
+   * visually identical so there is nothing else to wait on.
+   *
+   * Waits on Nuxt's own `isHydrating`, not on `__vue_app__`: `app.mount()` sets
+   * `__vue_app__` when mounting *starts*, so that flag goes true while the form
+   * below it is still inert. `isHydrating` flips false only once hydration has
+   * resolved. Under 8x CPU throttling the two are ~200ms apart, and that gap is
+   * what swallowed the click on CI runners.
    */
   override async waitForReady(): Promise<void> {
     await this.page.waitForFunction(
-      () => Boolean((document.getElementById('__nuxt') as { __vue_app__?: unknown } | null)?.__vue_app__),
+      () => {
+        try {
+          const app = (window as { useNuxtApp?: () => { isHydrating?: boolean } }).useNuxtApp?.();
+          return Boolean(app) && app!.isHydrating === false;
+        } catch {
+          return false; // Nuxt not on the page yet
+        }
+      },
       null,
       { timeout: 30_000 },
     );
