@@ -20,9 +20,8 @@ test.describe('Support', () => {
 
         await createTicket.fillSubject('test');
         await createTicket.fillDescription('test desc');
-        await createTicket.submit();
 
-        await expect(createTicket.successAlert).toBeVisible();
+        await createTicket.submitAndExpectCreated();
       });
 
       test('rejects an empty ticket subject', async ({ page }) => {

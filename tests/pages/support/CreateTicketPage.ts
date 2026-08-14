@@ -1,12 +1,12 @@
 import { Page, expect } from '@playwright/test';
 import { SupportBasePage } from './SupportBasePage';
+import type { MyTicketsPage } from './MyTicketsPage';
 
 export class CreateTicketPage extends SupportBasePage {
   private readonly subjectInput      = this.page.getByRole('textbox');
   private readonly descriptionEditor = this.page.locator('.tiptap');
   private readonly submitButton      = this.page.locator('form').getByRole('button', { name: 'Create' });
 
-  readonly successAlert             = this.page.getByText('Ticket created successfully', { exact: true });
   readonly validationAlert          = this.page.getByRole('alert', { name: 'Please fix the following' });
   readonly subjectRequiredAlert     = this.page.getByText('Subject is required', { exact: true });
   readonly descriptionRequiredAlert = this.page.getByText('Description is required', { exact: true });
@@ -36,6 +36,16 @@ export class CreateTicketPage extends SupportBasePage {
   async submit(): Promise<void> {
     await expect(this.submitButton).toBeEnabled();
     await this.submitButton.click();
+  }
+
+  /** Submits and waits for the return to My Tickets — the success toast auto-dismisses. */
+  async submitAndExpectCreated(): Promise<MyTicketsPage> {
+    await this.submit();
+    // Lazy: MyTicketsPage imports this class.
+    const { MyTicketsPage } = require('./MyTicketsPage') as typeof import('./MyTicketsPage');
+    const myTickets = new MyTicketsPage(this.page);
+    await myTickets.waitForReady();
+    return myTickets;
   }
 
   static get longSubject(): string {
