@@ -167,19 +167,13 @@ async function globalSetup(_config: FullConfig) {
     }
 
     /*
-     * Locally: three at a time. All six at once makes UAT's limiter 429 two of
-     * them.
-     *
-     * On CI: one at a time. Shards run on separate machines with no saved
-     * sessions, so 4 shards x 3 concurrent = 12 simultaneous logins, and UAT's
-     * login page stops hydrating within the 15s guard. That killed 3 of 4 shards
-     * in global setup, before any test ran. Concurrency here is per-machine and
-     * cannot see the other shards, so CI has to stay conservative.
+     * One at a time. Signing several roles in at once makes UAT return 429, or
+     * serve a login page that never hydrates — don't raise this.
      *
      * allSettled, not all, so a failing role is reported as itself rather than
      * hidden behind whichever rejection landed first.
      */
-    const AUTH_CONCURRENCY = process.env.CI ? 1 : 3;
+    const AUTH_CONCURRENCY = 1;
     const outcomes: PromiseSettledResult<'reused' | 'generated'>[] = [];
 
     for (let i = 0; i < ROLES.length; i += AUTH_CONCURRENCY) {

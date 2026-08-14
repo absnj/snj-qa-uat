@@ -4,6 +4,9 @@ import { loadTestEnv } from './tests/setup/env';
 
 loadTestEnv();
 
+/**
+ * See https://playwright.dev/docs/test-configuration.
+ */
 export default defineConfig({
   globalSetup: './tests/setup/global.setup.ts',
   expect: {
@@ -11,26 +14,32 @@ export default defineConfig({
   },
   timeout: 75_000,
   testDir: './tests',
+  /* Run tests in files in parallel */
   fullyParallel: true,
+  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
+  /* Retry on CI only */
   retries: 0,
-  // One worker per core. These tests are CPU-bound on the runner, so running
-  // more workers than cores just makes each one slower. CI gets its parallelism
-  // from sharding across runners instead.
-  workers: process.env.CI ? '100%' : 8,
-  // CI shards each emit a blob, merged into one HTML report by the `report` job.
-  reporter: process.env.CI ? [['blob'], ['line']] : [['html']],
+  /* Opt out of parallel tests on CI. */
+  workers: 8,
+  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  reporter: 'html',
+  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: process.env.UAT_URL,
     storageState: './tests/setup/.auth/merchant_admin.json',
+    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    // Below ~1536px the branch-config "Remarks" sidebar squeezes the main column
-    // until action buttons ("Add booking", "Change status") collapse to icons and
-    // lose their accessible name, breaking every getByRole lookup for them.
+    /* Below ~1536px wide, the branch-config "Remarks" sidebar leaves the main
+     * content column narrow enough that action button labels (e.g. "Add
+     * booking", "Change status") collapse to icon-only and lose their
+     * accessible name, breaking getByRole name-based locators. */
     viewport: { width: 1536, height: 900 },
   },
 
+  /* Configure projects for major browsers */
   projects: [
     {
       name: 'merchant-admin',
@@ -70,8 +79,9 @@ export default defineConfig({
     },
     // TODO: add a superuser project when superuser tests are ready.
 
-    // API tests — no browser, no saved session. Auth is a bearer token fetched
-    // per test, and the backend host can differ from the dashboard baseURL above.
+    // Pure API integration tests — no browser, no UI storageState. Auth is a
+    // bearer token fetched per-test via AuthApi.signIn, not cookies, and the
+    // backend host can differ from the admin dashboard's baseURL above.
     {
       name: 'api',
       testMatch: '**/specs/api/**/*.spec.ts',
