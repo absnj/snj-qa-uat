@@ -76,7 +76,7 @@ Tags are in the form `nJoyBook:<test name>`.
 ## Notes for scaffolding
 - The **Booking Page** tab is a deep link to the public site
   (staging.shopnjoy.com/booking/<slug>), so its tests span two origins —
-  the admin baseURL and the public host (reCAPTCHA on public booking).
+  the admin baseURL and the public host.
 - Several Rules / Time Slots / Blockouts scenarios mutate shared branch config;
   per CLAUDE.md they need a fixture that restores state via "Set to Default" or
   captured-and-restored settings, or must use unique data. Flag blockouts-* and

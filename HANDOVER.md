@@ -44,7 +44,7 @@ npx playwright test tests/specs/login.spec.ts --project=merchant-admin
 
 Then `npm run test:report` to open the results.
 
-`npm test` on its own runs everything. That takes up to an hour and changes UAT data, so don't make it your first move.
+`npm test` on its own runs everything, on one machine, and changes UAT data — so don't make it your first move. See [README's Running Tests](README.md#running-tests) for what drives the runtime.
 
 ## Step 3 — Set up GitHub
 
@@ -126,7 +126,6 @@ Two runs never overlap. A second one waits for the first to finish, so they can'
 The suite has known gaps, all deliberately marked in the code rather than quietly dropped. The big ones:
 
 - **All API tests are switched off.** UAT rate-limits the sign-in endpoint and every API test signs in first, so they fail unpredictably. Needs a shared login token or a higher rate limit for the test accounts.
-- **Public booking confirmation tests fail on reCAPTCHA.** They get all the way to the final step and stop there.
 - **A few booking tests depend on which day of the week they run.** Explained in `docs/njoybook-test-plan.md`.
 
 The full list, with reasons, is in [README's Known Gaps](README.md#known-gaps-and-in-progress-work).

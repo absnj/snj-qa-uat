@@ -67,7 +67,7 @@ Tests that need to be logged out must use `test.use({ storageState: undefined })
 
 ```bash
 npm test -- --list                                   # list only, nothing runs
-npm test                                             # everything (up to an hour)
+npm test                                             # everything (see the note below on runtime)
 npx playwright test --project=merchant-admin         # one role
 npx playwright test --project=api                    # API tests (needs UAT_API_* set)
 npx playwright test tests/specs/config/deals.spec.ts  # one file
@@ -77,6 +77,8 @@ npm run test:report                                  # open the last report
 ```
 
 Run the smallest thing that covers your change — one spec against one role, not the whole matrix. Save `npm test` for when you're ready for the runtime and the UAT side effects.
+
+**On runtime.** CI splits the suite across 4 machines, so a run finishes in roughly its slowest quarter. Locally everything shares one machine, so it takes considerably longer. The floor in both cases is `njoybook-general.spec.ts` and `njoybook-staff.spec.ts`: they run sequentially and can't be split, and each takes about 4–5 minutes on its own (measured 2026-08-13, merchant-admin only). UAT's own speed varies a lot between times of day, so treat any figure as a rough guide.
 
 ## Test Coverage
 
@@ -113,7 +115,7 @@ Things the inventory can't tell you:
 
 All of these are marked in the specs with `test.fixme` or `test.skip`, never silently dropped. Search for `fixme` or `skip` before assuming something is covered.
 
-1. **reCAPTCHA blocks public booking confirmation.** Every public-booking test in both NJoyBook files reaches the review step correctly and fails only at "Confirm booking". Was working headless as of 2026-07-13, broken since. Re-enable them together once reCAPTCHA passes reliably.
+1. **reCAPTCHA blocks public booking confirmation.** Every public-booking test in both NJoyBook files reaches the review step correctly and fails only at "Confirm booking". Worked headless as of 2026-07-13, broken since. **Re-confirmed 2026-08-14** by driving the flow directly: `POST https://staging.shopnjoy.com/api/recaptcha/verify` returns `400 "reCAPTCHA verification failed. Please try again."`, so the rejection is server-side on the public site, not a Playwright timing problem. Re-enable them together once reCAPTCHA passes reliably.
 2. **No per-branch "booking unavailable" signal.** The `Rules - Enable Booking` tests check for a site-wide unavailable message, but with two branches published, turning one off no longer produces it. Needs a per-branch signal first.
 3. **Staff "bookable" toggle doesn't change the public specialist count.** Needs a product decision on which control is meant to remove someone from the public page.
 4. **Booking edit modal (staff mode).** Party-size changes don't save and the modal doesn't close on save in headless runs. Needs investigation.
@@ -125,6 +127,7 @@ All of these are marked in the specs with `test.fixme` or `test.skip`, never sil
 10. **CRM lifecycle tests are all switched off.** The CRM has no delete and no undo — a lead can only be closed, remarks can't be removed, joining an agent queue is one-way. So each of these leaves a permanent record in shared UAT. Five `TODO(crm-cleanup)` markers across the `track/` specs unblock together, once there's a way to delete a contact or a disposable sales agent account.
 11. **API specs also get picked up by the role projects.** Each role project matches `**/specs/**/*.spec.ts`, which includes `specs/api/**`, and the API tests carry the same role tags. Harmless *only* because they're all switched off — re-enabling them (gap 8) would run each against the UI base URL with browser sessions, and multiply the sign-in volume that caused the rate limit. Add `testIgnore: '**/specs/api/**'` to the six role projects before re-enabling.
 12. **`merchant-success-staff` has a project but no tests.** Login, session and project all exist, but nothing tags `@merchant-success-staff`, so it runs zero tests. Needs a decision on which CRM screens that role owns.
+13. **Three admin-booking tests on the Staff-mode branch need staffed slots for *today*.** Skipped in `njoybook-staff.spec.ts`: Admin Add Booking, the check-in/complete lifecycle, and the status filter. Creating the booking returns `400 {"message":"Selected slot is not available"}` — confirmed against UAT on 2026-08-14 with today's booking list empty, so this is *not* the capacity cap in gap-adjacent quirks below. On a Staff-mode branch a slot is only bookable with a bookable staff member assigned, the dropdown offers unstaffed slots anyway, and nothing in the spec guarantees today's weekday is staffed. The sibling tests that still pass rely on the same unguaranteed precondition, so expect them to fail on a different weekday. Fix needs a fixture that staffs the current weekday, or a branch reserved for today-scoped booking tests — see [`docs/njoybook-test-plan.md`](docs/njoybook-test-plan.md#missing-test-support-capability-staffed-slots-for-today).
 
 ## UAT Quirks Worth Knowing
 
@@ -152,7 +155,7 @@ All of these are marked in the specs with `test.fixme` or `test.skip`, never sil
 - **One run at a time.** A second run queues behind the first rather than racing it on the same UAT branches.
 - **Automatic failure triage.** When a manual run fails, an agent sorts the failures, fixes ones caused by UI changes, and opens a PR. It doesn't run on pull requests. Read the "Suspected app regressions" section of every PR it opens — see [`docs/AGENT-TRIAGE.md`](docs/AGENT-TRIAGE.md).
 - **Secrets, never a committed `.env`.** The job writes `.env` from the `uat` environment's secrets and deletes it afterwards, pass or fail. Secret names match the `.env` variable names.
-- **Artifacts** are kept 30 days. They can contain real UAT data — don't copy them elsewhere or paste them into issues.
+- **Artifacts** are kept 30 days, split in two: the merged HTML report, and the traces/screenshots. `npm run report:ci` pulls just the report, so it opens in seconds. They can contain real UAT data — don't copy them elsewhere or paste them into issues.
 
 ## Configuration
 
@@ -167,3 +170,4 @@ Get real values from the team's secret store. Never hardcode or print credential
 - Keep specs explicit. There's no test-generator layer and there shouldn't be one.
 - `.playwright-mcp/`, `playwright-report/`, `test-results/` and `results.json` are local scratch, all gitignored. `results.json` feeds the triage agent and can contain UAT data.
 - `npm run report:serve` serves a report over `http://`, which the trace viewer needs. Opening a downloaded report via `file://` won't work. It accepts a folder or a `.zip`.
+- `npm run report:ci` does the same for a CI run without the download-and-unzip detour: it fetches the merged report with `gh` and serves it on localhost. No argument uses the most recent run; pass a run id for an older one. Add `--traces` when you need the trace viewer for a failure — that's the slow, large download, which is why it's opt-in.

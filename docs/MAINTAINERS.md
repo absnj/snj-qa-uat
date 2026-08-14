@@ -62,10 +62,7 @@ These look like regressions but are properties of the shared environment. Check 
 - **A test hangs on a "Start time" dropdown with no options.** Booking capacity is capped per slot per day. Global setup only clears *active* bookings — Cancelled, No-show and Completed ones from earlier runs still count against the cap. It clears itself the next day.
 - **A booking test on a future date returns 400 ("Selected slot is not available").** Only today reliably has open slots on staging. Admin bookings deliberately target today.
 - **"Set to Default" on the Rules tab didn't fully reset things.** It only resets Rules — not Time Slots, per-staff toggles, or bookings.
-- **A public booking test fails at "Confirm booking" with a reCAPTCHA error.** Known and tracked. Affects every such test in both NJoyBook files, all marked with `TODO(recaptcha-regression)`. Don't debug it as new.
 - **The two NJoyBook branches behave differently on purpose.** Thomson Plaza is Branch mode (capacity-based); My Village is Staff mode (specialist-based). A fix for one may not apply to the other.
-- **An API test fails with a 429, and a different one fails next run.** UAT rate-limits sign-in, and every API test signs in first. This is why they're all switched off. They pass individually, and `--workers=1` doesn't help. Don't add a sleep — share one token per role instead.
-- **Reports, screenshots and traces can contain real UAT data.** Don't paste them into issues or chat. They're gitignored for the same reason.
 
 ## Empty on purpose — not broken
 
