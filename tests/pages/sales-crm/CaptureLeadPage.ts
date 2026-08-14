@@ -135,9 +135,7 @@ export class CaptureLeadPage extends SalesCrmBasePage {
     await expect(this.createLeadButton).toBeVisible();
   }
 
-  // ---------------------------------------------------------------------------
   // Parameterised locators
-  // ---------------------------------------------------------------------------
 
   /** The inline error message rendered under a field's `.form-group`. */
   private fieldError(label: string): Locator {
@@ -156,9 +154,7 @@ export class CaptureLeadPage extends SalesCrmBasePage {
       .getByRole('textbox');
   }
 
-  // ---------------------------------------------------------------------------
   // Business details
-  // ---------------------------------------------------------------------------
 
   async fillBusinessDetails(data: LeadBusinessData): Promise<void> {
     await this.nameInput.fill(data.name);
@@ -245,9 +241,7 @@ export class CaptureLeadPage extends SalesCrmBasePage {
     await expect(this.uenSearchButton).toHaveText('Search and auto-fill');
   }
 
-  // ---------------------------------------------------------------------------
   // Contact people
-  // ---------------------------------------------------------------------------
 
   /** A lead can be created from business details alone; people are optional. */
   async addContactPerson(data: ContactPersonData): Promise<void> {
@@ -281,11 +275,9 @@ export class CaptureLeadPage extends SalesCrmBasePage {
     await this.backButton.click();
   }
 
-  // ---------------------------------------------------------------------------
   // Validation
   //
   // There is no successful-submit method on purpose — see the class comment.
-  // ---------------------------------------------------------------------------
 
   async submitExpectingValidationError(): Promise<void> {
     await this.createLeadButton.click();
@@ -305,9 +297,7 @@ export class CaptureLeadPage extends SalesCrmBasePage {
     await expect(this.fieldError(label)).toHaveCount(0);
   }
 
-  // ---------------------------------------------------------------------------
   // Assertions
-  // ---------------------------------------------------------------------------
 
   async expectAssignedToSelfNotice(): Promise<void> {
     await expect(this.ownerNotice).toBeVisible();

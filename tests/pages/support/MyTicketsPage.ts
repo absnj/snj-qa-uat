@@ -1,4 +1,3 @@
-// tests/pages/support/MyTicketsPage.ts
 import { Page } from '@playwright/test';
 import { SupportBasePage } from './SupportBasePage';
 import { CreateTicketPage } from './CreateTicketPage';

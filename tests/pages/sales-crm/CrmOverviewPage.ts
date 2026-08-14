@@ -32,17 +32,33 @@ export class CrmOverviewPage extends SalesCrmBasePage {
     await expect(this.heading).toBeVisible();
   }
 
-  // ---------------------------------------------------------------------------
   // Parameterised locators
-  // ---------------------------------------------------------------------------
 
-  private metricHeading(metric: CrmMetric): Locator {
-    return this.metricHeadings.filter({ hasText: exactText(metric) });
+  /** Tab strip entries are plain buttons whose only text is the tab name. */
+  private tab(name: CrmOverviewTab): Locator {
+    return this.tabs.filter({ hasText: exactText(name) });
   }
 
-  // ---------------------------------------------------------------------------
+  /** Each metric renders as a button whose accessible name is "View <metric>". */
+  private metricCard(metric: CrmMetric): Locator {
+    return this.metricCards.filter({ hasText: metric });
+  }
+
+  // Actions
+
+  async openTab(name: CrmOverviewTab): Promise<void> {
+    await this.tab(name).click();
+  }
+
+  async openMetric(metric: CrmMetric): Promise<void> {
+    await this.metricCard(metric).click();
+  }
+
+  async filterByAgent(agentName: string): Promise<void> {
+    await this.agentFilter.selectOption({ label: agentName });
+  }
+
   // Assertions
-  // ---------------------------------------------------------------------------
 
   async expectMetricVisible(metric: CrmMetric): Promise<void> {
     await expect(this.metricHeading(metric)).toBeVisible();

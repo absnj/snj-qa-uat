@@ -44,9 +44,7 @@ const formTest = test.extend<CaptureLeadFixtures>({
 
 test.describe('Track - CRM Capture Lead', () => {
   for (const role of SALES_AGENT_ROLES) {
-    // -----------------------------------------------------------------------
     // Form behaviour
-    // -----------------------------------------------------------------------
 
     formTest.describe(`${role.label} ${role.tag}`, () => {
       formTest('shows the lead is assigned to the agent automatically', async ({ captureLead }) => {
@@ -80,12 +78,8 @@ test.describe('Track - CRM Capture Lead', () => {
       });
     });
 
-    // -----------------------------------------------------------------------
-    // Validation
-    //
-    // An invalid submit surfaces twice: an inline message under the field, and
-    // a toast naming every offending field.
-    // -----------------------------------------------------------------------
+    // An invalid submit shows up twice: an inline message under the field, and
+    // a toast listing every field at fault.
 
     formTest.describe(`${role.label} validation ${role.tag}`, () => {
       formTest('rejects an empty lead name', async ({ captureLead, leadData }) => {
@@ -117,9 +111,7 @@ test.describe('Track - CRM Capture Lead', () => {
       });
     });
 
-    // -----------------------------------------------------------------------
     // Blocked on test-support capability
-    // -----------------------------------------------------------------------
 
     formTest.describe(`${role.label} lifecycle ${role.tag}`, () => {
       // TODO(crm-cleanup): each of these leaves a permanent UAT record — a lead

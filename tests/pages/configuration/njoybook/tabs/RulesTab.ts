@@ -102,6 +102,10 @@ export class RulesTab extends ConfigBasePage {
     // Save
     private readonly setToDefaultButton: Locator;
     private readonly saveButton: Locator;
+    private readonly saveConfirmation: Locator;
+    private readonly saveValidationAlert: Locator;
+    private readonly saveRuleAlert: Locator;
+    private readonly saveOutcome: Locator;
 
     // Heading (waitForReady anchor)
     private readonly heading: Locator;
@@ -146,6 +150,18 @@ export class RulesTab extends ConfigBasePage {
 
         this.setToDefaultButton = this.page.getByRole('button', { name: 'Set to Default' });
         this.saveButton = this.page.getByRole('button', { name: 'Save Booking Settings' });
+        // The persist-succeeded toast. Scoped to the Notifications region: the
+        // toast is exposed both as its own alert and as a wrapping "Notification
+        // [...]" alert, so an unscoped role/text lookup matches twice.
+        this.saveConfirmation = this.page
+            .getByRole('region', { name: 'Notifications' })
+            .getByText('Booking settings updated', { exact: true });
+        this.saveValidationAlert = this.page.getByRole('alert', { name: /Please fix the following/ });
+        this.saveRuleAlert = this.page.getByRole('alert', { name: /Unable to save booking settings/ });
+        // Either terminal state of a save, for save() to wait on.
+        this.saveOutcome = this.saveConfirmation
+            .or(this.saveValidationAlert)
+            .or(this.saveRuleAlert);
     }
 
     override async waitForReady(): Promise<void> {
@@ -320,21 +336,27 @@ export class RulesTab extends ConfigBasePage {
         await expect(this.page.getByText('Defaults applied', { exact: true })).toBeVisible();
     }
 
+    /**
+     * Clicks Save and waits for the app to report an outcome — success toast or
+     * validation alert. Deliberately does NOT assert which: callers that need a
+     * successful save navigate away and would fail on the next step anyway,
+     * while the boundary tests call save() precisely to assert the error. (This
+     * replaced a `networkidle` wait, which resolved on "the network went quiet"
+     * — slower, and silent about whether the save landed at all.)
+     */
     async save(): Promise<void> {
         await this.saveButton.click();
-        // Wait for the persist request to settle before callers navigate away
-        // (e.g. to the public page), otherwise the change may not be visible yet.
-        await this.page.waitForLoadState('networkidle');
+        await expect(this.saveOutcome).toBeVisible();
     }
 
     // --- Assertions ---
 
     async expectValidationError(): Promise<void> {
-        await expect(this.page.getByRole('alert', { name: /Please fix the following/ })).toBeVisible();
+        await expect(this.saveValidationAlert).toBeVisible();
     }
 
     async expectRuleValidationError(): Promise<void> {
-        await expect(this.page.getByRole('alert', { name: /Unable to save booking settings/ })).toBeVisible();
+        await expect(this.saveRuleAlert).toBeVisible();
     }
 
     // --- Persisted-value assertions ---

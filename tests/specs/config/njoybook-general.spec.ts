@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { HomePage } from '@pages/home/HomePage';
+import { BranchConfigPage } from '@pages/configuration/branch/BranchConfigPage';
 import { NJoyBookPage } from '@pages/configuration/njoybook/NjoyBookPage';
 import { RulesTab } from '@pages/configuration/njoybook/tabs/RulesTab';
 import { BookingsTab } from '@pages/configuration/njoybook/tabs/bookings/BookingsTab';
@@ -68,11 +68,7 @@ type NJoyBookGeneralFixtures = {
 
 const njoyBookTest = test.extend<NJoyBookGeneralFixtures>({
   njoyBookPage: async ({ page }, use) => {
-    const home = new HomePage(page);
-    await home.goto();
-
-    const configOverview = await home.goToConfiguration();
-    const branchConfig = await configOverview.openBranchConfig(TEST_BRANCH_NAME);
+    const branchConfig = await BranchConfigPage.open(page, TEST_BRANCH_NAME);
     const njoyBookPage = await branchConfig.goToNJoyBook();
 
     await use(njoyBookPage);
@@ -84,11 +80,7 @@ const njoyBookTest = test.extend<NJoyBookGeneralFixtures>({
   },
 
   resetNjoyBookPage: async ({ page }, use) => {
-    const home = new HomePage(page);
-    await home.goto();
-
-    const configOverview = await home.goToConfiguration();
-    const branchConfig = await configOverview.openBranchConfig(TEST_BRANCH_NAME);
+    const branchConfig = await BranchConfigPage.open(page, TEST_BRANCH_NAME);
     const njoyBookPage = await branchConfig.goToNJoyBook();
 
     await resetNJoyBookRulesToBranchMode(njoyBookPage);
@@ -104,11 +96,7 @@ const njoyBookTest = test.extend<NJoyBookGeneralFixtures>({
   },
 
   bookingsOnly: async ({ page }, use) => {
-    const home = new HomePage(page);
-    await home.goto();
-
-    const configOverview = await home.goToConfiguration();
-    const branchConfig = await configOverview.openBranchConfig(TEST_BRANCH_NAME);
+    const branchConfig = await BranchConfigPage.open(page, TEST_BRANCH_NAME);
     const njoyBookPage = await branchConfig.goToNJoyBook();
     const bookingsTab = await njoyBookPage.goToBookings();
 
@@ -116,11 +104,7 @@ const njoyBookTest = test.extend<NJoyBookGeneralFixtures>({
   },
 
   blockouts: async ({ page }, use) => {
-    const home = new HomePage(page);
-    await home.goto();
-
-    const configOverview = await home.goToConfiguration();
-    const branchConfig = await configOverview.openBranchConfig(TEST_BRANCH_NAME);
+    const branchConfig = await BranchConfigPage.open(page, TEST_BRANCH_NAME);
     const njoyBookPage = await branchConfig.goToNJoyBook();
     const tab = await njoyBookPage.goToBlockouts();
 
@@ -305,15 +289,11 @@ test.describe('Configuration - NJoyBook (General / Branch mode)', () => {
       // AddBookingModal / ENV PRECONDITION note in njoybook-staff.spec.ts —
       // future dates are not reliably bookable on staging).
       //
-      // TODO(recaptcha-regression): verified live on 2026-07-20 — both tests
-      // reach "Review your booking" with correct data (branch, date, party
-      // size, name/phone/email) and fail only on "Confirm booking" with
-      // "reCAPTCHA verification failed. Please try again.", reproduced twice.
-      // njoybook-staff.spec.ts's identical booking-confirm flow claims
-      // reCAPTCHA stopped blocking headless submission as of 2026-07-13; that
-      // appears to have regressed and now affects PublicBookingPage.confirm()
-      // repo-wide, not just these two. Un-fixme once reCAPTCHA reliably
-      // passes for headless "Confirm booking" again.
+      // TODO(recaptcha-regression): verified 2026-07-20, reproduced twice —
+      // both tests reach "Review your booking" with correct data and fail only
+      // at "Confirm booking" with "reCAPTCHA verification failed. Please try
+      // again." Affects PublicBookingPage.confirm() repo-wide, not just these.
+      // Re-enable once reCAPTCHA reliably passes headless.
 
       njoyBookTest.describe('Rules - Auto-Confirm', () => {
         njoyBookTest.fixme(
@@ -540,18 +520,13 @@ test.describe('Configuration - NJoyBook (General / Branch mode)', () => {
       // --- Bookings: Status Lifecycle ---
       // Each test creates its own booking so runs are independent.
       //
-      // ENV PRECONDITION (same constraint as njoybook-staff.spec.ts): admin
-      // bookings land on TODAY (AddBookingModal.selectFirstAvailableStartTime
-      // picks from today's Start time options), because only today reliably
-      // has staffed/open slots on staging. Each of this branch's 10 standard
-      // slots caps at 5 bookings/day. Verified live 2026-07-20: global
-      // setup's "Remove active" reset only cancels active (Pending/Confirmed/
-      // Checked-in) bookings — Cancelled/No-show/Completed ones from earlier
-      // runs are NOT cleared and still appear to count against the per-slot
-      // cap, so a day's capacity can exhaust after enough runs ("No remaining
-      // start times for today" — confirmed live). This isn't a code defect:
-      // it self-resolves the next calendar day. If these hang waiting on the
-      // Start time combobox, that's this exhaustion, not a regression.
+      // ENV PRECONDITION (same as njoybook-staff.spec.ts): admin bookings land
+      // on TODAY, because only today reliably has open slots on staging. Each
+      // of this branch's 10 slots caps at 5 bookings/day, and global setup only
+      // cancels *active* bookings — Cancelled/No-show/Completed ones from
+      // earlier runs still count against the cap (verified 2026-07-20), so a
+      // day's capacity can run out. Not a code defect: it clears the next day.
+      // If these hang on the Start time combobox, that's the cause.
 
       njoyBookTest.describe('Bookings - Status Lifecycle', () => {
         async function seedConfirmedBooking(

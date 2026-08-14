@@ -110,11 +110,18 @@ export class AddBookingModal extends ConfigBasePage {
 
     /**
      * Opens the Start time combobox and picks whichever option is first, rather
-     * than a caller-supplied literal. Which times are actually bookable depends
-     * on branch config (weekday slot template, existing bookings against the
-     * per-slot cap) that this page object has no way to introspect ahead of
-     * time, so tests that don't care which slot they land on should use this
-     * instead of guessing a specific time. Returns the picked option's label.
+     * than a caller-supplied literal. Useful because the offered times depend on
+     * the weekday slot template and the time of day (past slots are dropped),
+     * which this page object cannot introspect ahead of time.
+     *
+     * "Available" only means offered: the dropdown does NOT exclude slots that
+     * are already full, and submitting one fails with API 400 "Selected slot is
+     * not available". On a Staff-mode branch a slot holds one active booking per
+     * staff member, so on this staging branch (single staff) the first offered
+     * slot is bookable exactly once per run. Only ONE test per branch may use
+     * this; every other booking-creating test must claim its own start time.
+     *
+     * Returns the picked option's label.
      */
     async selectFirstAvailableStartTime(): Promise<string> {
         await this.startTimeCombobox.click();
@@ -153,6 +160,20 @@ export class AddBookingModal extends ConfigBasePage {
     /** Fills the form and submits; resolves once the modal has closed. */
     async createBooking(data: AddBookingData): Promise<void> {
         await this.fill(data);
+        // KNOWN VIOLATION of the "no arbitrary sleeps" rule, deliberate.
+        //
+        // `expect(createButton).toBeEnabled()` was tried and isn't equivalent:
+        // the button is already enabled while the staff fetch from
+        // setStartTime() may still be in flight, so its state isn't the thing
+        // being waited on.
+        //
+        // Before changing this, note that a failing assertion below does NOT
+        // prove the sleep is wrong — the modal also stays open when the API
+        // rejects the booking with 400 "Selected slot is not available", which
+        // looks identical from here. An unstaffed slot raises an "Unable to
+        // create booking" toast; a genuine race does not.
+        //
+        // The real fix is an observable ready signal for that fetch.
         await this.page.waitForTimeout(1000);
         await this.createButton.click();
         await expect(this.modal).not.toBeVisible();

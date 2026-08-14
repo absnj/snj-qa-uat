@@ -1,4 +1,3 @@
-// pages/Auth/LoginPage.ts
 import { Page, BrowserContext, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import { HomePage } from '../home/HomePage';
@@ -36,9 +35,7 @@ export class LoginPage extends BasePage {
     await expect(this.emailField).toBeVisible();
   }
 
-  // ---------------------------------------------------------------------------
   // Actions
-  // ---------------------------------------------------------------------------
 
   private async fillEmail(username: string): Promise<void> {
     await this.emailField.click();
@@ -72,9 +69,7 @@ export class LoginPage extends BasePage {
     }
   }
 
-  // ---------------------------------------------------------------------------
   // Flows
-  // ---------------------------------------------------------------------------
 
   async loginAs<T extends BasePage = HomePage>(
     username: string,
@@ -114,9 +109,7 @@ export class LoginPage extends BasePage {
     return this;
   }
 
-  // ---------------------------------------------------------------------------
   // Getters
-  // ---------------------------------------------------------------------------
 
   async getErrorMessage(): Promise<string> {
     return this.errorMessage.innerText();

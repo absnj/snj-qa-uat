@@ -8,7 +8,8 @@
     "test:headed": "npx playwright test --headed",
     "test:report": "npx playwright show-report",
     "report:serve": "bash scripts/serve-report.sh",
-    "docs:coverage": "node scripts/generate-coverage.mjs"
+    "docs:coverage": "node scripts/generate-coverage.mjs",
+    "report:ci": "bash scripts/serve-ci-report.sh"
   },
   "keywords": [],
   "author": "",

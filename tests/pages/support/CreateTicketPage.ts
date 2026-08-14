@@ -1,4 +1,3 @@
-// tests/pages/support/CreateTicketPage.ts
 import { Page, expect } from '@playwright/test';
 import { SupportBasePage } from './SupportBasePage';
 

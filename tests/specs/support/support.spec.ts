@@ -1,4 +1,3 @@
-// tests/specs/support/createTicket.spec.ts
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../../pages/home/HomePage';
 import { CreateTicketPage } from '../../pages/support/CreateTicketPage';
