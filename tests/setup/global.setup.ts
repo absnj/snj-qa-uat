@@ -167,18 +167,19 @@ async function globalSetup(_config: FullConfig) {
     }
 
     /*
-     * Sign roles in three at a time. Each gets its own browser context, so there
-     * is no ordering between them, and CI pays this on every shard (a fresh
-     * checkout has no saved sessions).
+     * Locally: three at a time. All six at once makes UAT's limiter 429 two of
+     * them.
      *
-     * Three is a measured ceiling, not a guess: all six at once makes UAT's
-     * sign-in limiter return 429 for two of them. Only raise it with evidence
-     * that both the rate limit and the runner's CPU tolerate more.
+     * On CI: one at a time. Shards run on separate machines with no saved
+     * sessions, so 4 shards x 3 concurrent = 12 simultaneous logins, and UAT's
+     * login page stops hydrating within the 15s guard. That killed 3 of 4 shards
+     * in global setup, before any test ran. Concurrency here is per-machine and
+     * cannot see the other shards, so CI has to stay conservative.
      *
      * allSettled, not all, so a failing role is reported as itself rather than
      * hidden behind whichever rejection landed first.
      */
-    const AUTH_CONCURRENCY = 3;
+    const AUTH_CONCURRENCY = process.env.CI ? 1 : 3;
     const outcomes: PromiseSettledResult<'reused' | 'generated'>[] = [];
 
     for (let i = 0; i < ROLES.length; i += AUTH_CONCURRENCY) {

@@ -220,7 +220,10 @@ jobs:
   # otherwise four agents open four PRs for one red run.
   # Not on pull_request: the agent must never triage its own PR.
   triage:
-    if: ${{ needs.test.result == 'failure' && github.event_name == 'workflow_dispatch' }}
+    # !cancelled() is required, not decorative: an `if` with no status function
+    # gets an implicit success(), which is always false here because `test`
+    # failed — so this job could never run.
+    if: ${{ !cancelled() && needs.test.result == 'failure' && github.event_name == 'workflow_dispatch' }}
     needs: [test, report]
     timeout-minutes: 60
     runs-on: ubuntu-latest
