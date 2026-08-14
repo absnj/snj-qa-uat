@@ -12,11 +12,9 @@ When the Playwright workflow fails, an agent looks at the failures, fixes the on
 
 ## When it runs
 
-`triage` is its own job, running after `test` and `report` have finished. It only starts when two things are true: the test job failed, **and** the run was started manually. Pull request runs never trigger it — an agent reviewing its own PR would loop.
+`triage` is a step at the end of the `test` job. It only runs when two things are true: the test step failed, **and** the run was started manually. Pull request runs never trigger it — an agent reviewing its own PR would loop.
 
-Being a separate job means it runs once against the merged result of all 4 shards. If it lived inside the test job it would run four times and open four PRs for one failure.
-
-It rebuilds `results.json` from the merged shard data, downloads the screenshots and traces, and works from those.
+It works from the `results.json` the run just wrote, plus the screenshots and traces in `test-results/`.
 
 ## What it may and may not do
 
@@ -52,7 +50,7 @@ You must also enable **Settings → Actions → General → "Allow GitHub Action
 
 ## Operational notes
 
-- **Time.** The test job caps at 30 minutes per shard, and triage at 60.
+- **Time.** The job caps at 90 minutes, covering both the suite and triage.
 - **One at a time.** The `playwright-uat` concurrency group makes runs queue rather than overlap on shared UAT.
 - **UAT is shared and stateful.** The agent is limited to read-only browsing while investigating, and to re-running only the affected specs while checking its fix. That's enforced by its instructions, not by the sandbox. Consider pointing it at a merchant account nobody depends on.
 - **The workflow still goes red** when the suite failed, even if the agent opened a PR. The PR is a proposal, not a fix.

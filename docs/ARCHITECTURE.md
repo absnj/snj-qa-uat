@@ -147,13 +147,13 @@ They need this because they read back branch config they themselves change — p
 
 **Only reach for this when a test reads back shared config it changed and no fixture can isolate it.** It's an exception, not a convenience.
 
-### These two files set the floor on CI time
+### These two files set the floor on run time
 
-Splitting work across machines happens at the level of runnable groups, and a sequential file is a single group — it can't be split. So the suite can never finish faster than the slower of these two files, no matter how many machines you add. A second saved *inside* them comes straight off the total; a second saved anywhere else usually doesn't.
+Everything else spreads across workers; these two can't, so the suite can never finish faster than the slower of them. A second saved *inside* them comes straight off the total; a second saved anywhere else usually doesn't.
 
 That's why the NJoyBook fixtures jump straight to the branch page via `BranchConfigPage.open()` instead of clicking through Home → Configuration → Branches. It's about 6 seconds per test.
 
-If the suite needs to get meaningfully faster, the answer is more test branches so NJoyBook scenarios can spread out and run in parallel — not more machines.
+If the suite needs to get meaningfully faster, the answer is more test branches, so NJoyBook scenarios can spread out and run in parallel. Splitting the run across machines does **not** work: every machine repeats the six-role login, and UAT's sign-in can't take the parallel load — it was tried on 2026-08-14 and reverted.
 
 ## The API layer
 

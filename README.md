@@ -78,7 +78,7 @@ npm run test:report                                  # open the last report
 
 Run the smallest thing that covers your change — one spec against one role, not the whole matrix. Save `npm test` for when you're ready for the runtime and the UAT side effects.
 
-**On runtime.** CI splits the suite across 4 machines, so a run finishes in roughly its slowest quarter. Locally everything shares one machine, so it takes considerably longer. The floor in both cases is `njoybook-general.spec.ts` and `njoybook-staff.spec.ts`: they run sequentially and can't be split, and each takes about 4–5 minutes on its own (measured 2026-08-13, merchant-admin only). UAT's own speed varies a lot between times of day, so treat any figure as a rough guide.
+**On runtime.** The whole suite runs on one machine, locally and in CI, and takes a while — save it for when you're ready. The floor is `njoybook-general.spec.ts` and `njoybook-staff.spec.ts`, which run sequentially: each takes about 4–5 minutes on its own (measured 2026-08-13, merchant-admin only). UAT's speed varies a lot by time of day, so treat any figure as a rough guide.
 
 ## Test Coverage
 
@@ -151,11 +151,11 @@ All of these are marked in the specs with `test.fixme` or `test.skip`, never sil
 
 - **Two triggers.** *Manual* (Actions tab) lets you pick a role project and a feature module. *Pull request* runs automatically when test code changes, scoped to `merchant-admin` so it costs minutes rather than an hour.
 - **The module dropdown is hand-maintained.** It's a `case` statement mapping module name to spec path — it does not find new specs on its own. Add a `case` entry *and* an `options` entry whenever you add a spec file.
-- **Split across 4 machines**, then merged into one report. Total time is roughly the slowest quarter, not the sum.
+- **One machine, one job.** Splitting the run across machines was tried and reverted: each machine repeats the six-role login, and UAT's sign-in couldn't take the parallel load.
 - **One run at a time.** A second run queues behind the first rather than racing it on the same UAT branches.
 - **Automatic failure triage.** When a manual run fails, an agent sorts the failures, fixes ones caused by UI changes, and opens a PR. It doesn't run on pull requests. Read the "Suspected app regressions" section of every PR it opens — see [`docs/AGENT-TRIAGE.md`](docs/AGENT-TRIAGE.md).
 - **Secrets, never a committed `.env`.** The job writes `.env` from the `uat` environment's secrets and deletes it afterwards, pass or fail. Secret names match the `.env` variable names.
-- **Artifacts** are kept 30 days, split in two: the merged HTML report, and the traces/screenshots. `npm run report:ci` pulls just the report, so it opens in seconds. They can contain real UAT data — don't copy them elsewhere or paste them into issues.
+- **Artifacts** are kept 30 days: the HTML report, `results.json`, and the traces/screenshots, in one `playwright-report` artifact. They can contain real UAT data — don't copy them elsewhere or paste them into issues.
 
 ## Configuration
 
@@ -170,4 +170,3 @@ Get real values from the team's secret store. Never hardcode or print credential
 - Keep specs explicit. There's no test-generator layer and there shouldn't be one.
 - `.playwright-mcp/`, `playwright-report/`, `test-results/` and `results.json` are local scratch, all gitignored. `results.json` feeds the triage agent and can contain UAT data.
 - `npm run report:serve` serves a report over `http://`, which the trace viewer needs. Opening a downloaded report via `file://` won't work. It accepts a folder or a `.zip`.
-- `npm run report:ci` does the same for a CI run without the download-and-unzip detour: it fetches the merged report with `gh` and serves it on localhost. No argument uses the most recent run; pass a run id for an older one. Add `--traces` when you need the trace viewer for a failure — that's the slow, large download, which is why it's opt-in.

@@ -109,10 +109,10 @@ Go to the **Actions** tab, pick **Playwright Tests**, and click **Run workflow**
 - **project** — which role to test as, or `all`
 - **module** — which feature area to test, or `all`
 
-The work is split across 4 machines and combined into one report at the end. Download the `playwright-report` artifact from the run, then:
+To read the results, download the `playwright-report` artifact from the run, then:
 
 ```bash
-npm run report:ci -- <run-id>
+npm run report:serve path/to/playwright-report.zip
 ```
 
 That serves the report locally. Opening the downloaded file directly in a browser won't work properly — the trace viewer needs a real web server.
