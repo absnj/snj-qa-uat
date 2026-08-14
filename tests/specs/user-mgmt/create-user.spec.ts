@@ -59,9 +59,7 @@ async function expectBasicInfoValidation(
   await expect(basicInfoStep.validationError).toBeVisible();
 }
 
-// ---------------------------------------------------------------------------
 // Admin roles - happy path
-// ---------------------------------------------------------------------------
 
 test.describe('User Management - Create User', () => {
   for (const role of USER_MANAGEMENT_ADMIN_ROLES) {
@@ -89,9 +87,7 @@ test.describe('User Management - Create User', () => {
   }
 });
 
-// ---------------------------------------------------------------------------
 // Admin roles - basic-info validation
-// ---------------------------------------------------------------------------
 
 formTest.describe('User Management - Create User Validation', () => {
   for (const role of USER_MANAGEMENT_ADMIN_ROLES) {
@@ -234,9 +230,7 @@ formTest.describe('User Management - Create User Validation', () => {
   }
 });
 
-// ---------------------------------------------------------------------------
 // Staff roles - access control only
-// ---------------------------------------------------------------------------
 
 test.describe('User Management - Access Control', () => {
   for (const role of USER_MANAGEMENT_STAFF_ROLES) {

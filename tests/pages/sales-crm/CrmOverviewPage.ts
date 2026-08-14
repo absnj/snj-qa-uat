@@ -41,9 +41,7 @@ export class CrmOverviewPage extends SalesCrmBasePage {
     await expect(this.heading).toBeVisible();
   }
 
-  // ---------------------------------------------------------------------------
   // Parameterised locators
-  // ---------------------------------------------------------------------------
 
   /** Tab strip entries are plain buttons whose only text is the tab name. */
   private tab(name: CrmOverviewTab): Locator {
@@ -55,9 +53,7 @@ export class CrmOverviewPage extends SalesCrmBasePage {
     return this.metricCards.filter({ hasText: metric });
   }
 
-  // ---------------------------------------------------------------------------
   // Actions
-  // ---------------------------------------------------------------------------
 
   async openTab(name: CrmOverviewTab): Promise<void> {
     await this.tab(name).click();
@@ -71,9 +67,7 @@ export class CrmOverviewPage extends SalesCrmBasePage {
     await this.agentFilter.selectOption({ label: agentName });
   }
 
-  // ---------------------------------------------------------------------------
   // Assertions
-  // ---------------------------------------------------------------------------
 
   async expectMetricVisible(metric: CrmMetric): Promise<void> {
     await expect(this.metricCard(metric)).toBeVisible();

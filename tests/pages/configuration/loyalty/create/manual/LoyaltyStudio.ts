@@ -37,12 +37,11 @@ export const MAXIMUM_REWARDS = 5;
 
 /**
  * The manual loyalty builder is a single "loyalty design studio" page. Details,
- * Rewards, Designs, Brand and Finish are sections of one form and "Create
- * loyalty program" validates and submits all of them, so there is no longer a
- * details step, a design step, or a "Next" button.
+ * Rewards, Designs, Brand and Finish are all sections of one form, and "Create
+ * loyalty program" validates and submits the lot — there are no steps and no
+ * "Next" button.
  *
- * Rewards changed shape too: instead of a one-at-a-time carousel with
- * Prev/Next, every reward is an expandable card in a list, capped at five.
+ * Each reward is an expandable card in a list, capped at five.
  *
  * Fields carry no id, aria-label or test id, so they are located through the
  * one stable contract the markup offers: each field sits in a `.form-group`

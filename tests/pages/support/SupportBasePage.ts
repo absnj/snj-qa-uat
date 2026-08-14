@@ -1,4 +1,3 @@
-// tests/pages/support/SupportBasePage.ts
 import { Page } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import type { MyTicketsPage } from './MyTicketsPage';

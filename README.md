@@ -1,54 +1,47 @@
 # ShopNJoy UAT Test Automation
 
-Playwright end-to-end tests for the ShopNJoy admin dashboard, run against a **shared, stateful UAT environment** (not a disposable per-run environment). Tests can create or modify real UAT data — read the isolation and cleanup notes below before adding or running scenarios.
+Playwright end-to-end tests for the ShopNJoy admin dashboard.
 
-For contribution rules (locator policy, fixture/teardown conventions, role tags, forbidden patterns), see `CLAUDE.md` / `AGENTS.md` at the repo root — those files are the enforced style guide and are kept in sync with each other. This README is the onboarding/reference doc: what exists today, how to run it, and where the known gaps are.
+**New to this repo? Start with [`HANDOVER.md`](HANDOVER.md)** — setup, GitHub secrets, and first run.
 
-Extending the framework itself (a new page object, fixture, or API client)? See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for how the existing pieces are built and why. Reacting to an app change, or picking this suite up cold? See [`docs/MAINTAINERS.md`](docs/MAINTAINERS.md) for playbooks (new role, new spec module, new API endpoint, UI selector changed) and a troubleshooting guide for shared-UAT quirks. When CI fails, an agent triages the failures and opens a fix PR — see [`docs/AGENT-TRIAGE.md`](docs/AGENT-TRIAGE.md). [`docs/README.md`](docs/README.md) indexes all of them.
+These tests run against a **shared UAT environment**, not a fresh one per run. They create and change real UAT data, so read the isolation and cleanup notes below before adding or running scenarios.
+
+The rules for writing tests (locators, fixtures, role tags, what's banned) live in [`AGENTS.md`](AGENTS.md). This README is the reference: what exists, how to run it, and what's still missing.
 
 ## Quick Start
 
 ```bash
 npm install
-cp .env.example .env   # fill in UAT_URL and role credentials (ask a teammate)
+cp .env.example .env   # fill in the URL and role logins
 npx playwright install --with-deps
-npm test -- --list     # sanity check: parses config, lists tests, makes no network calls
+npm test -- --list     # lists tests, runs nothing, touches no UAT data
 ```
 
-Then see [Running Tests](#running-tests).
-
-## Architecture
+## Layout
 
 ```text
-tests/specs/            Test intent, business scenarios, assertions (the readable test inventory)
-  tests/specs/api/         API-level specs (no browser) — currently all skipped, see Known Gaps
-  tests/specs/helpers/     Role definitions/groups and the API-client fixtures
-tests/pages/             Page objects: selectors + direct UI interactions
-tests/api/               API clients, one per resource (AuthApi, DealsApi, LoyaltyApi)
-tests/core/               Shared page/browser/HTTP abstractions (BasePage, ApiClient, BaseComponent, BrowserManager)
-tests/setup/              Env loading, global auth setup, generated storage state, traces
-tests/config/             Environment config helpers
-tests/testDataGenerators.ts   Unique test-data helpers (emails, phone numbers, titles)
-playwright.config.ts     Projects (one per role, plus `api`), timeouts, reporters, shared browser options
-schema.json              Captured API request/response examples — check field names here first
+tests/specs/            What each test does — scenarios and assertions
+  tests/specs/api/         API tests (no browser) — all switched off, see Known Gaps
+  tests/specs/helpers/     Role definitions and API fixtures
+tests/pages/             Page objects: selectors and UI actions
+tests/api/               API clients, one per resource
+tests/core/              Shared building blocks (BasePage, ApiClient)
+tests/setup/             Env loading, login setup, saved sessions
+tests/config/            Environment config helpers
+tests/testDataGenerators.ts   Generates unique emails, phone numbers, titles
+playwright.config.ts     Projects (one per role, plus `api`), timeouts, reporters
+schema.json              Recorded API requests/responses — check field names here first
 ```
 
-Specs own test intent and outcome assertions. Page objects own selectors and meaningful user actions (not arbitrary Playwright-call wrappers). Setup/fixtures own reusable state and guaranteed cleanup. There is no generated-spec or hidden data-driven test layer by design — every test's behavior and role coverage must be visible in the spec file itself.
+Specs say *what* is being tested. Page objects hold the selectors and the UI actions. Fixtures handle setup and cleanup. There is no generated-test layer, and there shouldn't be — every test's behaviour and role coverage should be readable in the spec file itself.
 
-TypeScript path aliases (`tsconfig.json`) — use these instead of long relative imports:
+Import shortcuts (defined in `tsconfig.json`): `@core/*`, `@pages/*`, `@config/*`. Use these instead of long relative paths.
 
-| Alias | Resolves to |
-|---|---|
-| `@core/*` | `tests/core/*` |
-| `@pages/*` | `tests/pages/*` |
-| `@config/*` | `tests/config/*` |
-| `@components/*`, `@fixtures/*`, `@helpers/*` | declared but not yet populated |
+`typescript` isn't a dependency here, so `npx tsc --noEmit` isn't a check you can rely on.
 
-`typescript` is not a declared project dependency — don't rely on `npx tsc --noEmit` as a verification step unless that's intentionally added.
+## Roles and Login
 
-## Roles and Auth
-
-Six roles are modeled, each with its own credentials in `.env` and its own generated storage state:
+Six roles, each with its own login in `.env` and its own saved session:
 
 | Role | Tag | Playwright project |
 |---|---|---|
@@ -57,166 +50,120 @@ Six roles are modeled, each with its own credentials in `.env` and its own gener
 | Branch Admin | `@branch-admin` | `branch-admin` |
 | Branch Staff | `@branch-staff` | `branch-staff` |
 | Sales Agent (CRM) | `@sales-agent` | `sales-agent` |
-| Merchant Success Staff (CRM) | `@merchant-success-staff` | `merchant-success-staff` (no tests yet — see [Known Gaps](#known-gaps-and-in-progress-work)) |
+| Merchant Success Staff (CRM) | `@merchant-success-staff` | `merchant-success-staff` (no tests yet — see [Known Gaps](#known-gaps)) |
 
-A seventh Playwright project, `api`, is not role-based: it runs `tests/specs/api/**` with no `storageState` and its own `baseURL` (`UAT_API_URL`), authenticating per-test with a bearer token instead of cookies.
+A seventh project, `api`, isn't role-based. It runs `tests/specs/api/**` with no saved session and its own base URL (`UAT_API_URL`), signing in per test with a token instead of cookies.
 
-Role groups live in `tests/specs/helpers/roles.ts` and compose these six into named sets (e.g. `DEAL_CREATOR_ROLES`, `NJOYBOOK_FULL_ACCESS_ROLES`) so specs iterate over the right subset instead of hardcoding role lists. A `superuser` credential exists in `.env` but has no project yet (`playwright.config.ts` has a `TODO` marker there).
+Role groups in `tests/specs/helpers/roles.ts` bundle these into named sets (`DEAL_CREATOR_ROLES`, `NJOYBOOK_FULL_ACCESS_ROLES`) so specs use the right subset instead of listing roles by hand. A `superuser` login exists in `.env` but has no project yet.
 
-`tests/setup/global.setup.ts` runs once before the suite: it logs in every role via `LoginPage`, saves storage state to `tests/setup/.auth/<role>.json` (untracked, regenerated each run), and then performs a **NJoyBook capacity reset** — it cancels active bookings on the two NJoyBook test branches (`Hajime - My Village`, `Hajime - Thomson Plaza`) so each run starts under the per-slot booking cap. This reset is non-fatal per branch (a failure warns but doesn't fail the suite) and must never run concurrently with the tests themselves — see [CI](#continuous-integration-github-actions) for how that's enforced.
+`tests/setup/global.setup.ts` runs once before everything:
 
-Login/unauthenticated scenarios must use `test.use({ storageState: undefined })` (see `login.spec.ts`).
+1. Logs in as every role and saves the session to `tests/setup/.auth/<role>.json` (regenerated each run, never committed).
+2. Cancels active bookings on the two NJoyBook test branches, so each run starts below the daily booking limit. If this fails for a branch it warns but doesn't stop the run.
+
+Tests that need to be logged out must use `test.use({ storageState: undefined })` — see `login.spec.ts`.
 
 ## Running Tests
 
 ```bash
-# Parse configuration and list tests without executing UAT scenarios
-npm test -- --list
-
-# Run everything (all six role projects plus `api`)
-npm test
-
-# Run one role project
-npx playwright test --project=merchant-admin
-
-# Run the API project (no browser; needs UAT_API_* vars — see Setup)
-npx playwright test --project=api
-
-# Run one spec file
-npx playwright test tests/specs/config/deals.spec.ts
-
-# Run one test by title
-npx playwright test -g "creates a deal successfully"
-
-# Debug / headed
+npm test -- --list                                   # list only, nothing runs
+npm test                                             # everything (up to an hour)
+npx playwright test --project=merchant-admin         # one role
+npx playwright test --project=api                    # API tests (needs UAT_API_* set)
+npx playwright test tests/specs/config/deals.spec.ts  # one file
+npx playwright test -g "creates a deal successfully"  # one test
 npx playwright test tests/specs/config/deals.spec.ts --debug
-npm run test:headed
-
-# View the last HTML report
-npm run test:report
+npm run test:report                                  # open the last report
 ```
 
-Prefer the smallest relevant check for a change: one spec against one role project, not the full matrix. Run `npm test` (the full matrix) only when you've confirmed credentials are set up and you're comfortable with the shared-UAT side effects.
+Run the smallest thing that covers your change — one spec against one role, not the whole matrix. Save `npm test` for when you're ready for the runtime and the UAT side effects.
 
 ## Test Coverage
 
-**[`docs/COVERAGE.md`](docs/COVERAGE.md) is the inventory** — every case by name, which role projects run it, and whether it is active, skipped or fixme, with a spec × project matrix. It is generated from `npx playwright test --list`, so it cannot drift from the specs:
+**[`docs/COVERAGE.md`](docs/COVERAGE.md) is the full inventory** — every test by name, which roles run it, and whether it's active or switched off. It's generated from the specs, so it can't drift:
 
 ```bash
-npm run docs:coverage   # regenerate after adding, removing or retagging a test
+npm run docs:coverage   # rerun after adding, removing or retagging a test
 ```
 
-Never hand-edit that file. Regenerating when nothing changed produces a byte-identical result, so any diff means coverage actually moved.
+Never edit that file by hand. Regenerating with no changes gives an identical file, so any diff means coverage really moved.
 
-The table below is orientation only — what each spec file is *about*. It deliberately carries no counts, so it does not go stale.
+The table below is orientation only — what each file is *about*. No counts, so it doesn't go stale.
 
 | Spec | Covers | Roles |
 |---|---|---|
-| `login.spec.ts` | Valid and invalid sign-in | 4 base roles, unauthenticated |
-| `support/support.spec.ts` | Ticket creation and its field validation | 4 base roles |
-| `user-mgmt/create-user.spec.ts` | Staff creation, extensive field validation, and that staff roles cannot reach it | admin roles + staff roles for access control |
-| `config/deals.spec.ts` | Deal creation end-to-end, validation, and read-only enforcement | creator roles + branch-staff |
-| `config/loyalty.spec.ts` | Visit- and spend-based programs, the five-reward maximum, validation | creator roles + branch-staff |
-| `config/njoybook-general.spec.ts` | NJoyBook in **Branch mode** — rules, time slots, bookings, blockouts, public booking page | merchant-admin |
-| `config/njoybook-staff.spec.ts` | NJoyBook in **Staff mode**, plus per-staff bookable toggles and limited-role tab visibility | merchant-admin + limited roles |
-| `track/crm-contacts.spec.ts` | CRM contact lists, filters, and the ownership access gate — entirely read-only | sales-agent |
-| `track/crm-capture-lead.spec.ts` | The capture-a-lead form and its validation — never submits | sales-agent |
-| `api/*.spec.ts` | Auth, deals and loyalty at the HTTP layer — **all skipped**, see gap 8 | `api` project |
+| `login.spec.ts` | Valid and invalid sign-in | 4 base roles, logged out |
+| `support/support.spec.ts` | Ticket creation and field validation | 4 base roles |
+| `user-mgmt/create-user.spec.ts` | Staff creation, field validation, and that staff can't reach it | admins + staff for access checks |
+| `config/deals.spec.ts` | Deal creation, validation, read-only enforcement | creator roles + branch-staff |
+| `config/loyalty.spec.ts` | Visit- and spend-based programs, five-reward limit, validation | creator roles + branch-staff |
+| `config/njoybook-general.spec.ts` | NJoyBook in **Branch mode** — rules, slots, bookings, blockouts, public page | merchant-admin |
+| `config/njoybook-staff.spec.ts` | NJoyBook in **Staff mode**, per-staff toggles, limited-role tab visibility | merchant-admin + limited roles |
+| `track/crm-contacts.spec.ts` | CRM contact lists, filters, ownership gate — read-only | sales-agent |
+| `track/crm-capture-lead.spec.ts` | Capture-a-lead form and validation — never submits | sales-agent |
+| `api/*.spec.ts` | Auth, deals, loyalty over HTTP — **all switched off**, see gap 8 | `api` project |
 
-**Things the inventory can't tell you:**
+Things the inventory can't tell you:
 
-- **The two NJoyBook specs target different branches on purpose.** `njoybook-general` runs against "Hajime - Thomson Plaza" (Branch mode, capacity-based, no staff); `njoybook-staff` runs against "Hajime - My Village" (Staff mode, specialist-based). Behaviour does not transfer between them. Both files use `test.describe.configure({ mode: 'default' })` — sequential within the file — because they read back branch config they mutate; they still run in parallel with each other, since the branches are independent.
-- **`crm-contacts.spec.ts` hardcodes two UAT contacts** (`HANBAOBAO PTE. LTD.`, `TestCompany`) to exercise the ownership gate. If they're ever claimed or removed those tests fail loudly rather than silently pass — that's intended. Why the CRM locators look unusual is in [`tests/pages/sales-crm/README.md`](tests/pages/sales-crm/README.md).
-- **Planned-but-unwritten NJoyBook scenarios** live in [`docs/njoybook-test-plan.md`](docs/njoybook-test-plan.md) — a backlog, not current state.
+- **The two NJoyBook specs target different branches on purpose.** `njoybook-general` uses "Hajime - Thomson Plaza" (Branch mode, capacity-based, no staff); `njoybook-staff` uses "Hajime - My Village" (Staff mode, specialist-based). Behaviour does not carry over between them. Both run sequentially within their own file because they read back config they change — but they still run in parallel with each other, since the branches are independent.
+- **`crm-contacts.spec.ts` relies on two specific UAT contacts** (`HANBAOBAO PTE. LTD.`, `TestCompany`) to test the ownership gate. If those get claimed or deleted, the tests fail loudly rather than passing quietly. That's intended. Why the CRM selectors look odd: [`tests/pages/sales-crm/README.md`](tests/pages/sales-crm/README.md).
+- **Planned but unwritten NJoyBook scenarios** are in [`docs/njoybook-test-plan.md`](docs/njoybook-test-plan.md) — a backlog, not a description of what exists.
 
-## Known Gaps and In-Progress Work
+## Known Gaps
 
-These are tracked as `test.fixme` or `test.skip` in the specs themselves (never silently dropped) — grep for `fixme`/`skip` before assuming a scenario is covered:
+All of these are marked in the specs with `test.fixme` or `test.skip`, never silently dropped. Search for `fixme` or `skip` before assuming something is covered.
 
-1. **reCAPTCHA regression (repo-wide)** — every public-booking-confirmation test (`Rules - Auto-Confirm` and `End-to-End Booking` in both NJoyBook spec files) reaches the review step correctly and fails only at "Confirm booking" with a reCAPTCHA error. Previously believed fixed for headless runs as of 2026-07-13; regressed since. Un-fixme all of these together once reCAPTCHA reliably passes headless.
-2. **Per-branch "booking unavailable" signal** — `Rules - Enable Booking` tests assert a site-wide unavailability message, but with two branches now published on the shared public booking site, disabling one branch no longer triggers that message (the other stays bookable). Needs a per-branch signal (e.g. "no slots for this branch/date") before these can be un-fixme'd.
-3. **Staff "bookable" toggle doesn't affect public specialist count** — needs product clarification on which control (bookable flag vs. "Active" toggle vs. de-assigning from Bulk Edit) is meant to remove a staff member from the public page.
-4. **Booking edit modal (staff-mode)** — party-size changes don't persist and the modal doesn't close on save in headless runs; needs a trace-level investigation.
-5. **Public "No preference" staff selection** — not implemented on the public booking site yet, despite the admin rule's helptext promising it.
-6. **Duplicate-email / no-role-selected validation** (user creation) — both skipped pending either a reusable form-reopen flow or a decision on how to exercise "no role selected" in the UI.
-7. **Superuser role** — credentials exist in `.env`; no Playwright project or tests exist yet (`playwright.config.ts` has an explicit `TODO`).
-8. **The whole API suite is skipped on a UAT rate limit** — all three `tests/specs/api/` specs are `describe.skip`'d with `SKIP(api-rate-limit)`. UAT throttles `POST /v2/auth/sign-in`, and because every API test signs in first, the suite makes ~15 sign-ins in under 40s and starts getting 429s, so a *different* subset fails on every run. Verified 2026-08-06: tests pass individually, and `--workers=1` does not help — the limit is requests-per-window, not concurrency. Unblock by cutting sign-in volume (a worker-scoped fixture that signs in once per role and shares the token) or by raising the limit for the UAT test accounts. **Do not "fix" this with a sleep.**
-9. **Logout may not invalidate sessions** — surfaced while writing `auth.spec.ts`: a second logout with an already-logged-out token *resolves* instead of rejecting. This is a possible backend issue, not just a test problem, and needs a human decision on whether the test's premise or the backend is wrong. Settle it before unskipping `auth.spec.ts`.
-10. **CRM lifecycle scenarios are all `fixme`** — the CRM has no delete and no undo anywhere (a lead can only be closed Lost/Archived, remarks can't be removed, joining an agent queue is one-way), so creating/qualifying/closing a lead and adding a remark each leave a permanent shared-UAT record. Five `TODO(crm-cleanup)` fixmes across the two `track/` specs unblock together, once a contact delete/reset endpoint or a disposable sales agent exists.
-11. **API specs are collected into the role projects too** — each role project's `testMatch` is `**/specs/**/*.spec.ts`, which also matches `specs/api/**`, and the API describes carry the same `@role` tags the projects `grep` on. `npm test -- --list` shows 26 API entries under the six role projects on top of the 54 under `api`. This is inert *only* because every API spec is currently skipped; unskipping them (gap 8) would run each one against the UI `baseURL` with browser storage state — and multiply the sign-in volume that caused the rate limit in the first place. Fix before unskipping: add `testIgnore: '**/specs/api/**'` to the six role projects.
-12. **`merchant-success-staff` has a project but no tests** — credentials, storage state and a Playwright project all exist, but no spec tags `@merchant-success-staff`, so the project runs zero tests. The role is referenced only by the (skipped) `api/auth.spec.ts`. The CRM specs deliberately scope to `SALES_AGENT_ROLES`; extending them needs a decision on which CRM screens merchant success actually owns.
+1. **reCAPTCHA blocks public booking confirmation.** Every public-booking test in both NJoyBook files reaches the review step correctly and fails only at "Confirm booking". Was working headless as of 2026-07-13, broken since. Re-enable them together once reCAPTCHA passes reliably.
+2. **No per-branch "booking unavailable" signal.** The `Rules - Enable Booking` tests check for a site-wide unavailable message, but with two branches published, turning one off no longer produces it. Needs a per-branch signal first.
+3. **Staff "bookable" toggle doesn't change the public specialist count.** Needs a product decision on which control is meant to remove someone from the public page.
+4. **Booking edit modal (staff mode).** Party-size changes don't save and the modal doesn't close on save in headless runs. Needs investigation.
+5. **"No preference" staff option** isn't built on the public site yet, though the admin helptext promises it.
+6. **Duplicate-email and no-role-selected validation** (user creation) — both need either a reusable form-reopen step or a decision on how to test "no role selected".
+7. **Superuser role** — login exists in `.env`, but no project and no tests.
+8. **All API tests are switched off** with `SKIP(api-rate-limit)`. UAT limits `POST /v2/auth/sign-in`, and every API test signs in first — roughly 15 sign-ins in under 40 seconds, so a different set fails each run. Confirmed 2026-08-06: they pass one at a time, and `--workers=1` doesn't help, because the limit is per time window rather than per connection. Fix by signing in once per role and sharing the token, or by raising the limit for the test accounts. **Do not paper over this with a sleep.**
+9. **Logout may not end the session.** Found while writing `auth.spec.ts`: logging out twice with an already-expired token succeeds instead of failing. This may be a backend bug rather than a test bug. Settle it before re-enabling `auth.spec.ts`.
+10. **CRM lifecycle tests are all switched off.** The CRM has no delete and no undo — a lead can only be closed, remarks can't be removed, joining an agent queue is one-way. So each of these leaves a permanent record in shared UAT. Five `TODO(crm-cleanup)` markers across the `track/` specs unblock together, once there's a way to delete a contact or a disposable sales agent account.
+11. **API specs also get picked up by the role projects.** Each role project matches `**/specs/**/*.spec.ts`, which includes `specs/api/**`, and the API tests carry the same role tags. Harmless *only* because they're all switched off — re-enabling them (gap 8) would run each against the UI base URL with browser sessions, and multiply the sign-in volume that caused the rate limit. Add `testIgnore: '**/specs/api/**'` to the six role projects before re-enabling.
+12. **`merchant-success-staff` has a project but no tests.** Login, session and project all exist, but nothing tags `@merchant-success-staff`, so it runs zero tests. Needs a decision on which CRM screens that role owns.
 
-## Environment Constraints Worth Knowing
+## UAT Quirks Worth Knowing
 
-- **Booking capacity is shared and capped** — each NJoyBook branch's slots cap at a fixed number of bookings/day. Global setup resets *active* (Pending/Confirmed/Checked-in) bookings once per run, but terminal-state bookings (Cancelled/No-show/Completed) from earlier runs are not cleared and may still count against the cap on some days — if a test hangs waiting on the "Start time" combobox, this exhaustion is the likely cause, not a regression.
-- **Admin-created bookings target "today"** — only today reliably has staffed/open slots on staging; future dates return a 400 ("Selected slot is not available").
-- **`Set to Default` on the Rules tab only resets Rules** — it does not reset Time Slots, per-staff toggles, or delete created bookings. Tests that mutate those still aren't fully isolated by that helper alone.
-- **The two NJoyBook test branches are configured differently on purpose** — "Hajime - Thomson Plaza" is Branch mode (capacity-based, no staff), "Hajime - My Village" is Staff mode (specialist-based). Don't assume behavior transfers between the two specs.
+- **Booking capacity is shared and capped.** Each NJoyBook slot has a daily booking limit. Global setup clears *active* bookings, but Cancelled/No-show/Completed ones from earlier runs still count against the cap. If a test hangs waiting on the "Start time" dropdown, this is the usual cause — not a regression.
+- **Admin-created bookings target today.** Only today reliably has open slots on staging; future dates return a 400.
+- **"Set to Default" on the Rules tab only resets Rules.** It doesn't reset Time Slots, per-staff toggles, or delete bookings.
+- **The two NJoyBook branches are configured differently on purpose** — Thomson Plaza is Branch mode, My Village is Staff mode.
 
 ## Adding Tests
 
-1. Put the test in the relevant file under `tests/specs/`, inside the role-describe loop that should run it (reuse or extend a role group in `tests/specs/helpers/roles.ts` rather than hardcoding a role list).
-2. Add or reuse page-object methods in `tests/pages/` for any new selectors or UI interactions — methods should represent a meaningful user action or observable state, not a thin wrapper around a single Playwright call.
-3. If the scenario needs setup/teardown, add a fixture (`test.extend`) rather than cleaning up inline at the end of the test body, so cleanup still runs after a failure.
-4. If the scenario mutates shared UAT state, either generate unique data (see `tests/testDataGenerators.ts` and `tests/specs/config/njoybook.helpers.ts` for existing helpers — unique emails, phone numbers, guest names, deal/program titles, ISO dates) or restore shared config via fixture teardown. If neither isolation nor cleanup is possible, don't add the test — document the missing test-support capability in a comment instead (see the `fixme` entries above for the existing style).
-5. Follow the locator hierarchy in `CLAUDE.md`/`AGENTS.md`: `getByRole` first, then `getByLabel`/`getByPlaceholder`/`getByText`/test id, scoped to a container; no XPath, no positional locators without a documented ordering contract, no `page.waitForTimeout()`, no `force: true` outside a scenario that specifically tests bypassing actionability.
-6. Never leave `test.only` in committed code — CI's `forbidOnly` rejects it.
+1. Put it in the right file under `tests/specs/`, inside the role loop that should run it. Reuse or extend a group in `tests/specs/helpers/roles.ts` rather than listing roles inline.
+2. Add page-object methods in `tests/pages/` for any new selectors. Methods should represent a real user action, not wrap a single Playwright call.
+3. Need setup or cleanup? Write a fixture (`test.extend`), not cleanup at the end of the test body — a failed assertion skips the end of the body, but fixture teardown always runs.
+4. Changing shared UAT data? Either generate unique data (`tests/testDataGenerators.ts`, `tests/specs/config/njoybook.helpers.ts`) or restore what you changed in fixture teardown. If you can do neither, don't add the test — write down the missing capability instead.
+5. Follow the locator rules in [`AGENTS.md`](AGENTS.md): `getByRole` first, scoped to a container. No XPath, no `page.waitForTimeout()`, no `force: true` outside tests that specifically check it.
+6. Never commit `test.only` — CI rejects it.
 
-## Continuous Integration (GitHub Actions)
+## Continuous Integration
 
-`.github/workflows/playwright.yml` runs the suite in CI. Key decisions, given this hits a shared, stateful environment:
+`.github/workflows/playwright.yml`. See [`HANDOVER.md`](HANDOVER.md) for first-time setup.
 
-- **Trigger: `workflow_dispatch` only** — no automatic run on push/PR. Someone must deliberately trigger it from the Actions tab, choosing:
-  - `project` — one role project, or `all`.
-  - `module` — one spec file (`login`, `deals`, `loyalty`, `njoybook-general`, `njoybook-staff`, `support`, `user-mgmt`, `crm-contacts`, `crm-capture-lead`), or `api` (the whole `tests/specs/api/` directory), or `all`. This is a hand-maintained mapping from module name to spec path in the workflow's `case` statement — **add a new `case` entry, and a matching `options` entry, whenever a new spec file is added**; it does not auto-discover.
-- **Failure triage** — when the suite goes red on a `workflow_dispatch` run, an agent step triages the failures, fixes the ones caused by UI drift, and opens a PR. It does not run on `pull_request` (an agent triaging its own PR is a loop). Read the "Suspected app regressions" section of every PR it opens — see [`docs/AGENT-TRIAGE.md`](docs/AGENT-TRIAGE.md).
-- **Concurrency guard** — `concurrency: { group: playwright-uat, cancel-in-progress: false }` at the workflow level queues a second dispatch behind one already running, rather than letting two runs race the same shared UAT branches (in particular, the NJoyBook capacity reset in global setup).
-- **Secrets, not a committed `.env`** — the job writes `.env` from repo (or environment-scoped) secrets in a dedicated step, and removes it in an `if: always()` step after the run. Secret names mirror the `.env` variable names (`UAT_URL`, `UAT_MERCHANT_ADMIN_USER`/`PASSWORD`, etc. — see [Setup](#setup) below for the full list). Use `gh secret set --env-file .env` (optionally `--env <environment-name>`) to bulk-load them from a local `.env` file rather than adding them one at a time in the UI.
-- **Artifacts** — the Playwright HTML report is uploaded (30-day retention) whether the run passes or fails, unless cancelled. Reports can contain sensitive UAT data — don't copy them elsewhere or paste their contents into issues/PRs.
+- **Two triggers.** *Manual* (Actions tab) lets you pick a role project and a feature module. *Pull request* runs automatically when test code changes, scoped to `merchant-admin` so it costs minutes rather than an hour.
+- **The module dropdown is hand-maintained.** It's a `case` statement mapping module name to spec path — it does not find new specs on its own. Add a `case` entry *and* an `options` entry whenever you add a spec file.
+- **Split across 4 machines**, then merged into one report. Total time is roughly the slowest quarter, not the sum.
+- **One run at a time.** A second run queues behind the first rather than racing it on the same UAT branches.
+- **Automatic failure triage.** When a manual run fails, an agent sorts the failures, fixes ones caused by UI changes, and opens a PR. It doesn't run on pull requests. Read the "Suspected app regressions" section of every PR it opens — see [`docs/AGENT-TRIAGE.md`](docs/AGENT-TRIAGE.md).
+- **Secrets, never a committed `.env`.** The job writes `.env` from the `uat` environment's secrets and deletes it afterwards, pass or fail. Secret names match the `.env` variable names.
+- **Artifacts** are kept 30 days. They can contain real UAT data — don't copy them elsewhere or paste them into issues.
 
-Optional next step, not yet configured: a GitHub Environment (e.g. `uat`) scoping these secrets and adding required-reviewer approval before the job runs, for an extra manual gate on top of `workflow_dispatch`.
+## Configuration
 
-## Setup
+`.env` at the repo root (never committed) holds the UAT URL and one username/password per role. See [`.env.example`](.env.example) for the full list and [`HANDOVER.md`](HANDOVER.md) for the matching GitHub secrets.
 
-`.env` at the repo root (never committed — see `.gitignore`) supplies the UAT URL and one username/password pair per role:
+Get real values from the team's secret store. Never hardcode or print credentials.
 
-```env
-UAT_URL=
-
-# Only needed by the `api` project (tests/specs/api/). UAT_API_URL is the
-# backend host and may differ from UAT_URL, which is the dashboard frontend.
-# The store/branch IDs exist because Deals/Loyalty API payloads take raw IDs —
-# the UI tests avoid this by clicking branches by display name.
-UAT_API_URL=
-UAT_API_MERCHANT_STORE_ID=
-UAT_API_BRANCH_ID=
-
-UAT_SUPERUSER_USER=
-UAT_SUPERUSER_PASSWORD=
-
-UAT_MERCHANT_ADMIN_USER=
-UAT_MERCHANT_ADMIN_PASSWORD=
-
-UAT_MERCHANT_STAFF_USER=
-UAT_MERCHANT_STAFF_PASSWORD=
-
-UAT_BRANCH_ADMIN_USER=
-UAT_BRANCH_ADMIN_PASSWORD=
-
-UAT_BRANCH_STAFF_USER=
-UAT_BRANCH_STAFF_PASSWORD=
-
-UAT_SALES_AGENT_USER=
-UAT_SALES_AGENT_PASSWORD=
-
-UAT_MERCHANT_SUCCESS_STAFF_USER=
-UAT_MERCHANT_SUCCESS_STAFF_PASSWORD=
-```
-
-Get real values from a teammate or the team's secret store — never hardcode or print credentials. `tests/setup/.auth/` (generated login storage state) and `tests/setup/traces/` are untracked and regenerated by global setup on every run; don't hand-edit them.
+`tests/setup/.auth/` and `tests/setup/traces/` are generated on every run and aren't tracked — don't edit them by hand.
 
 ## Notes
 
-- Keep specs explicit. There is no generated-spec layer and shouldn't be one — resist recreating a hidden generator through over-abstracted test definitions.
-- `.playwright-mcp/` (Playwright MCP browser snapshots), `playwright-report/`, `test-results/` and `results.json` are all gitignored local scratch, not test source. `results.json` in particular is the triage agent's structured input and can contain UAT data.
-- `npm run report:serve` (`scripts/serve-report.sh`) serves a report over `http://`, which the trace viewer requires — a downloaded artifact zip opened via `file://` won't work. It accepts a directory or a `.zip`.
+- Keep specs explicit. There's no test-generator layer and there shouldn't be one.
+- `.playwright-mcp/`, `playwright-report/`, `test-results/` and `results.json` are local scratch, all gitignored. `results.json` feeds the triage agent and can contain UAT data.
+- `npm run report:serve` serves a report over `http://`, which the trace viewer needs. Opening a downloaded report via `file://` won't work. It accepts a folder or a `.zip`.

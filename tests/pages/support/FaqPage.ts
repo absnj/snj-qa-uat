@@ -1,4 +1,3 @@
-// tests/pages/support/FaqPage.ts
 import { Page } from '@playwright/test';
 import { SupportBasePage } from './SupportBasePage';
 

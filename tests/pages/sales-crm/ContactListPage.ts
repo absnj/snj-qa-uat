@@ -142,9 +142,7 @@ export class ContactListPage extends SalesCrmBasePage {
     await expect(this.heading).toBeVisible();
   }
 
-  // ---------------------------------------------------------------------------
   // Parameterised locators
-  // ---------------------------------------------------------------------------
 
   /**
    * A contact's row (list view) or card (kanban view). Both expose
@@ -168,9 +166,7 @@ export class ContactListPage extends SalesCrmBasePage {
     return this.page.getByRole('button', { name: `View ${merchantName} on map` });
   }
 
-  // ---------------------------------------------------------------------------
   // View switching
-  // ---------------------------------------------------------------------------
 
   async switchToListView(): Promise<void> {
     await this.listViewButton.click();
@@ -187,9 +183,7 @@ export class ContactListPage extends SalesCrmBasePage {
     await expect(this.mapViewButton).toHaveAttribute('aria-pressed', 'true');
   }
 
-  // ---------------------------------------------------------------------------
   // Search and filters
-  // ---------------------------------------------------------------------------
 
   async search(term: string): Promise<void> {
     await this.searchBox.fill(term);
@@ -254,9 +248,7 @@ export class ContactListPage extends SalesCrmBasePage {
     await this.priorityFilter.click();
   }
 
-  // ---------------------------------------------------------------------------
   // Navigation out
-  // ---------------------------------------------------------------------------
 
   async openCreateLeadForm(): Promise<CaptureLeadPage> {
     await this.createButton.click();
@@ -290,9 +282,7 @@ export class ContactListPage extends SalesCrmBasePage {
     await expect(this.backToStatusesButton).toBeHidden();
   }
 
-  // ---------------------------------------------------------------------------
   // Pagination
-  // ---------------------------------------------------------------------------
 
   async setPageSize(size: '10' | '20' | '50' | '100' | '500' | '1000'): Promise<void> {
     await this.perPageSelect.selectOption(size);
@@ -306,9 +296,7 @@ export class ContactListPage extends SalesCrmBasePage {
     await this.previousPageButton.click();
   }
 
-  // ---------------------------------------------------------------------------
   // Assertions
-  // ---------------------------------------------------------------------------
 
   async expectContactVisible(merchantName: string): Promise<void> {
     await expect(this.contact(merchantName)).toBeVisible();

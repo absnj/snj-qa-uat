@@ -4,7 +4,7 @@ Generated from `npx playwright test --list` by `npm run docs:coverage`. **Do not
 
 This is the inventory only: it says what the suite *would run*, not what last passed. For why a scenario is skipped or fixme'd, see [README's Known Gaps](../README.md#known-gaps-and-in-progress-work).
 
-**249 active** test runs across 12 spec files and 7 projects, plus 58 skipped and 17 fixme.
+**246 active** test runs across 12 spec files and 7 projects, plus 61 skipped and 17 fixme.
 
 A "test run" is one test case in one project — a case covering three roles counts three times, because that is three executions against three different permission sets.
 
@@ -12,7 +12,7 @@ A "test run" is one test case in one project — a case covering three roles cou
 
 | Project | Active | Skipped | Fixme |
 |---|---:|---:|---:|
-| `merchant-admin` | 111 | 8 | 12 |
+| `merchant-admin` | 108 | 11 | 12 |
 | `merchant-staff` | 42 | 6 | — |
 | `branch-admin` | 61 | 8 | — |
 | `branch-staff` | 13 | 4 | — |
@@ -32,7 +32,7 @@ Counts are active test runs; `·` means the file contributes nothing to that pro
 | `specs/config/deals.spec.ts` | 17 | 17 | 17 | 2 | · | · | · | 53 |
 | `specs/config/loyalty.spec.ts` | 15 | 15 | 15 | 1 | · | · | · | 46 |
 | `specs/config/njoybook-general.spec.ts` | 32 | · | · | · | · | · | · | 32 · 4 fixme |
-| `specs/config/njoybook-staff.spec.ts` | 21 | 3 | 3 | 3 | · | · | · | 30 · 8 fixme |
+| `specs/config/njoybook-staff.spec.ts` | 18 | 3 | 3 | 3 | · | · | · | 27 · 3 skip · 8 fixme |
 | `specs/login.spec.ts` | 2 | 2 | 2 | 2 | · | · | · | 8 |
 | `specs/support/support.spec.ts` | 4 | 4 | 4 | 4 | · | · | · | 16 |
 | `specs/track/crm-capture-lead.spec.ts` | · | · | · | · | 9 | · | · | 9 · 4 fixme |
@@ -167,7 +167,7 @@ Legend: **MA** merchant-admin · **MS** merchant-staff · **BA** branch-admin ·
 
 ### `specs/config/njoybook-staff.spec.ts`
 
-30 · 8 fixme test runs across 32 cases.
+27 · 3 skip · 8 fixme test runs across 32 cases.
 
 | Case | Projects | Status |
 |---|---|---|
@@ -189,13 +189,13 @@ Legend: **MA** merchant-admin · **MS** merchant-staff · **BA** branch-admin ·
 | deactivating a slot removes it from the public booking page | MA | active |
 | configured staff are visible and active by default | MA | active |
 | turning a staff member non-bookable removes them from the public page, and re-enabling restores them | MA | **fixme** |
-| admin-created booking appears in the list as Confirmed | MA | active |
+| admin-created booking appears in the list as Confirmed | MA | **skip** |
 | required fields are validated on submit | MA | active |
-| checking in then completing advances the status | MA | active |
+| checking in then completing advances the status | MA | **skip** |
 | a confirmed booking can be cancelled | MA | active |
 | a confirmed booking can be marked no-show | MA | active |
 | editing a booking updates its details | MA | **fixme** |
-| the status filter narrows the list to matching bookings | MA | active |
+| the status filter narrows the list to matching bookings | MA | **skip** |
 | a closed blockout can be created and then removed | MA | active |
 | customer can complete a booking and it appears in admin as Confirmed | MA | **fixme** |
 | customer can book with "No preference" staff selection | MA | **fixme** |

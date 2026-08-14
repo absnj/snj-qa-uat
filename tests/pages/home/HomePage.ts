@@ -1,4 +1,3 @@
-// pages/Home/HomePage.ts
 import { Page, expect } from '@playwright/test';
 import { BasePage } from '../../core/BasePage';
 import { MyTicketsPage } from '../support/MyTicketsPage';
@@ -28,9 +27,7 @@ export class HomePage extends BasePage {
     await expect(this.welcomeHeading).toBeVisible({ timeout: 30_000 });
   }
 
-  // ---------------------------------------------------------------------------
   // Navigation
-  // ---------------------------------------------------------------------------
 
   // async goToTrack(): Promise<TrackPage> {
   //   await this.trackCard.click();
@@ -77,9 +74,7 @@ export class HomePage extends BasePage {
   //   return message;
   // }
 
-  // ---------------------------------------------------------------------------
   // Shared nav
-  // ---------------------------------------------------------------------------
 
   async openUserMenu(): Promise<void> {
     await this.userMenu.click();

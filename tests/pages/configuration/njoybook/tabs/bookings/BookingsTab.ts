@@ -47,9 +47,8 @@ export class BookingsTab extends ConfigBasePage {
         await expect(this.heading).toBeVisible();
     }
 
-    // The Date/Status filters are always rendered under "Search and filters" —
-    // there is no longer a toggle to expand them. This just asserts they're
-    // present, kept as a step so existing call sites read the same.
+    // The Date/Status filters are always rendered under "Search and filters",
+    // with no toggle to expand them, so this only asserts they are present.
     async openFilters(): Promise<void> {
         await expect(this.filtersRegion).toBeVisible();
         await expect(this.prevWeekButton).toBeVisible();
@@ -150,10 +149,16 @@ export class BookingsTab extends ConfigBasePage {
      * Cancels every active booking on the branch (all dates) via "Remove active" →
      * "Remove all active bookings". Irreversible. This is a between-runs capacity
      * reset — call it once, outside parallel test execution, NOT as a per-test
-     * teardown. Best-effort: no-op when there is nothing to remove.
+     * teardown.
+     *
+     * The header action is rendered whether or not anything is active (with
+     * nothing to cancel the confirm simply removes nothing), so a missing button
+     * means the control was not found, not "nothing to remove" — assert it and
+     * let the caller see the failure. Treating absence as a no-op silently
+     * skipped the reset for every run in which the label was collapsed.
      */
     async removeAllActiveBookings(): Promise<void> {
-        if (!(await this.removeActiveButton.count())) return; // nothing active
+        await expect(this.removeActiveButton).toBeVisible();
         await this.removeActiveButton.click();
         await this.confirmRemoveButton.click();
         await expect(this.confirmModal).not.toBeVisible();

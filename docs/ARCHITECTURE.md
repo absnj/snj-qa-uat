@@ -1,18 +1,18 @@
-# Architecture Deep Dive
+# How the framework is built
 
-This doc explains *how* the framework pieces fit together and *why* they look the way they do — for someone extending the framework itself (new page object, new fixture, new API client), not just writing a new test case. For "what exists today" and how to run things, see [`README.md`](../README.md). For the enforced style rules (locator hierarchy, forbidden patterns), see [`CLAUDE.md`](../CLAUDE.md).
+For someone extending the framework itself — a new page object, fixture, or API client. For what exists and how to run it, see [`README.md`](../README.md). For the rules, see [`AGENTS.md`](../AGENTS.md).
 
-## Page Object Model
+## Page objects
 
-### Inheritance chain
+### The inheritance chain
 
 ```
 BasePage (tests/core/BasePage.ts)
-  └─ domain base page (AdminBasePage, ConfigBasePage, SupportBasePage, UserManagementBasePage)
-       └─ concrete page (DealsPage, RulesTab, MyTicketsPage, ...)
+  └─ section base page (AdminBasePage, ConfigBasePage, SupportBasePage, UserManagementBasePage)
+       └─ actual page (DealsPage, RulesTab, MyTicketsPage, ...)
 ```
 
-`BasePage` (`tests/core/BasePage.ts`) is small on purpose:
+`BasePage` is deliberately small:
 
 ```ts
 export abstract class BasePage {
@@ -26,7 +26,7 @@ export abstract class BasePage {
 }
 ```
 
-The default `waitForReady()` waits for the "ShopNJoy" loading logo to disappear — a generic "the app has stopped loading" signal. Every concrete page that has something more specific to assert **overrides** it, usually calling `super.waitForReady()` first and then adding a page-specific check. Example, `DealsPage.ts`:
+The default `waitForReady()` just waits for the loading logo to disappear — a generic "the app has stopped loading" signal. Any page with something more specific to check **overrides** it, usually calling `super.waitForReady()` first:
 
 ```ts
 override async waitForReady(): Promise<void> {
@@ -35,17 +35,19 @@ override async waitForReady(): Promise<void> {
 }
 ```
 
-Domain base pages (`ConfigBasePage`, `AdminBasePage`, etc.) sit between `BasePage` and concrete pages when a whole section of the app shares chrome — e.g. `ConfigBasePage` (`tests/pages/configuration/ConfigBasePage.ts`) declares the `overviewTab`/`dealsTab`/`loyaltyTab` nav links shared by every Configuration sub-page. If you're adding a page inside an existing section, extend the section's base class, not `BasePage` directly.
+Section base pages sit in the middle when a whole area of the app shares navigation — `ConfigBasePage` holds the Configuration tabs every sub-page uses. Adding a page inside an existing section? Extend that section's base class, not `BasePage`.
 
-**When adding a new page object**: pick the narrowest existing base class that already has the locators/behavior you need. Don't reintroduce shared nav locators in every leaf class.
+**Pick the narrowest base class that already has what you need.** Don't re-declare shared nav selectors in every page.
 
-### Locators live in the constructor, never inline in a method
+### Selectors go in the constructor, never in a method
 
-Every page object declares its locators as `readonly` fields, either inline (`HomePage.ts` style) or assigned in the constructor body (`DealsPage.ts` style — needed when a locator depends on a constructor parameter). Both styles are in use; pick whichever the surrounding file already uses. What's non-negotiable: a method must never call `this.page.getByRole(...)` (or any locator factory) inline — locators are declared once, named, and reused. This makes the accessible-name contract for an element visible in one place instead of scattered across methods, and it's the first thing to check when the app's UI text changes.
+Every page object declares its selectors as `readonly` fields — either inline (`HomePage.ts` style) or assigned in the constructor body (`DealsPage.ts` style, needed when a selector depends on a constructor argument). Both are fine; match the file you're in.
+
+What's not optional: a method must never call `this.page.getByRole(...)` inline. Selectors are declared once, named, and reused. That keeps every element's name contract in one place, which is the first thing you check when the app's wording changes.
 
 ### Navigation returns the next page object
 
-The backbone pattern across the whole suite: a navigation method clicks, constructs the destination page object, calls `waitForReady()` on it, and returns it. From `HomePage.ts`:
+The core pattern: click, build the destination page object, wait for it, return it.
 
 ```ts
 async goToConfiguration(): Promise<ConfigOverview> {
@@ -56,7 +58,7 @@ async goToConfiguration(): Promise<ConfigOverview> {
 }
 ```
 
-This is what lets specs read as a chain of business actions instead of raw Playwright calls:
+That's what lets specs read as a chain of actions instead of raw Playwright calls:
 
 ```ts
 const home = new HomePage(page);
@@ -65,35 +67,21 @@ const configOverview = await home.goToConfiguration();
 const dealsPage = await configOverview.goToDeals();
 ```
 
-When adding a new navigation action from an existing page, follow this exact shape — click, construct, `waitForReady()`, return — so the chain stays composable. `HomePage.ts` has a few navigation methods commented out (`goToTrack`, `goToFinance`, `goToMessage`) for modules not built yet, with a lazy `import()` for the destination page — that's the pattern to copy when the corresponding module lands.
+Follow this exact shape for new navigation methods so the chain stays composable. `HomePage.ts` has a few commented out for modules that don't exist yet — that's the template to copy when they land.
 
-### Reserved-but-empty files
+### Reserved but empty
 
-`tests/core/BaseComponent.ts` and `tests/core/BrowserManager.ts` exist but are **empty**, and `tests/core/index.ts` deliberately comments out their exports:
+`tests/core/BaseComponent.ts` and `tests/core/BrowserManager.ts` exist but are empty, and `tests/core/index.ts` leaves their exports commented out. They're placeholders for later, not leftovers. Don't delete them, and don't build on them expecting an implementation.
 
-```ts
-export { BasePage } from './BasePage';
-export { ApiClient, ApiError } from './ApiClient';
-// export { BaseComponent } from './BaseComponent';
-// export { BrowserManager } from './BrowserManager';
-```
+## Fixtures
 
-They're reserved for future use (e.g. a shared component abstraction for repeated widgets, a browser-context helper) — not dead code left over from a removed feature. Don't delete them assuming they're cruft, and don't build on them assuming they have an implementation.
+There's no shared fixture file. Each spec defines its own with `test.extend`. Two patterns are in use.
 
-## Fixture patterns
-
-There is no shared fixture file in `tests/core/` — every spec file that needs fixtures defines its own via `test.extend`, scoped to that file. Two patterns are in active use:
-
-### Simple state fixture
+### Plain setup, no cleanup
 
 `deals.spec.ts`'s `formTest`:
 
 ```ts
-type DealFormFixtures = {
-  dealData: DealDetailsData;
-  detailsStep: DealDetailsStep;
-};
-
 const formTest = test.extend<DealFormFixtures>({
   dealData: async ({}, use) => { await use(validDeal()); },
   detailsStep: async ({ page }, use) => {
@@ -106,11 +94,11 @@ const formTest = test.extend<DealFormFixtures>({
 });
 ```
 
-This exists so ~14 validation test cases each start from a form that's already navigated-to and pre-filled with valid data, instead of repeating that navigation in every test body. Use this pattern when a group of tests shares expensive setup but needs no teardown.
+Around 14 validation tests each start from a form that's already open and filled in, instead of repeating that navigation every time. Use this when tests share expensive setup but need no cleanup.
 
-### Reset-before / restore-after (guaranteed cleanup)
+### Reset before, restore after
 
-`njoybook-general.spec.ts`'s `resetNjoyBookPage` fixture is the reference implementation for CLAUDE.md's "prefer fixture teardown over end-of-test cleanup" rule:
+`njoybook-general.spec.ts`'s `resetNjoyBookPage`:
 
 ```ts
 resetNjoyBookPage: async ({ page }, use) => {
@@ -120,19 +108,20 @@ resetNjoyBookPage: async ({ page }, use) => {
   const branchConfig = await configOverview.openBranchConfig(TEST_BRANCH_NAME);
   const njoyBookPage = await branchConfig.goToNJoyBook();
 
-  await resetNJoyBookRulesToBranchMode(njoyBookPage);   // baseline BEFORE
+  await resetNJoyBookRulesToBranchMode(njoyBookPage);   // known state BEFORE
 
   await use(njoyBookPage);
 
-  await resetNJoyBookRulesToBranchMode(njoyBookPage);   // restore AFTER — runs on pass or fail
+  await resetNJoyBookRulesToBranchMode(njoyBookPage);   // restore AFTER — pass or fail
 },
 ```
 
-The code after `await use(...)` runs whether the test passed, failed, or threw — that's what makes this safe on a shared, stateful UAT environment. The same file has a second variant for fixtures that track *what a test created* rather than resetting a fixed baseline — `blockouts` and `restorableTimeSlots` both push identifiers into an array during the test and iterate-and-undo that array in teardown:
+Everything after `await use(...)` runs whether the test passed, failed, or threw. That's what makes it safe on shared UAT.
+
+The second variant tracks what a test *created* rather than resetting to a fixed state:
 
 ```ts
 blockouts: async ({ page }, use) => {
-  // ...navigate to the tab...
   const created: string[] = [];
   await use({ tab, created });
 
@@ -142,42 +131,48 @@ blockouts: async ({ page }, use) => {
 },
 ```
 
-Note the `.catch(() => {})` on cleanup calls — teardown must not throw if the resource is already gone (e.g. the test itself already deleted it as part of the assertion). **When adding a new state-mutating fixture, pick whichever of these two shapes matches your scenario** (fixed baseline to restore vs. a running list of created resources to undo) rather than inventing a third shape.
+Note the `.catch()` — cleanup must not throw if the thing is already gone, since the test may have deleted it itself.
 
-### Forcing sequential execution when tests read back shared state
+**Pick whichever of these two matches your scenario** rather than inventing a third.
 
-The repo default is `fullyParallel: true` (`playwright.config.ts`). `njoybook-general.spec.ts` and `njoybook-staff.spec.ts` both opt out for their own file:
+## Running sequentially when tests read back what they changed
+
+The default is `fullyParallel: true`. Both NJoyBook specs opt out for their own file:
 
 ```ts
 njoyBookTest.describe.configure({ mode: 'default' });
 ```
 
-This is necessary only because these tests read back branch-level config they themselves mutate (Rules, Time Slots) — parallel workers racing on the same branch's saved state would flake. The two files still run in parallel *with each other*, because they target different branches (`Hajime - Thomson Plaza` vs. `Hajime - My Village`) with isolated state. **Only reach for `mode: 'default'` when a test reads back shared config it mutates and no fixture-level isolation is possible** — it's an exception to the parallelism default, not a template to copy for convenience.
+They need this because they read back branch config they themselves change — parallel workers would race each other. The two files still run in parallel *with each other*, since they target different branches.
 
-## The API testing layer
+**Only reach for this when a test reads back shared config it changed and no fixture can isolate it.** It's an exception, not a convenience.
 
-This is a second, mostly-independent testing surface: no browser, no `storageState`, HTTP calls straight to the backend.
+### These two files set the floor on CI time
 
-> **The specs using this layer are all currently skipped** (`describe.skip`, `SKIP(api-rate-limit)`) — UAT throttles `POST /v2/auth/sign-in` and every API test signs in first. The layer described below is real and works; only the specs are parked. See [README's Known Gaps](../README.md#known-gaps-and-in-progress-work). The likeliest unblock — a worker-scoped fixture that signs in once per role and shares the token — lands in `apiFixtures.ts`, described at the end of this section.
+Splitting work across machines happens at the level of runnable groups, and a sequential file is a single group — it can't be split. So the suite can never finish faster than the slower of these two files, no matter how many machines you add. A second saved *inside* them comes straight off the total; a second saved anywhere else usually doesn't.
+
+That's why the NJoyBook fixtures jump straight to the branch page via `BranchConfigPage.open()` instead of clicking through Home → Configuration → Branches. It's about 6 seconds per test.
+
+If the suite needs to get meaningfully faster, the answer is more test branches so NJoyBook scenarios can spread out and run in parallel — not more machines.
+
+## The API layer
+
+A second, mostly separate testing surface: no browser, no saved session, HTTP straight to the backend.
+
+> **All the specs using this are currently switched off** — UAT rate-limits sign-in and every API test signs in first. The layer below works; only the specs are parked. See [README's Known Gaps](../README.md#known-gaps). The likely fix — sign in once per role and share the token — goes in `apiFixtures.ts`.
 
 ### `ApiClient` (`tests/core/ApiClient.ts`)
 
-Abstract base every concrete API client extends. It:
+The base every API client extends. It:
 
 - Wraps Playwright's `APIRequestContext`.
-- Assumes every response body is an envelope `{ status, message, data }` — confirmed against `schema.json`'s captured User/Account examples — and its private `unwrap<T>()` returns just `data`.
-- Throws a custom `ApiError` (carries `httpStatus` and the raw `body`) when `response.ok()` is false.
-- Exposes protected `get/post/postForm/patch/delete` helpers, each accepting an optional bearer `token`.
-
-```ts
-export class ApiError extends Error {
-  constructor(readonly httpStatus: number, readonly body: unknown) { ... }
-}
-```
+- Assumes every response looks like `{ status, message, data }` and returns just `data`.
+- Throws `ApiError` (carrying `httpStatus` and the raw body) when the response isn't OK.
+- Provides `get/post/postForm/patch/delete`, each taking an optional bearer token.
 
 ### Concrete clients (`tests/api/`)
 
-`AuthApi.ts`, `DealsApi.ts`, `LoyaltyApi.ts` extend `ApiClient` and expose one method per endpoint, e.g.:
+One method per endpoint:
 
 ```ts
 export class AuthApi extends ApiClient {
@@ -190,9 +185,9 @@ export class AuthApi extends ApiClient {
 }
 ```
 
-`AuthApi.ts` also exports `decodeJwtPayload(token)` — decodes (not verifies) the JWT payload, sufficient for asserting the `roles` claim in a test since the token was just issued by the API under test.
+`AuthApi.ts` also exports `decodeJwtPayload(token)` — it decodes but doesn't verify, which is fine for checking the `roles` claim on a token the API under test just issued.
 
-**When adding coverage for a new endpoint**: add a method to the relevant existing client (or a new client if it's a new resource), following the same "one client method per endpoint, typed request/response" shape — don't call `this.request` directly from a spec.
+**Adding an endpoint:** add a method to the right client, same typed shape. Never call `this.request` from a spec.
 
 ### Fixtures (`tests/specs/helpers/apiFixtures.ts`)
 
@@ -210,11 +205,11 @@ export async function tokenFor(authApi: AuthApi, role: Role): Promise<string> {
 }
 ```
 
-`apiTest` is Playwright's `request`-fixture-backed `base.extend`, not the UI `test` — API specs import `apiTest`/`expect` from here, never the top-level `@playwright/test` `test`. `tokenFor()` reuses the same `getCredentials()` role→env-var lookup the UI suite uses, so API tests authenticate as the same roles without a separate credential set.
+API specs import `apiTest` and `expect` from here, never the UI `test`. `tokenFor()` reuses the same credential lookup the UI tests use, so both authenticate as the same roles.
 
-### The `api` Playwright project
+### The `api` project
 
-`playwright.config.ts` has a project with no `storageState` and its own `baseURL`:
+No saved session, its own base URL:
 
 ```ts
 {
@@ -224,7 +219,7 @@ export async function tokenFor(authApi: AuthApi, role: Role): Promise<string> {
 },
 ```
 
-`UAT_API_URL` can differ from `UAT_URL` (admin dashboard frontend origin vs. backend API host — see `.env.example`'s comment). Two more env vars exist only for API tests: `UAT_API_MERCHANT_STORE_ID` / `UAT_API_BRANCH_ID` — the UI-vs-API asymmetry is that UI flows select a branch by clicking its display name, but API payloads (e.g. deal/loyalty creation) need the raw store/branch ID, which the UI never has to supply directly.
+`UAT_API_URL` can differ from `UAT_URL` — one is the backend, the other the dashboard. Two more variables exist only for API tests: `UAT_API_MERCHANT_STORE_ID` and `UAT_API_BRANCH_ID`. UI tests pick a branch by clicking its name; API calls need the raw ID.
 
 ### Assertion style
 
@@ -234,32 +229,26 @@ API specs assert on thrown errors, not page state:
 await expect(authApi.signIn(username, `${password}invalid`)).rejects.toThrow(ApiError);
 ```
 
-and inspect `ApiError.httpStatus`/`.body` when the status code itself matters, e.g.:
+and inspect `ApiError.httpStatus` when the status code itself matters.
+
+## Roles and credentials
+
+`tests/specs/helpers/roles.ts` connects a role to its project, its tag, and its `.env` credentials.
 
 ```ts
-expect((error as ApiError).httpStatus).toBeGreaterThanOrEqual(400);
-```
-
-## Role and credential wiring
-
-`tests/specs/helpers/roles.ts` is the single source of truth connecting a role's identity to its Playwright project, its tag, and its `.env` credentials.
-
-```ts
-export type Role = { label: string; normalized: string; tag: string };
-
 export const ROLES = {
   merchantAdmin: { label: 'Merchant Admin', normalized: 'MERCHANT_ADMIN', tag: '@merchant-admin' },
   // ...
 } satisfies Record<string, Role>;
 ```
 
-- `label` — human-readable, used in `test.describe` titles.
-- `normalized` — uppercase-with-underscores form, used to build the env var name (`getCredentials`) and the storage-state filename (`global.setup.ts` lowercases it: `tests/setup/.auth/${role.normalized.toLowerCase()}.json`).
-- `tag` — the `@role-tag` string embedded in `describe` titles, which each Playwright project's `grep: /@role-tag/` filters on.
+- `label` — readable name, used in test titles.
+- `normalized` — uppercase form, used to build the env var name and the session filename (lowercased).
+- `tag` — the `@role-tag` in describe titles, which each project's `grep` filters on.
 
-Role **groups** (`ALL_ROLES`, `DEAL_CREATOR_ROLES`, `NJOYBOOK_FULL_ACCESS_ROLES`, etc.) are just arrays composed from `ROLES` — specs iterate a group instead of hardcoding which roles get which coverage. Adding a role to an existing group's array is how you extend coverage to a role that should already reach a feature; see [MAINTAINERS.md](./MAINTAINERS.md) for the full checklist when the role itself is new.
+Role groups are just arrays built from `ROLES`. Specs loop over a group instead of hardcoding roles. Adding a role to an existing group is how you extend coverage; see [MAINTAINERS.md](./MAINTAINERS.md#a-new-role-was-added) when the role itself is new.
 
-`getCredentials(normalized)` is the only place `.env` role variables are read:
+`getCredentials(normalized)` is the only place `.env` role variables get read:
 
 ```ts
 export function getCredentials(normalized: string) {
@@ -271,11 +260,11 @@ export function getCredentials(normalized: string) {
 }
 ```
 
-## `tests/setup/global.setup.ts` walkthrough
+## `tests/setup/global.setup.ts`
 
-Runs once before the whole suite (wired via `globalSetup` in `playwright.config.ts`). Two phases:
+Runs once before the whole suite. Two phases:
 
-1. **Per-role login and storage-state generation.** For every role in `[...ALL_ROLES, ...ALL_CRM_ROLES]` (6 roles — `superuser` is not included, matching the commented-out `superuser` project): open a fresh browser context, start tracing, log in via `LoginPage.loginAs()` (CRM roles pass `createHomePage: (p) => new AdminHomePage(p)` so their post-login landing page object is right), save `context.storageState()` to `tests/setup/.auth/<role>.json`, stop tracing to `tests/setup/traces/<role>-setup.zip`, close the context. A failure for any one role **throws and aborts the whole setup** — auth generation is all-or-nothing.
-2. **NJoyBook capacity reset.** For each of the two NJoyBook test branches, opens a context using the merchant-admin storage state just generated, navigates Home → Configuration → branch config → NJoyBook → Bookings, and calls `bookings.removeAllActiveBookings()`. Unlike phase 1, a failure here is **non-fatal per branch** (`console.warn`'d, not thrown) — this reset is a convenience to keep booking-capacity tests reliable, not a suite precondition. It's documented to never run concurrently with the tests themselves (see the CI concurrency guard in `README.md`'s CI section).
+1. **Log in as every role and save the session.** For each of the 6 roles: fresh browser context, start tracing, log in, save the session to `tests/setup/.auth/<role>.json`, save the trace, close. If any role fails, **the whole setup fails** — it's all or nothing. (CRM roles pass a different landing page object, since they land on `AdminHomePage`.)
+2. **Clear NJoyBook bookings.** For each of the two test branches, open a context with the merchant-admin session just saved, navigate to the Bookings tab, and cancel active bookings. Unlike phase 1, a failure here just warns — this is a convenience to keep booking tests reliable, not a requirement. It must never run at the same time as the tests themselves, which is what the CI concurrency guard prevents.
 
-If you add a new role that needs auth state generated, it must join the `ROLES` array this file builds from (`ALL_ROLES`/`ALL_CRM_ROLES` or a new group added to that spread) — see [MAINTAINERS.md](./MAINTAINERS.md#a-new-role-was-added).
+A new role that needs a session must be reachable from the `[...ALL_ROLES, ...ALL_CRM_ROLES]` list this file builds from.

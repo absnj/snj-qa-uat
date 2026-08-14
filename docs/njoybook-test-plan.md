@@ -86,3 +86,42 @@ Tags are in the form `nJoyBook:<test name>`.
   Plaza (Branch mode, capacity-based) and `njoybook-staff.spec.ts` covers My Village
   (Staff mode, specialist-based). Pick the spec matching the booking mode your
   scenario needs — behaviour does not transfer between the two.
+
+---
+
+## Missing test-support capability: staffed slots for *today*
+
+Three admin-booking scenarios on the Staff-mode branch (My Village) are
+`test.skip`ped in `njoybook-staff.spec.ts` and cannot be re-enabled from the test
+code alone:
+
+- `Bookings - Admin Add Booking` › admin-created booking appears in the list as Confirmed
+- `Bookings - Status Lifecycle` › checking in then completing advances the status
+- `Bookings - Filters` › the status filter narrows the list to matching bookings
+
+**Symptom.** Creating the booking fails with `400 {"message":"Selected slot is
+not available"}`; the modal stays open and the test times out on the
+closed-modal assertion. Confirmed directly against UAT on 2026-08-14 with
+today's booking list *empty*, so this is not the per-slot capacity cap that
+global setup's "Remove active" reset already handles.
+
+**Cause.** On a Staff-mode branch a slot is only bookable when a bookable staff
+member is assigned to it, and the Add-booking dropdown offers unstaffed slots
+anyway — the rejection only arrives after submit. These tests book *today*, but
+nothing guarantees today's weekday slots are staffed: the `bookingsOnly` fixture
+deliberately skips the Rules reset, and the fixtures that do call
+`assignStaffToSlots()` target Monday/Tuesday/Wednesday. So a run's outcome
+depends on the weekday it runs on and on the slot-staff state a previous run
+left behind. The sibling tests that still pass (lifecycle 18:30/19:30, Detail &
+Edit) rest on the same unguaranteed precondition.
+
+**What would unblock it** — either:
+
+1. a fixture that assigns a bookable staff member to the *current* weekday's
+   slots and restores the prior assignment in teardown; or
+2. a branch reserved for today-scoped booking tests that no other spec
+   re-configures (the Rules "Set to Default" reset is what clears slot-staff
+   assignments).
+
+Option 2 is preferable: option 1 still mutates a branch other tests read back,
+which is why these files are serial in the first place.

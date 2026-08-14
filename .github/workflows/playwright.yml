@@ -33,8 +33,8 @@ on:
           - crm-contacts
           - crm-capture-lead
           - api
-  # Verifies changes to test code — including the PRs the triage agent opens.
-  # Scoped to merchant-admin so a PR costs minutes, not an hour, on shared UAT.
+  # Checks changes to test code, including PRs the triage agent opens.
+  # Scoped to merchant-admin so a PR costs minutes rather than an hour.
   pull_request:
     paths:
       - 'tests/**'
@@ -47,17 +47,19 @@ concurrency:
 
 jobs:
   test:
-    timeout-minutes: 90
+    # Per shard, not for the whole suite.
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     environment: uat
+    strategy:
+      # One shard failing must not cancel the others, or the merged report
+      # comes out with holes in it.
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    # Only the `triage` job commits, pushes or files issues.
     permissions:
-      contents: write
-      pull-requests: write
-      # The triage prompt's fallback path: when every failure is a suspected
-      # regression or a flake there is no PR to open, so the agent files an
-      # issue instead. Without this the report is silently lost — the token
-      # answers "Resource not accessible by integration".
-      issues: write
+      contents: read
     env:
       # inputs.* are empty on pull_request — fall back to a fast, safe scope.
       PROJECT: ${{ inputs.project || 'merchant-admin' }}
@@ -94,19 +96,15 @@ jobs:
         UAT_MERCHANT_SUCCESS_STAFF_PASSWORD=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_PASSWORD }}
         EOF
 
-    # continue-on-error: a red suite is the input to triage, not the end of the
-    # job. The json reporter gives the agent structured failures instead of
-    # scraped stdout.
+    # continue-on-error so a failing shard still uploads its blob — otherwise the
+    # merged report loses that quarter of the run. The suite's real verdict is
+    # applied by the "Reflect suite result" step below.
     #
-    # Retries are off to keep the run short. That removes the failed-then-passed
-    # signal the agent used to separate flakes from hard breaks, so it must now
-    # reproduce a suspected flake itself (re-running the affected spec) rather
-    # than reading it off the results.
+    # Retries are off to keep runs short, so the triage agent can't tell a flake
+    # from a real break by "failed then passed" — it re-runs the spec itself.
     - name: Run Playwright tests
       id: tests
       continue-on-error: true
-      env:
-        PLAYWRIGHT_JSON_OUTPUT_NAME: results.json
       run: |
         case "$MODULE" in
           all) SPEC="" ;;
@@ -119,40 +117,174 @@ jobs:
           user-mgmt) SPEC="tests/specs/user-mgmt/create-user.spec.ts" ;;
           crm-contacts) SPEC="tests/specs/track/crm-contacts.spec.ts" ;;
           crm-capture-lead) SPEC="tests/specs/track/crm-capture-lead.spec.ts" ;;
-          # Path prefix, not a single file — the three api specs share the `api`
-          # project. Every one is currently describe.skip'd, so this reports
-          # zero tests until they are unskipped.
+          # A folder, not one file — the three api specs share the `api` project.
+          # All are currently skipped, so this reports zero tests until they're on.
           api) SPEC="tests/specs/api" ;;
           *) echo "Unknown module: $MODULE"; exit 1 ;;
         esac
 
+        # Don't pass --reporter here: it would override the blob reporter from
+        # playwright.config.ts and leave the `report` job nothing to merge.
         if [ "$PROJECT" = "all" ]; then
-          npx playwright test $SPEC --reporter=html,json
+          npx playwright test $SPEC --shard=${{ matrix.shard }}/${{ strategy.job-total }}
         else
-          npx playwright test $SPEC --project="$PROJECT" --reporter=html,json
+          npx playwright test $SPEC --project="$PROJECT" --shard=${{ matrix.shard }}/${{ strategy.job-total }}
         fi
 
-    # Uploaded BEFORE triage, on purpose. The agent re-runs specs to verify its
-    # fixes, and Playwright clears playwright-report/ at the start of every run
-    # — so uploading after triage captures the agent's last scoped re-run
-    # instead of this suite run. results.json and test-results/ come along
-    # because the HTML report alone omits the structured results, traces,
-    # screenshots and error-context files that a failure is actually debugged
-    # from.
-    - name: Upload test results
+    # Uploaded here, never from triage. Playwright clears the output directory at
+    # the start of every run, so artifacts captured after the agent's verification
+    # re-runs would show those instead of this suite run.
+    - name: Upload blob report
       uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
-        path: |
-          playwright-report/
-          test-results/
-          results.json
+        name: blob-report-${{ matrix.shard }}
+        path: blob-report/
         retention-days: 30
 
-    # Not on pull_request: the agent must never triage its own PR.
+    # Separate from the report. Traces and screenshots are most of the bytes, and
+    # `npm run report:ci` only needs the report — keeping them apart is what makes
+    # that download quick.
+    - name: Upload failure artifacts
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: test-results-${{ matrix.shard }}
+        path: test-results/
+        retention-days: 30
+        if-no-files-found: ignore
+
+    - name: Remove .env
+      if: always()
+      run: rm -f .env
+
+    # The suite's own result decides the workflow's, so a red run the agent
+    # couldn't fully fix still shows red.
+    - name: Reflect suite result
+      if: steps.tests.outcome == 'failure'
+      run: exit 1
+
+
+  # Merges the four shards into one HTML report, so there's a single artifact
+  # to open rather than four.
+  report:
+    if: ${{ !cancelled() }}
+    needs: test
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+
+    # merge-reports loads playwright.config.ts, which throws without a .env. This
+    # job never opens a browser or reaches UAT, so a placeholder is enough — and
+    # real credentials here would be worse. Same reason it's outside `environment: uat`.
+    - name: Write placeholder .env
+      run: echo 'UAT_URL=http://merge-reports.invalid' > .env
+
+    - name: Download blob reports
+      uses: actions/download-artifact@v4
+      with:
+        path: all-blob-reports
+        pattern: blob-report-*
+        merge-multiple: true
+
+    - name: Merge into HTML report
+      run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+    # What `npm run report:ci` downloads. Report only, no traces, so it's quick.
+    - name: Upload HTML report
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+
+    - name: Summarise
+      run: |
+        {
+          echo "### Playwright report"
+          echo
+          echo 'Serve it locally (opens on localhost, trace viewer works):'
+          echo
+          echo '```'
+          echo "npm run report:ci -- ${{ github.run_id }}"
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+  # Its own job so it runs once against the merged result, not once per shard —
+  # otherwise four agents open four PRs for one red run.
+  # Not on pull_request: the agent must never triage its own PR.
+  triage:
+    if: ${{ needs.test.result == 'failure' && github.event_name == 'workflow_dispatch' }}
+    needs: [test, report]
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    environment: uat
+    permissions:
+      contents: write
+      pull-requests: write
+      # When every failure is an app bug or a flake there's no PR to open, so the
+      # agent files an issue instead. Without this its report is silently lost.
+      issues: write
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Write .env
+      run: |
+        cat <<EOF > .env
+        UAT_URL=${{ secrets.UAT_URL }}
+        UAT_API_URL=${{ secrets.UAT_API_URL }}
+        UAT_API_MERCHANT_STORE_ID=${{ secrets.UAT_API_MERCHANT_STORE_ID }}
+        UAT_API_BRANCH_ID=${{ secrets.UAT_API_BRANCH_ID }}
+        UAT_SUPERUSER_USER=${{ secrets.UAT_SUPERUSER_USER }}
+        UAT_SUPERUSER_PASSWORD=${{ secrets.UAT_SUPERUSER_PASSWORD }}
+        UAT_MERCHANT_ADMIN_USER=${{ secrets.UAT_MERCHANT_ADMIN_USER }}
+        UAT_MERCHANT_ADMIN_PASSWORD=${{ secrets.UAT_MERCHANT_ADMIN_PASSWORD }}
+        UAT_MERCHANT_STAFF_USER=${{ secrets.UAT_MERCHANT_STAFF_USER }}
+        UAT_MERCHANT_STAFF_PASSWORD=${{ secrets.UAT_MERCHANT_STAFF_PASSWORD }}
+        UAT_BRANCH_ADMIN_USER=${{ secrets.UAT_BRANCH_ADMIN_USER }}
+        UAT_BRANCH_ADMIN_PASSWORD=${{ secrets.UAT_BRANCH_ADMIN_PASSWORD }}
+        UAT_BRANCH_STAFF_USER=${{ secrets.UAT_BRANCH_STAFF_USER }}
+        UAT_BRANCH_STAFF_PASSWORD=${{ secrets.UAT_BRANCH_STAFF_PASSWORD }}
+        UAT_SALES_AGENT_USER=${{ secrets.UAT_SALES_AGENT_USER }}
+        UAT_SALES_AGENT_PASSWORD=${{ secrets.UAT_SALES_AGENT_PASSWORD }}
+        UAT_MERCHANT_SUCCESS_STAFF_USER=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_USER }}
+        UAT_MERCHANT_SUCCESS_STAFF_PASSWORD=${{ secrets.UAT_MERCHANT_SUCCESS_STAFF_PASSWORD }}
+        EOF
+
+    # The failure data the agent reads, rebuilt here from the merged shard blobs.
+    - name: Download blob reports
+      uses: actions/download-artifact@v4
+      with:
+        path: all-blob-reports
+        pattern: blob-report-*
+        merge-multiple: true
+
+    # Deliberately no PLAYWRIGHT_JSON_OUTPUT_NAME: with it set the reporter writes
+    # the file itself and prints nothing, so the redirect below would produce an
+    # empty results.json and the agent would see no failures.
+    - name: Rebuild results.json
+      run: npx playwright merge-reports --reporter json ./all-blob-reports > results.json
+
+    - name: Download failure artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: test-results
+        pattern: test-results-*
+        merge-multiple: true
+
     - name: Triage failures
-      if: steps.tests.outcome == 'failure' && github.event_name == 'workflow_dispatch'
       uses: openai/codex-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -161,32 +293,20 @@ jobs:
         model: gpt-5.6-sol
         effort: high
         prompt-file: .claude/commands/triage-failures.md
-        # .codex/config.toml supplies the Playwright MCP server and the `triage`
-        # permission profile.
+        # .codex/config.toml supplies the browser setup and the `triage` profile.
         codex-home: .codex
-        # Two independent knobs, easily confused:
-        #
-        # safety-strategy governs the privileges of the Codex *process*.
-        # drop-sudo revokes the runner user's sudo before Codex starts and is
-        # what keeps OPENAI_API_KEY out of reach; it grants the sandbox nothing.
-        #
-        # permission-profile governs the *sandbox* — filesystem and network.
-        # Omitting it falls back to the legacy workspace-write sandbox, which
-        # leaves .git read-only and blocks all network, so the agent could edit
-        # tests but never commit, push, or open a PR. See .codex/config.toml.
+        # Two separate settings, easily confused:
+        #   safety-strategy  — limits the agent process. drop-sudo is what keeps
+        #                      OPENAI_API_KEY out of its reach.
+        #   permission-profile — limits files and network. Leave it off and the
+        #                      fallback makes .git read-only and blocks network,
+        #                      so the agent could edit tests but never open a PR.
         safety-strategy: drop-sudo
         permission-profile: triage
-        # Permission profiles are beta and require Codex CLI >= 0.138.0.
-        # Unpinned, a rollback to an older CLI silently reverts to the legacy
-        # sandbox and the agent goes quiet again.
+        # Permission profiles are beta and need Codex CLI >= 0.138.0. Unpinned, an
+        # older CLI silently falls back to the restricted sandbox above.
         codex-version: 0.138.0
 
     - name: Remove .env
       if: always()
       run: rm -f .env
-
-    # The suite's own verdict gates the workflow, so a red run the agent could
-    # not fully fix still shows red.
-    - name: Reflect suite result
-      if: steps.tests.outcome == 'failure'
-      run: exit 1

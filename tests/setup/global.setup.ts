@@ -1,9 +1,8 @@
-// tests/setup/global.setup.ts
 import { chromium, type Browser, type FullConfig, type Page } from '@playwright/test';
 import { loadTestEnv } from './env';
 import { LoginPage } from '../pages/auth/LoginPage';
 import { AdminHomePage } from '../pages/admin/AdminHomePage';
-import { HomePage } from '../pages/home/HomePage';
+import { BranchConfigPage } from '../pages/configuration/branch/BranchConfigPage';
 import { ALL_ROLES, ALL_CRM_ROLES, getCredentials, type Role } from '../specs/helpers/roles';
 import fs from 'fs/promises';
 
@@ -134,14 +133,11 @@ async function globalSetup(_config: FullConfig) {
   });
 
   try {
-    let reused = 0;
-    let generated = 0;
-
-    for (const role of ROLES) {
+    /** Signs one role in, with the retry ladder. Resolves to what it did. */
+    async function prepareRole(role: Role): Promise<'reused' | 'generated'> {
       if (await hasUsableAuthState(role)) {
         console.log(`Reusing auth state for ${role.normalized}`);
-        reused += 1;
-        continue;
+        return 'reused';
       }
 
       let lastError: Error | undefined;
@@ -159,22 +155,48 @@ async function globalSetup(_config: FullConfig) {
         console.log(`Generating auth state for ${role.normalized}`);
         try {
           await authenticate(browser, role);
-          lastError = undefined;
-          generated += 1;
-          break;
+          return 'generated';
         } catch (error) {
           lastError = error as Error;
         }
       }
 
-      // All-or-nothing: a role without storage state would fail every test in
-      // its project with a confusing UI error rather than an obvious auth one.
-      if (lastError) {
-        throw new Error(
-          `Global setup failed for ${role.normalized} after ${LOGIN_ATTEMPTS} attempts: ${lastError.message}`,
-        );
-      }
+      throw new Error(
+        `Global setup failed for ${role.normalized} after ${LOGIN_ATTEMPTS} attempts: ${lastError!.message}`,
+      );
     }
+
+    /*
+     * Sign roles in three at a time. Each gets its own browser context, so there
+     * is no ordering between them, and CI pays this on every shard (a fresh
+     * checkout has no saved sessions).
+     *
+     * Three is a measured ceiling, not a guess: all six at once makes UAT's
+     * sign-in limiter return 429 for two of them. Only raise it with evidence
+     * that both the rate limit and the runner's CPU tolerate more.
+     *
+     * allSettled, not all, so a failing role is reported as itself rather than
+     * hidden behind whichever rejection landed first.
+     */
+    const AUTH_CONCURRENCY = 3;
+    const outcomes: PromiseSettledResult<'reused' | 'generated'>[] = [];
+
+    for (let i = 0; i < ROLES.length; i += AUTH_CONCURRENCY) {
+      const batch = ROLES.slice(i, i + AUTH_CONCURRENCY);
+      outcomes.push(...(await Promise.allSettled(batch.map(prepareRole))));
+    }
+
+    const failures = outcomes.flatMap((o) => (o.status === 'rejected' ? [o.reason as Error] : []));
+
+    // All-or-nothing: a role without storage state would fail every test in
+    // its project with a confusing UI error rather than an obvious auth one.
+    if (failures.length) {
+      throw new Error(failures.map((error) => error.message).join('\n'));
+    }
+
+    const settled = outcomes.flatMap((o) => (o.status === 'fulfilled' ? [o.value] : []));
+    const reused = settled.filter((r) => r === 'reused').length;
+    const generated = settled.filter((r) => r === 'generated').length;
 
     console.log(`Auth state ready: ${reused} reused, ${generated} generated`);
 
@@ -184,26 +206,36 @@ async function globalSetup(_config: FullConfig) {
     // once here, never concurrently with tests. Non-fatal per branch: a
     // failure must not block the whole suite.
     const RESET_BRANCHES = ['Hajime - My Village', 'Hajime - Thomson Plaza'];
-    for (const branchName of RESET_BRANCHES) {
-      const ctx = await browser.newContext({
-        storageState: 'tests/setup/.auth/merchant_admin.json',
-        baseURL: process.env.UAT_URL, // HomePage.goto() uses a relative '/'
-      });
-      try {
-        const page = await ctx.newPage();
-        const home = new HomePage(page);
-        await home.goto();
-        const config = await home.goToConfiguration();
-        const branch = await config.openBranchConfig(branchName);
-        const njoyBook = await branch.goToNJoyBook();
-        const bookings = await njoyBook.goToBookings();
-        await bookings.removeAllActiveBookings();
-      } catch (err) {
-        console.warn(`NJoyBook capacity reset skipped for ${branchName}: ${(err as Error).message}`);
-      } finally {
-        await ctx.close();
-      }
-    }
+    await Promise.all(
+      RESET_BRANCHES.map(async (branchName) => {
+        const ctx = await browser.newContext({
+          storageState: 'tests/setup/.auth/merchant_admin.json',
+          baseURL: process.env.UAT_URL, // BranchConfigPage.open() uses a relative path
+          /*
+           * Global setup builds its own contexts, so it does not inherit the
+           * project's `use.viewport` and would default to 1280x720. Below
+           * 1536px the Bookings header actions collapse to icon-only buttons
+           * that carry no aria-label, so "Remove active" loses its accessible
+           * name and the reset finds nothing to click. Stay clear of that
+           * breakpoint rather than sitting exactly on it.
+           */
+          viewport: { width: 1600, height: 900 },
+        });
+        try {
+          const page = await ctx.newPage();
+          const branch = await BranchConfigPage.open(page, branchName);
+          const njoyBook = await branch.goToNJoyBook();
+          const bookings = await njoyBook.goToBookings();
+          await bookings.removeAllActiveBookings();
+        } catch (err) {
+          console.warn(
+            `NJoyBook capacity reset skipped for ${branchName}: ${(err as Error).message}`,
+          );
+        } finally {
+          await ctx.close();
+        }
+      }),
+    );
   } finally {
     await browser.close();
   }

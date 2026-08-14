@@ -38,10 +38,6 @@ async function goToCrm(page: import('@playwright/test').Page): Promise<CrmOvervi
 test.describe('Track - CRM Contacts', () => {
   for (const role of SALES_AGENT_ROLES) {
     test.describe(`${role.label} ${role.tag}`, () => {
-      // ---------------------------------------------------------------------
-      // Listing
-      // ---------------------------------------------------------------------
-
       test.describe('Listing', () => {
         test('shows the my contacts list', async ({ page }) => {
           const myContacts = new ContactListPage(page, 'my');
@@ -101,12 +97,8 @@ test.describe('Track - CRM Contacts', () => {
         });
       });
 
-      // ---------------------------------------------------------------------
-      // Filters
-      //
-      // These exercise the filter controls themselves rather than asserting
-      // against UAT rows, so they hold whatever data the environment carries.
-      // ---------------------------------------------------------------------
+      // These check the filter controls themselves rather than the rows they
+      // return, so they work with whatever data UAT happens to hold.
 
       test.describe('Filters', () => {
         test('disables the sub-category filter until a category is chosen', async ({ page }) => {
@@ -129,10 +121,6 @@ test.describe('Track - CRM Contacts', () => {
           await myContacts.expectFilterOptions(CONTACT_PRIORITIES);
         });
       });
-
-      // ---------------------------------------------------------------------
-      // Access control
-      // ---------------------------------------------------------------------
 
       test.describe('Access Control', () => {
         test('does not open a contact owned by another agent', async ({ page }) => {
@@ -157,9 +145,7 @@ test.describe('Track - CRM Contacts', () => {
         });
       });
 
-      // ---------------------------------------------------------------------
       // Blocked on test-support capability
-      // ---------------------------------------------------------------------
 
       // TODO(crm-cleanup): joining an agent queue has no self-service undo, so
       // this cannot run against shared UAT. Un-fixme once a queue-leave action

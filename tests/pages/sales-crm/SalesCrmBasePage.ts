@@ -69,9 +69,7 @@ export abstract class SalesCrmBasePage extends BasePage {
     this.accessDeniedAlert = this.page.getByRole('alert', { name: 'Access Denied' });
   }
 
-  // ---------------------------------------------------------------------------
   // Sidebar navigation
-  // ---------------------------------------------------------------------------
 
   async goToCrmOverview(): Promise<CrmOverviewPage> {
     await this.overviewLink.click();
@@ -105,12 +103,10 @@ export abstract class SalesCrmBasePage extends BasePage {
     return contacts;
   }
 
-  // ---------------------------------------------------------------------------
   // Label-scoped control factories
   //
   // Call these from a subclass *constructor* to name a control once; never
   // build a locator inside an action method.
-  // ---------------------------------------------------------------------------
 
   /**
    * The `.form-group` whose `label` starts with `label`. Prefix-anchored so
@@ -140,9 +136,7 @@ export abstract class SalesCrmBasePage extends BasePage {
     return this.formGroup(label).locator('button[role="combobox"]');
   }
 
-  // ---------------------------------------------------------------------------
   // Control interactions
-  // ---------------------------------------------------------------------------
 
   /** Open a radix `Select` and pick an option by its visible text. */
   protected async chooseSelectOption(trigger: Locator, option: string): Promise<void> {
